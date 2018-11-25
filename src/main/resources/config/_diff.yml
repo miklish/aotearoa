@@ -1,26 +1,65 @@
+# extract values from existing config files for use in config
+use:
+  client:
+    tls:
+      keyStore: {client-keystore-name}
+
+# detail info on the variables to get from user or _diff-values.yml
 variables:
-  datasource.servers:
+  postgres-servers:
     min: 1
     max: inf
-    format: comma-separated
+    output:
+      - comma-separated
     type: string
     prompt-text: "Enter the Postgres database urls (including ports)"
-  datasource.username:
+  postgres-username:
     min: 1
     max: 1
-    format: copy
+    output:
+      - copy
     type: string
     prompt-text: "Enter the UAT Postgres database user name"
   tableau-rest-url:
     min: 1
     max: 1
-    format: copy
+    output:
+      - copy
     type: string
     prompt-text: "Enter the Tableau REST API url"
+  tableau-username:
+    min: 1
+    max: 1
+    output:
+      - copy
+    type: string
+    prompt-text: "Enter the Tableau functional ID username"
+  tableau-password:
+    min: 1
+    max: 1
+    output:
+      - encrypt
+    type: string
+    prompt-text: "Enter the Tableau functional ID password"
+  postgres-password:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Enter the Postgres database password"
+
+# details on where to inject resolved config values
 files:
-  datasource: # lookup this file
+  datasource:
     PostgresDataSource:
-      jdbcUrl:  jdbc:postgresql://{datasource.servers}/workgroup?ssl=true&sslfactory=com.cibc.api.tableau.wbook.desc.PostgresSSLSocketFactory
-      username: {datasource-username}
+      jdbcUrl:  jdbc:postgresql://{postgres-servers}/workgroup?ssl=true&sslfactory=com.cibc.api.tableau.wbook.desc.PostgresSSLSocketFactory
+      username: {postgres-username}
   proxy:
     hosts: {tableau-rest-url}
+  tableau:
+    serverUrl: https://tableaussi-uat.cibcwm.com:443
+    tableauUsername: {tableau-username}
+  secret:
+    tableauPassword: {tableau-password}
+    postgresPassword: {postgres-password}

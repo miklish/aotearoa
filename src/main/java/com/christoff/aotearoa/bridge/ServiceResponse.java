@@ -1,4 +1,7 @@
 package com.christoff.aotearoa.bridge;
 
-public class ServiceResponse {
+public class ServiceResponse
+{
+    String resultMessage;
+    String resultCode;
 }
