@@ -1,0 +1,17 @@
+# Reverse Proxy Handler Configuration
+
+# If HTTP 2.0 protocol will be used to connect to target servers
+http2Enabled: false
+
+# If TLS is enabled when connecting to the target servers
+httpsEnabled: true
+
+# Target URIs
+hosts: https://tableaussi-uat.cibcwm.com:443
+#hosts: https://us-west-2b.online.tableau.com:443
+
+# Connections per thread to the target servers
+connectionsPerThread: 20
+
+# Max request time in milliseconds before timeout
+maxRequestTime: 10000
