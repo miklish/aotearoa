@@ -1,6 +1,9 @@
 package com.christoff.aotearoa.test;
 
 
+import com.christoff.aotearoa.extern.gateway.ServiceConfigFileGateway;
+import com.christoff.aotearoa.intern.gateway.ConfigDataException;
+import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
@@ -20,30 +23,79 @@ import static org.apache.commons.io.FilenameUtils.*;
 public class TestFiles {
     
     @Test
-    public void testFilenameHandling() {
-        String base = System.getProperty("user.dir");
-        String fileId = base + "/" + "src/main\\resources/config/_diff.yml";
-        String nFileId = normalize(fileId);
-        
-        System.out.println("Normalized Path: " + nFileId);
-        System.out.println("Full Path: " + getFullPath(nFileId));
-        System.out.println("Relative Path: " + getPath(nFileId));
-        System.out.println("Prefix: " + getPrefix(nFileId));
-        System.out.println("Extension: " + getExtension(nFileId));
-        System.out.println("Base: " + getBaseName(nFileId));
-        System.out.println("Name: " + getName(nFileId));
+    public void testFilenameHandling()
+    {
+        String userdir = System.getProperty("user.dir");
+        String base = userdir + "/src/main/resources/config/";
+        String outBase = userdir + "/src/main/resources/config-out/";
+        String baseFake = userdir + "/src/main/resources/config-fake/";
+        String newBase = userdir + "/src/main/resources/config3/";
+        String diff = base + "_diff.yml";
+        String diffVals = "_diff-values.yml";
+        String diffFake = base + "_diff_fake.yml";
     
-        File file = getFile(normalize(nFileId));
-        Assert.assertNotNull(file);
+        //IServiceConfigDataGateway g = new ServiceConfigFileGateway();
+        ServiceConfigFileGateway g = new ServiceConfigFileGateway();
         
-        String missingFileId = base + "/" + "src/main\\resources/config/_diff1.yml";
-        String nMissingFileId = normalize(missingFileId);
-        File file2 = getFile(nMissingFileId);
-        Assert.assertFalse(file2.exists());
+        // test get
+        Map<String, Object> diffMap = g.get(diff);
+        Assert.assertTrue(diffMap.size() == 3);
+        Assert.assertTrue(
+            diffMap.containsKey("use") &&
+            diffMap.containsKey("variables") &&
+            diffMap.containsKey("files")
+        );
+        Assert.assertTrue(
+            diffMap.get("use") instanceof Map &&
+                diffMap.get("variables") instanceof Map &&
+                diffMap.get("files") instanceof Map
+        );
         
-        String dirId = getFullPath(nFileId);
-        File dir = getFile(dirId);
-        Assert.assertTrue(dir.exists());
+        // check if file exists
+        Assert.assertTrue(g.configExists(diff));
+        Assert.assertFalse(g.configExists(diffFake));
+        // pass in directory as config
+        Assert.assertFalse(g.configExists(base));
+    
+        // check if base exists
+        Assert.assertTrue(g.baseExists(base));
+        Assert.assertFalse(g.baseExists(baseFake));
+        // pass in config as config
+        Assert.assertFalse(g.baseExists(diff));
+        
+        // update diff into output dir
+        Map<String, Object> updateMap = g.get(diff);
+        String outputConfig = g.getConfigBase(outBase) + g.getConfigName(diff);
+        g.save(updateMap, outputConfig, true);
+        
+        // Test with directory
+        boolean b = false;
+        try {
+            b = g.save(updateMap, g.getConfigBase(outBase), g.getConfigName(outBase), true);
+        } catch(ConfigDataException e) {
+            b = true;
+        }
+        Assert.assertTrue(b);
+        
+        // Test with config
+        b = false;
+        try {
+            b = g.save(updateMap, g.getConfigBase(diff), g.getConfigName(diff), true);
+        } catch(ConfigDataException e) {
+            b = false;
+        }
+        Assert.assertTrue(b);
+        
+        /*
+        public Map<String, Object> get(String configId);
+        public void save(Map<String, Object> map, String baseId, String configName, boolean deleteIfExists);
+        public void save(Map<String, Object> map, String configId, boolean deleteIfExists);
+        public boolean configExists(String configId);
+        public boolean configExists(String baseId, String configName);
+        public boolean baseExists(String baseId);
+        public boolean createBase(String baseId);
+        public boolean deleteBase(String baseId, boolean deleteIfNonEmpty);
+        */
     }
     
 /*
