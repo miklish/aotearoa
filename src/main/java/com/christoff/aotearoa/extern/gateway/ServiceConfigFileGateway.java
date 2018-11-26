@@ -1,6 +1,7 @@
 package com.christoff.aotearoa.extern.gateway;
 
 import com.christoff.aotearoa.intern.gateway.*;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,10 @@ public class ServiceConfigFileGateway implements IServiceConfigDataGateway
     
     public Map<String, Object> get(String configId) {
         return getFileInfo(configId, true).map;
+    }
+
+    public Map<String, Object> get(String baseId, String configName) {
+        return getFileInfo(FilenameUtils.normalize(baseId + "/" + configName), true).map;
     }
     
     public boolean save(Map<String, Object> map, String baseId, String configName, boolean deleteIfExists) {

@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FilenameUtils.*;
@@ -96,6 +98,18 @@ public class TestFiles {
         } catch(ConfigDataException e) {
         }
         Assert.assertTrue(b);
+
+
+        // test pattern matcher
+        List<String> matchList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("\\(\\{.*?}\\)");
+        Matcher regexMatcher = regex.matcher("Hello This is {Java} Not {.NET}");
+        while (regexMatcher.find()) {//Finds Matching Pattern in String
+            matchList.add(regexMatcher.group(1));//Fetching Group from String
+        }
+        for(String str:matchList) {
+            System.out.println(str);
+        }
         
         /*
         public Map<String, Object> get(String configId);

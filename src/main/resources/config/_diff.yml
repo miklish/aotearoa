@@ -1,5 +1,5 @@
 use:
-  client:
+  client.yml:
     tls:
       keyStore: '{client-keystore-name}'
 variables:
@@ -46,15 +46,15 @@ variables:
     type: string
     prompt-text: Enter the Postgres database password
 files:
-  datasource:
+  datasource.yml:
     PostgresDataSource:
       jdbcUrl: jdbc:postgresql://{postgres-servers}/workgroup?ssl=true&sslfactory=com.cibc.api.tableau.wbook.desc.PostgresSSLSocketFactory
       username: '{postgres-username}'
-  proxy:
+  proxy.yml:
     hosts: '{tableau-rest-url}'
-  tableau:
+  tableau.yml:
     serverUrl: https://tableaussi-uat.cibcwm.com:443
     tableauUsername: '{tableau-username}'
-  secret:
+  secret.yml:
     tableauPassword: '{tableau-password}'
     postgresPassword: '{postgres-password}'

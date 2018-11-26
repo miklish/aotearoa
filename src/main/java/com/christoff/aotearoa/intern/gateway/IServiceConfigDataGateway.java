@@ -5,6 +5,7 @@ import java.util.Map;
 public interface IServiceConfigDataGateway
 {
     public Map<String, Object> get(String configId);
+    public Map<String, Object> get(String baseId, String configName);
     public boolean save(Map<String, Object> map, String baseId, String configName, boolean deleteIfExists);
     public boolean save(Map<String, Object> map, String configId, boolean deleteIfExists);
     public boolean configExists(String configId);
