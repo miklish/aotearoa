@@ -3,14 +3,8 @@ package com.christoff.aotearoa.extern.gateway;
 import com.christoff.aotearoa.intern.gateway.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.apache.commons.io.FileUtils.getFile;
@@ -18,15 +12,11 @@ import static org.apache.commons.io.FilenameUtils.*;
 
 public class ServiceConfigFileGateway implements IServiceConfigDataGateway
 {
-    private DumperOptions _options;
-    private Yaml _yaml;
+    private YamlHelper _yamlHelper;
     
     public ServiceConfigFileGateway()
     {
-        _options = new DumperOptions();
-        _options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        _options.setPrettyFlow(true);
-        _yaml = new Yaml(_options);
+        _yamlHelper = new YamlHelper();
     }
     
     private class FileInfo
@@ -50,7 +40,7 @@ public class ServiceConfigFileGateway implements IServiceConfigDataGateway
     
         if(info.exists && buildYaml) {
             try {
-                info.map = _yaml.load(FileUtils.openInputStream(info.file));
+                info.map = _yamlHelper.loadYaml(info.file);
             } catch (IOException e) {
                 throw new ConfigDataException(e.getMessage());
             }
@@ -70,20 +60,20 @@ public class ServiceConfigFileGateway implements IServiceConfigDataGateway
     {
         FileInfo info = getFileInfo(configId, true);
         
-        if(!info.exists || deleteIfExists)
-            info.file.delete();
-        else
-            throw new ConfigAlreadyExists(
-                "Config data with normalized id " + info.nId + " already exists and connect be deleted");
+        if(info.exists) {
+            if (deleteIfExists)
+                info.file.delete();
+            else
+                throw new ConfigAlreadyExists(
+                    "Config data with normalized id " + info.nId + " already exists and connect be deleted");
+        }
 
-        FileWriter writer = null;
         try {
-            writer = new FileWriter(info.nId);
-        } catch(IOException e) {
+            _yamlHelper.dump(map, info.nId);
+        } catch (IOException e) {
             throw new ConfigIOException(e.getMessage());
         }
-        
-        _yaml.dump(map, writer);
+
         return true;
     }
     
@@ -122,22 +112,34 @@ public class ServiceConfigFileGateway implements IServiceConfigDataGateway
         else
             return true;
     }
-    
+
+    /***
+     *
+     * @param baseId
+     * @param deleteIfNonEmpty
+     * @return Returns true if the base does not exist after method (e.g.: true could mean base was never there)
+     */
     public boolean deleteBase(String baseId, boolean deleteIfNonEmpty)
     {
         String id = normalize(baseId);
-        File file = getFile(id);
-    
-        if(file.exists() && file.isDirectory() && (deleteIfNonEmpty || dirEmpty(file))) {
-            try {
-                deleteDirectory(file);
-                return true;
-            } catch (IOException e) {
-                throw new ConfigIOException(e.getMessage());
-            }
+        File base = getFile(id);
+
+        if(!base.isDirectory()) return false;
+
+        if(base.exists())
+        {
+            if((!dirEmpty(base) && deleteIfNonEmpty) || dirEmpty(base))
+                try {
+                    deleteDirectory(base);
+                    return true;
+                } catch (IOException e) {
+                    throw new ConfigIOException(e.getMessage());
+                }
+            else
+                return false;
         }
         else
-            return false;
+            return true;
     }
     
     public String getConfigBase(String configId) {

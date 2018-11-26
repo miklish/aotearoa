@@ -31,7 +31,7 @@ public class TestFiles {
         String baseFake = userdir + "/src/main/resources/config-fake/";
         String newBase = userdir + "/src/main/resources/config3/";
         String diff = base + "_diff.yml";
-        String diffVals = "_diff-values.yml";
+        String diffVals = base + "_diff-values.yml";
         String diffFake = base + "_diff_fake.yml";
     
         //IServiceConfigDataGateway g = new ServiceConfigFileGateway();
@@ -60,17 +60,28 @@ public class TestFiles {
         // check if base exists
         Assert.assertTrue(g.baseExists(base));
         Assert.assertFalse(g.baseExists(baseFake));
-        // pass in config as config
+        // pass in config when method expects base
         Assert.assertFalse(g.baseExists(diff));
         
         // update diff into output dir
         Map<String, Object> updateMap = g.get(diff);
         String outputConfig = g.getConfigBase(outBase) + g.getConfigName(diff);
         g.save(updateMap, outputConfig, true);
+
+        // update diff-values with new value and save into output directory
+        //
+        // update diff-values into output dir
+        Map<String, Object> updateMap2 = g.get(diffVals);
+        List<String> tabPasswordList = (List<String>) updateMap2.get("tableau-password");
+        String tableauPassword = tabPasswordList.get(0);
+        tabPasswordList.set(0, "newPassword");
+        String outputConfig2 = g.getConfigBase(outBase) + g.getConfigName(diffVals);
+        g.save(updateMap2, outputConfig2, true);
         
         // Test with directory
         boolean b = false;
         try {
+            // should return false
             b = g.save(updateMap, g.getConfigBase(outBase), g.getConfigName(outBase), true);
         } catch(ConfigDataException e) {
             b = true;
@@ -80,9 +91,9 @@ public class TestFiles {
         // Test with config
         b = false;
         try {
+            // should return true
             b = g.save(updateMap, g.getConfigBase(diff), g.getConfigName(diff), true);
         } catch(ConfigDataException e) {
-            b = false;
         }
         Assert.assertTrue(b);
         
