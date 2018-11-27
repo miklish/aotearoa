@@ -41,6 +41,11 @@ public class Bootstrap
             optionInput = parseCommandLine(optionConfig, args);
         } catch(Exception e) {
             System.out.println(e.getMessage());
+            try {
+                optionConfig.printHelpOn(System.out);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             exit(1);
         }
 

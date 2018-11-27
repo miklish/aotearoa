@@ -2,12 +2,13 @@ use:
   client.yml:
     tls:
       keyStore: '{client-keystore-name}'
+
 variables:
   postgres-servers:
     min: 1
     max: inf
     output:
-    - comma-separated
+    - comma-separated   # [ copy | list | comma-separated | encrypt ]
     type: string
     prompt-text: Enter the Postgres database urls (including ports)
   postgres-username:
@@ -45,6 +46,7 @@ variables:
     - encrypt
     type: string
     prompt-text: Enter the Postgres database password
+
 files:
   datasource.yml:
     PostgresDataSource:
