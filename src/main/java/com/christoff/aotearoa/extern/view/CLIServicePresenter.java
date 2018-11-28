@@ -1,4 +1,8 @@
 package com.christoff.aotearoa.extern.view;
 
-public class CLIServicePresenter {
+import com.christoff.aotearoa.intern.view.IServicePresenter;
+
+public class CLIServicePresenter implements IServicePresenter
+{
+
 }

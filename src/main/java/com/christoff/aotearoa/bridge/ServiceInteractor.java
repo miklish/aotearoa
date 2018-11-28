@@ -1,5 +1,6 @@
 package com.christoff.aotearoa.bridge;
 
+import com.christoff.aotearoa.intern.VarMetadata;
 import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
 import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
 import com.christoff.aotearoa.intern.gateway.ITransformGateway;
@@ -39,18 +40,29 @@ public class ServiceInteractor
     {
         _rq = request;                                      // save request
         _diffMap = _configGateway.get(request.configId);    // Load in the diff file
-
-        // Resolve 'use' values
+        
         Map<String,Object> useMap = getUseMap();
-
-        Map<String,Object> variablesMap = (Map<String, Object>) _diffMap.get(VARIABLES);
-
-        Map<String,Object> filesMap = (Map<String, Object>) _diffMap.get(FILES);
+        Map<String,VarMetadata> variablesMap = (Map<String, VarMetadata>) _diffMap.get(VARIABLES);
 
         // dispatch sections of the diff file to different methods/classes
-
-        int x = 1;
+        
         return new ServiceResponse("Success", "SUCCESS");
+    }
+    
+    // returns map of populated VarMeta data objects
+    private Map<String,VarMetadata> getVarMetadataMap()
+    {
+        /*
+        Map<String,Object> varMap = (Map<String, Object>) _diffMap.get(VARIABLES);
+        Map<String,VarMetadata> allVarMeta = new HashMap<>();
+        
+        for(Map.Entry<String,Object> varMetadata : varMap.entrySet()) {
+            ITransformGateway tx = _transformGateway.get(varMetadata.get("comma-separated"));
+            VarMetadata var = new VarMetadata(varEntry.getKey(), (Map<String, Object> varMap, ))
+        }
+        */
+        
+        return null;
     }
 
     private Map<String,Object> getUseMap()
