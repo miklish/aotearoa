@@ -41,23 +41,15 @@ public class Bootstrap
             optionInput = parseCommandLine(optionConfig, args);
         } catch(Exception e) {
             System.out.println(e.getMessage());
-            try {
-                optionConfig.printHelpOn(System.out);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            printHelp(optionConfig);
             exit(1);
         }
 
         if(optionInput.has("h")) {
-            try {
-                optionConfig.printHelpOn(System.out);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
+            if(printHelp(optionConfig))
                 exit(1);
-            }
-
-            exit(0);
+            else
+                exit(0);
         }
 
         // Build Request and invoke Service Interactor
@@ -124,5 +116,16 @@ public class Bootstrap
     private OptionSet parseCommandLine(OptionParser optionConfig, String[] args) throws RuntimeException
     {
         return optionConfig.parse(args);
+    }
+
+    public static boolean printHelp(OptionParser optionConfig) {
+        try {
+            optionConfig.printHelpOn(System.out);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error printing help message");
+            return false;
+        }
+        return true;
     }
 }

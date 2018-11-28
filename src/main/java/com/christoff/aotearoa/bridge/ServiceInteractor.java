@@ -33,15 +33,14 @@ public class ServiceInteractor
 
     public ServiceResponse exec(ServiceRequest request)
     {
-        _rq = request;
-
-        // Load in the diff file
-        _diffMap = _configGateway.get(request.configId);
+        _rq = request;                                      // save request
+        _diffMap = _configGateway.get(request.configId);    // Load in the diff file
 
         // Resolve 'use' values
         Map<String,Object> useMap = getUseMap();
 
         Map<String,Object> variablesMap = (Map<String, Object>) _diffMap.get(VARIABLES);
+
         Map<String,Object> filesMap = (Map<String, Object>) _diffMap.get(FILES);
 
         // dispatch sections of the diff file to different methods/classes
@@ -52,6 +51,8 @@ public class ServiceInteractor
 
     private Map<String,Object> getUseMap()
     {
+        // All tag names must be unique across all config files of the service
+
         Map<String,Object> allFileValues = new HashMap<String,Object>();
 
         // get root of 'use' section in diff
@@ -81,9 +82,9 @@ public class ServiceInteractor
     private Map<String,Object> resolveUseFileVariables(
         Map<String,Object> pointerRoot, Map<String,Object> srcRoot)
     {
-        final Map<String,Object> map = new HashMap<String,Object>();
-        yamlWalker(pointerRoot, srcRoot, (searchKey, searchTag, srcValue) -> map.put(searchTag, srcValue));
-        return map;
+        final Map<String,Object> fileMap = new HashMap<String,Object>();
+        yamlWalker(pointerRoot, srcRoot, (searchKey, searchTag, srcValue) -> fileMap.put(searchTag, srcValue));
+        return fileMap;
     }
     
     @FunctionalInterface
