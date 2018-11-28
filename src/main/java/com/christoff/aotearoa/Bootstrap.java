@@ -3,12 +3,10 @@ package com.christoff.aotearoa;
 import com.christoff.aotearoa.bridge.ServiceInteractor;
 import com.christoff.aotearoa.bridge.ServiceRequest;
 import com.christoff.aotearoa.bridge.ServiceResponse;
-import com.christoff.aotearoa.extern.gateway.CLIServicePresenter;
-import com.christoff.aotearoa.extern.gateway.ServiceConfigFileGateway;
-import com.christoff.aotearoa.extern.gateway.ServiceValueFileGateway;
-import com.christoff.aotearoa.extern.gateway.ServiceValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.*;
 import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
 import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
+import com.christoff.aotearoa.intern.gateway.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -30,12 +28,11 @@ public class Bootstrap
         new Bootstrap().exec(args);
     }
 
-
     public void exec(String[] args)
     {
-        // configure command line
+        // Configure command line
+        
         OptionParser optionConfig = configureCommandLineOptions();
-
         OptionSet optionInput = null;
         try {
             optionInput = parseCommandLine(optionConfig, args);
@@ -44,36 +41,42 @@ public class Bootstrap
             printHelp(optionConfig);
             exit(1);
         }
-
         if(optionInput.has("h")) {
             if(printHelp(optionConfig))
                 exit(1);
             else
                 exit(0);
         }
+        
 
         // Build Request and invoke Service Interactor
+        
         ServiceRequest request = new ServiceRequest();
         request.baseId = (String) optionInput.valueOf(BASE_ID);
         request.configId = (String) optionInput.valueOf(CONFIG_ID);
         request.outputBaseId = (String) optionInput.valueOf(OUTPUT_BASE_ID);
+        
 
         // Construct Gateways for ServiceInteractor
+        
         // - Select Presenter Gateway
         IServicePresenter presenter = new CLIServicePresenter();
-
         // - Select Config Data Gateway
         IServiceConfigDataGateway configGateway = new ServiceConfigFileGateway();
-
-        // Select Config Value Gateway
+        // - Select Config Value Gateway
         IServiceValueGateway valueGateway;
         if(optionInput.has(CONFIG_VALS_ID))
             valueGateway = new ServiceValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
         else
             valueGateway = new ServiceValuePromptGateway();
+        // - Select Transform Gateway
+        ITransformGateway transformGateway = new DefaultTransformGateway();
+        
 
         // Construct ServiceInteractor
-        ServiceInteractor serviceInteractor = new ServiceInteractor(configGateway, valueGateway, presenter);
+        ServiceInteractor serviceInteractor =
+            new ServiceInteractor(configGateway, valueGateway, presenter, transformGateway);
+        
 
         // Process response
         ServiceResponse resp = serviceInteractor.exec(request);
@@ -118,7 +121,7 @@ public class Bootstrap
         return optionConfig.parse(args);
     }
 
-    public static boolean printHelp(OptionParser optionConfig) {
+    private static boolean printHelp(OptionParser optionConfig) {
         try {
             optionConfig.printHelpOn(System.out);
         } catch (IOException e) {

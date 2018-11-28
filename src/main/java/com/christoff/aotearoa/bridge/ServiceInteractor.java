@@ -2,6 +2,7 @@ package com.christoff.aotearoa.bridge;
 
 import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
 import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
+import com.christoff.aotearoa.intern.gateway.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
 import java.util.*;
@@ -17,6 +18,7 @@ public class ServiceInteractor
     private IServiceConfigDataGateway _configGateway;
     private IServiceValueGateway _valueGateway;
     private IServicePresenter _presenter;
+    private ITransformGateway _transformGateway;
 
     private Map<String, Object> _diffMap = null;
     private ServiceRequest _rq = null;
@@ -24,11 +26,13 @@ public class ServiceInteractor
     public ServiceInteractor(
             IServiceConfigDataGateway configGateway,
             IServiceValueGateway valueGateway,
-            IServicePresenter presenter
+            IServicePresenter presenter,
+            ITransformGateway transformGateway
     ) {
         _configGateway = configGateway;
         _valueGateway = valueGateway;
         _presenter = presenter;
+        _transformGateway = transformGateway;
     }
 
     public ServiceResponse exec(ServiceRequest request)
