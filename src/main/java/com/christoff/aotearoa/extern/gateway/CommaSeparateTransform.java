@@ -6,10 +6,6 @@ import java.util.List;
 
 public class CommaSeparateTransform implements ITransform
 {
-    public String transform(String input) {
-        return input;
-    }
-    
     @Override
     public String transform(List<String> inputList)
     {

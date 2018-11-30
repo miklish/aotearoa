@@ -1,8 +1,9 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.intern.VarMetadata;
+import com.christoff.aotearoa.intern.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
 import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
+import com.christoff.aotearoa.intern.gateway.ITransform;
 import com.christoff.aotearoa.intern.gateway.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
@@ -42,27 +43,38 @@ public class ServiceInteractor
         _diffMap = _configGateway.get(request.configId);    // Load in the diff file
         
         Map<String,Object> useMap = getUseMap();
-        Map<String,VarMetadata> variablesMap = (Map<String, VarMetadata>) _diffMap.get(VARIABLES);
-
+        Map<String, VariableMetadata> varMetadata = getVarMetadataMap();
+    
         // dispatch sections of the diff file to different methods/classes
         
         return new ServiceResponse("Success", "SUCCESS");
     }
     
-    // returns map of populated VarMeta data objects
-    private Map<String,VarMetadata> getVarMetadataMap()
+    // returns map of populated VariableMetadata data objects
+    private Map<String, VariableMetadata> getVarMetadataMap()
     {
-        /*
-        Map<String,Object> varMap = (Map<String, Object>) _diffMap.get(VARIABLES);
-        Map<String,VarMetadata> allVarMeta = new HashMap<>();
+        ///*
+        Map<String,Map<String,Object>> varMap = (Map<String,Map<String,Object>>) _diffMap.get(VARIABLES);
+        Map<String, VariableMetadata> allVarMetadata = new HashMap<>();
         
-        for(Map.Entry<String,Object> varMetadata : varMap.entrySet()) {
-            ITransformGateway tx = _transformGateway.get(varMetadata.get("comma-separated"));
-            VarMetadata var = new VarMetadata(varEntry.getKey(), (Map<String, Object> varMap, ))
+        for(Map.Entry<String,Map<String,Object>> varMetadataEntry : varMap.entrySet()) {
+            String varName = varMetadataEntry.getKey();
+            
+            Map<String,String> varPropertiesMap = new HashMap<String,String>();
+            for(Map.Entry<String,Object> e : varMetadataEntry.getValue().entrySet()) {
+                String val = e.getValue().toString().trim();
+                if(val.startsWith("[") && val.endsWith("]"))
+                    val = val.substring(1, val.length()-1);
+                varPropertiesMap.put(e.getKey(), val);
+            }
+            
+            // we should be getting a *list* of transforms
+            ITransform tx = _transformGateway.get(varPropertiesMap.get("output"));
+            VariableMetadata varMetadataClass = new VariableMetadata(varName, varPropertiesMap);
+            allVarMetadata.put(varName, varMetadataClass);
         }
-        */
         
-        return null;
+        return allVarMetadata;
     }
 
     private Map<String,Object> getUseMap()

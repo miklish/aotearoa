@@ -57,7 +57,7 @@ public class AESEncryptorTransform implements ITransform {
          * @return
          * @throws RuntimeException
          */
-    public String transform(String input)
+    private String transform(String input)
     {
         try
         {
