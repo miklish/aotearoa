@@ -1,10 +1,9 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.intern.VariableMetadata;
-import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
-import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
-import com.christoff.aotearoa.intern.gateway.ITransform;
-import com.christoff.aotearoa.intern.gateway.ITransformGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
+import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
 import java.util.*;
@@ -17,21 +16,22 @@ public class ServiceInteractor
     public static final String VARIABLES = "variables";
     public static final String FILES = "files";
 
-    private IServiceConfigDataGateway _configGateway;
-    private IServiceValueGateway _valueGateway;
+    private IVariableMetadataGateway _metadataGateway;
+    private IValueGateway _valueGateway;
     private IServicePresenter _presenter;
     private ITransformGateway _transformGateway;
 
-    private Map<String, Object> _diffMap = null;
+    //private Map<String, Object> _diffMap = null;
+    private Map<String,Object> _metadataMap;
     private ServiceRequest _rq = null;
 
     public ServiceInteractor(
-            IServiceConfigDataGateway configGateway,
-            IServiceValueGateway valueGateway,
+            IVariableMetadataGateway metadataGateway,
+            IValueGateway valueGateway,
             IServicePresenter presenter,
             ITransformGateway transformGateway
     ) {
-        _configGateway = configGateway;
+        _metadataGateway = metadataGateway;
         _valueGateway = valueGateway;
         _presenter = presenter;
         _transformGateway = transformGateway;
@@ -39,44 +39,19 @@ public class ServiceInteractor
 
     public ServiceResponse exec(ServiceRequest request)
     {
-        _rq = request;                                      // save request
-        _diffMap = _configGateway.get(request.configId);    // Load in the diff file
-        
-        Map<String,Object> useMap = getUseMap();
-        Map<String, VariableMetadata> varMetadata = getVarMetadataMap();
+        _rq = request;
+
+        // TODO: Turn this on
+        //Map<String,Object> useMap = getUseMap();
+
+        Map<String, VariableMetadata> varMetadata = _metadataGateway.getAllConfigMetadata();
     
         // dispatch sections of the diff file to different methods/classes
         
         return new ServiceResponse("Success", "SUCCESS");
     }
-    
-    // returns map of populated VariableMetadata data objects
-    private Map<String, VariableMetadata> getVarMetadataMap()
-    {
-        ///*
-        Map<String,Map<String,Object>> varMap = (Map<String,Map<String,Object>>) _diffMap.get(VARIABLES);
-        Map<String, VariableMetadata> allVarMetadata = new HashMap<>();
-        
-        for(Map.Entry<String,Map<String,Object>> varMetadataEntry : varMap.entrySet()) {
-            String varName = varMetadataEntry.getKey();
-            
-            Map<String,String> varPropertiesMap = new HashMap<String,String>();
-            for(Map.Entry<String,Object> e : varMetadataEntry.getValue().entrySet()) {
-                String val = e.getValue().toString().trim();
-                if(val.startsWith("[") && val.endsWith("]"))
-                    val = val.substring(1, val.length()-1);
-                varPropertiesMap.put(e.getKey(), val);
-            }
-            
-            // we should be getting a *list* of transforms
-            ITransform tx = _transformGateway.get(varPropertiesMap.get("output"));
-            VariableMetadata varMetadataClass = new VariableMetadata(varName, varPropertiesMap);
-            allVarMetadata.put(varName, varMetadataClass);
-        }
-        
-        return allVarMetadata;
-    }
 
+    /*
     private Map<String,Object> getUseMap()
     {
         // All tag names must be unique across all config files of the service
@@ -93,10 +68,10 @@ public class ServiceInteractor
             // Root of the 'pointers' section for a single file in the 'use' section
             System.out.println("current use-file : " + useFileKey);
             Map<String,Object> pointerRoot = (Map<String,Object>) useMapInfo.get(useFileKey);
-            System.out.println("use-file: baseId= " + _rq.baseId + " dataId=" + useFileKey);
+            System.out.println("use-file: templateDir= " + _rq.templateDir + " dataId=" + useFileKey);
 
             // load the source data
-            Map<String, Object> srcRoot = _configGateway.get(_rq.baseId, useFileKey);
+            Map<String, Object> srcRoot = _configGateway.get(_rq.templateDir, useFileKey);
 
             // now we pair (a) the root of the data-location pointers + (b) root of the source data
             Map<String,Object> fileResolutions = resolveUseFileVariables(pointerRoot, srcRoot);
@@ -106,6 +81,7 @@ public class ServiceInteractor
 
         return allFileValues;
     }
+    */
 
     private Map<String,Object> resolveUseFileVariables(
         Map<String,Object> pointerRoot, Map<String,Object> srcRoot)

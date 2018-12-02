@@ -1,7 +1,7 @@
-postgres.servers:
+postgres-servers:
   - pg-server-a-uat:8080
   - pg-server-uat-b:9090
-postgres.username:
+postgres-username:
   - thePostgresUsername-uat
 tableau-rest-url:
   - https://tableau-uat.com

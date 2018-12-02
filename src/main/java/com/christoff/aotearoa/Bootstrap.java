@@ -3,29 +3,33 @@ package com.christoff.aotearoa;
 import com.christoff.aotearoa.bridge.ServiceInteractor;
 import com.christoff.aotearoa.bridge.ServiceRequest;
 import com.christoff.aotearoa.bridge.ServiceResponse;
-import com.christoff.aotearoa.extern.gateway.DefaultTransformGateway;
-import com.christoff.aotearoa.extern.gateway.ServiceConfigFileGateway;
-import com.christoff.aotearoa.extern.gateway.ServiceValueFileGateway;
-import com.christoff.aotearoa.extern.gateway.ServiceValuePromptGateway;
-import com.christoff.aotearoa.extern.view.CLIServicePresenter;
-import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
-import com.christoff.aotearoa.intern.gateway.IServiceValueGateway;
-import com.christoff.aotearoa.intern.gateway.ITransformGateway;
+
+import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
+import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
+
+import com.christoff.aotearoa.extern.gateway.metadata.local.VariableMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.transform.configserver.TransformServerGateway;
+import com.christoff.aotearoa.extern.gateway.transform.local.TransformFileGateway;
+import com.christoff.aotearoa.extern.view.CLIServicePresenter;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import static java.lang.System.exit;
 
 public class Bootstrap
 {
-    private static final String CONFIG_ID = "d";
-    private static final String BASE_ID = "i";
+    private static final String METADATA_ID = "d";
+    private static final String TEMPLATE_DIR = "i";
     private static final String CONFIG_VALS_ID = "v";
-    private static final String OUTPUT_BASE_ID = "o";
+    private static final String OUTPUT_DIR = "o";
+    private static final String SERVER_URL = "s";
 
     public static void main(String[] args)
     {
@@ -54,32 +58,36 @@ public class Bootstrap
         
 
         // Build Request and invoke Service Interactor
-        
+        // - no data put directly in request at the moment
         ServiceRequest request = new ServiceRequest();
-        request.baseId = (String) optionInput.valueOf(BASE_ID);
-        request.configId = (String) optionInput.valueOf(CONFIG_ID);
-        request.outputBaseId = (String) optionInput.valueOf(OUTPUT_BASE_ID);
-        
+
 
         // Construct Gateways for ServiceInteractor
         
         // - Select Presenter Gateway
         IServicePresenter presenter = new CLIServicePresenter();
-        // - Select Config Data Gateway
-        IServiceConfigDataGateway configGateway = new ServiceConfigFileGateway();
-        // - Select Config Value Gateway
-        IServiceValueGateway valueGateway;
+        // - Select Value Gateway
+        IValueGateway valueGateway;
         if(optionInput.has(CONFIG_VALS_ID))
-            valueGateway = new ServiceValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
+            valueGateway = new ValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
         else
-            valueGateway = new ServiceValuePromptGateway();
+            valueGateway = new ValuePromptGateway();
         // - Select Transform Gateway
-        ITransformGateway transformGateway = new DefaultTransformGateway();
-        
+        ITransformGateway transformGateway = null;
+        if(!optionInput.has(SERVER_URL))
+            transformGateway = new TransformFileGateway();
+        else
+            transformGateway = new TransformServerGateway();
+        // - Select Metadata Gateway
+        IVariableMetadataGateway metadataGateway = new VariableMetadataFileGateway(
+            (String) optionInput.valueOf(METADATA_ID),
+            valueGateway,
+            transformGateway);
+
 
         // Construct ServiceInteractor
         ServiceInteractor serviceInteractor =
-            new ServiceInteractor(configGateway, valueGateway, presenter, transformGateway);
+            new ServiceInteractor(metadataGateway, valueGateway, presenter, transformGateway);
         
 
         // Process response
@@ -95,27 +103,49 @@ public class Bootstrap
         /**
          * Options
          *   d / diff      : diff file  (required)
-         *   i / inputdir  : base directory (required)
          *   v / vals      : value file (required in this version -- prompts not yet supported)
+         *   i / inputdir  : base directory (required)
          *   o / outputdir : output directory (required)
+         *   s / server    ; server url (optional)
          *   h / help      : help info
          */
         OptionParser optionConfig = new OptionParser();
 
-        final String[] diffOptions = {CONFIG_ID,"diff"};
-        optionConfig.acceptsAll(Arrays.asList(diffOptions), "_diff file (required)").withRequiredArg().required();
+        /** diff file */
+        final String[] diffOptions = {METADATA_ID,"diff"};
+        optionConfig.acceptsAll(
+                Arrays.asList(diffOptions),
+                "_diff file (required)").withRequiredArg().required();
 
-        final String[] inputdirOptions = {BASE_ID,"inputdir"};
-        optionConfig.acceptsAll(Arrays.asList(inputdirOptions), "Config file input folder (required)").withRequiredArg().required();
+        /** local: input dir */
+        final String[] inputdirOptions = {TEMPLATE_DIR,"inputdir"};
+        optionConfig.acceptsAll(
+                Arrays.asList(inputdirOptions),
+                "Config file input folder (required)").withRequiredArg().required();
 
+        /** config values */
         final String[] valsOptions = {CONFIG_VALS_ID,"vals"};
-        optionConfig.acceptsAll(Arrays.asList(valsOptions), "Value file (optional)").withRequiredArg().required();
+        optionConfig.acceptsAll(
+                Arrays.asList(valsOptions),
+                "Value file (required)").withRequiredArg().required();
 
-        final String[] outputOptions = {OUTPUT_BASE_ID,"outputdir"};
-        optionConfig.acceptsAll(Arrays.asList(outputOptions), "Output directory (required)").withRequiredArg().required();
+        /** local: output dir */
+        final String[] outputOptions = {OUTPUT_DIR,"outputdir"};
+        optionConfig.acceptsAll(
+                Arrays.asList(outputOptions),
+                "Output directory (required)").withRequiredArg().required();
 
+        /** local: output dir */
+        final String[] serverOptions = {SERVER_URL,"server"};
+        optionConfig.acceptsAll(
+                Arrays.asList(serverOptions),
+                "Config Server URL (optional)").withRequiredArg();
+
+        /** help */
         final String[] helpOptions = {"h","help"};
-        optionConfig.acceptsAll(Arrays.asList(helpOptions), "Display help/usage information").forHelp();
+        optionConfig.acceptsAll(
+                Arrays.asList(helpOptions),
+                "Display help/usage information").forHelp();
 
         return optionConfig;
     }

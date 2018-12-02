@@ -1,12 +1,12 @@
 # Use a value from an existing part of the config
 use:
-  client.yml:
+  client:
     tls:
       keyStore: '{client-keystore-name}'
 
 variables:
 
-  postgres-servers:
+  postgres-servers:     # this should be the same as the key (minus the first element) in config-server
     min: 1
     max: inf
     output:
@@ -15,7 +15,7 @@ variables:
     replacement-strategy: regex   # values can be 'regex' or 'structural'
     prompt-text: Enter the Postgres database urls (including ports)
     files:
-    - datasource.yml
+    - datasource
 
   postgres-username:
     min: 1
@@ -25,7 +25,7 @@ variables:
     type: string
     prompt-text: Enter the UAT Postgres database user name
     files:
-    - datasource.yml
+    - datasource
 
   tableau-rest-url:
     min: 1
@@ -35,8 +35,8 @@ variables:
     type: string
     prompt-text: Enter the Tableau REST API url
     files:
-    - tableau.yml
-    - proxy.yml
+    - tableau
+    - proxy
 
   tableau-username:
     min: 1
@@ -46,7 +46,7 @@ variables:
     type: string
     prompt-text: Enter the Tableau functional ID username
     files:
-    - tableau.yml
+    - tableau
 
   tableau-password:
     min: 1
@@ -56,7 +56,7 @@ variables:
     type: string
     prompt-text: Enter the Tableau functional ID password
     files:
-    - secret.yml
+    - secret
 
   postgres-password:
     min: 1
@@ -66,5 +66,5 @@ variables:
     type: string
     prompt-text: Enter the Postgres database password
     files:
-    - secret.yml
+    - secret
 

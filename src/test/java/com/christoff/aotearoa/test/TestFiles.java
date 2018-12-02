@@ -1,25 +1,9 @@
 package com.christoff.aotearoa.test;
 
 
-import com.christoff.aotearoa.extern.gateway.ServiceConfigFileGateway;
-import com.christoff.aotearoa.intern.gateway.ConfigDataException;
-import com.christoff.aotearoa.intern.gateway.IServiceConfigDataGateway;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.apache.commons.io.FileUtils.getFile;
-import static org.apache.commons.io.FilenameUtils.*;
 
 
 public class TestFiles {
@@ -27,6 +11,7 @@ public class TestFiles {
     @Test
     public void testFilenameHandling()
     {
+        /*
         String userdir = System.getProperty("user.dir");
         String base = userdir + "/src/main/resources/config/";
         String outBase = userdir + "/src/main/resources/config-out/";
@@ -36,8 +21,8 @@ public class TestFiles {
         String diffVals = base + "_diff-values.yml";
         String diffFake = base + "_diff_fake.yml";
     
-        //IServiceConfigDataGateway g = new ServiceConfigFileGateway();
-        ServiceConfigFileGateway g = new ServiceConfigFileGateway();
+        //IMetadataGatewayOld g = new MetadataFileGatewayOld();
+        MetadataFileGatewayOld g = new MetadataFileGatewayOld();
         
         // test get
         Map<String, Object> diffMap = g.get(diff);
@@ -85,7 +70,7 @@ public class TestFiles {
         try {
             // should return false
             b = g.save(updateMap, g.getConfigBase(outBase), g.getConfigName(outBase), true);
-        } catch(ConfigDataException e) {
+        } catch(MetadataFormatException e) {
             b = true;
         }
         Assert.assertTrue(b);
@@ -95,7 +80,7 @@ public class TestFiles {
         try {
             // should return true
             b = g.save(updateMap, g.getConfigBase(diff), g.getConfigName(diff), true);
-        } catch(ConfigDataException e) {
+        } catch(MetadataFormatException e) {
         }
         Assert.assertTrue(b);
 
@@ -110,16 +95,17 @@ public class TestFiles {
         for(String str:matchList) {
             System.out.println(str);
         }
+        */
         
         /*
-        public Map<String, Object> get(String configId);
-        public void save(Map<String, Object> map, String baseId, String configName, boolean deleteIfExists);
-        public void save(Map<String, Object> map, String configId, boolean deleteIfExists);
-        public boolean configExists(String configId);
-        public boolean configExists(String baseId, String configName);
-        public boolean baseExists(String baseId);
-        public boolean createBase(String baseId);
-        public boolean deleteBase(String baseId, boolean deleteIfNonEmpty);
+        public Map<String, Object> get(String metadataDir);
+        public void save(Map<String, Object> map, String templateDir, String configName, boolean deleteIfExists);
+        public void save(Map<String, Object> map, String metadataDir, boolean deleteIfExists);
+        public boolean configExists(String metadataDir);
+        public boolean configExists(String templateDir, String configName);
+        public boolean baseExists(String templateDir);
+        public boolean createBase(String templateDir);
+        public boolean deleteBase(String templateDir, boolean deleteIfNonEmpty);
         */
     }
     
