@@ -1,8 +1,8 @@
 package com.christoff.aotearoa;
 
-import com.christoff.aotearoa.bridge.ServiceInteractor;
-import com.christoff.aotearoa.bridge.ServiceRequest;
-import com.christoff.aotearoa.bridge.ServiceResponse;
+import com.christoff.aotearoa.bridge.ValueInjectInteractor;
+import com.christoff.aotearoa.bridge.ValueInjectRequest;
+import com.christoff.aotearoa.bridge.ValueInjectResponse;
 
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -59,25 +59,32 @@ public class Bootstrap
 
         // Build Request and invoke Service Interactor
         // - no data put directly in request at the moment
-        ServiceRequest request = new ServiceRequest();
+        ValueInjectRequest request = new ValueInjectRequest();
 
 
-        // Construct Gateways for ServiceInteractor
-        
+        // Construct Gateways for ValueInjectInteractor
+
+        // Collect command line options
+        boolean usingConfigServer = optionInput.has(SERVER_URL);
+        boolean usingFileSystemValues = optionInput.has(CONFIG_VALS_ID);
+
         // - Select Presenter Gateway
         IServicePresenter presenter = new CLIServicePresenter();
+
         // - Select Value Gateway
         IValueGateway valueGateway;
-        if(optionInput.has(CONFIG_VALS_ID))
+        if(usingFileSystemValues)
             valueGateway = new ValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
         else
             valueGateway = new ValuePromptGateway();
+
         // - Select Transform Gateway
         ITransformGateway transformGateway = null;
-        if(!optionInput.has(SERVER_URL))
-            transformGateway = new TransformFileGateway();
-        else
+        if(usingConfigServer)
             transformGateway = new TransformServerGateway();
+        else
+            transformGateway = new TransformFileGateway();
+
         // - Select Metadata Gateway
         IVariableMetadataGateway metadataGateway = new VariableMetadataFileGateway(
             (String) optionInput.valueOf(METADATA_ID),
@@ -85,14 +92,14 @@ public class Bootstrap
             transformGateway);
 
 
-        // Construct ServiceInteractor
-        ServiceInteractor serviceInteractor =
-            new ServiceInteractor(metadataGateway, valueGateway, presenter, transformGateway);
+        // Construct ValueInjectInteractor
+        ValueInjectInteractor serviceInteractor =
+            new ValueInjectInteractor(metadataGateway, presenter);
         
 
         // Process response
-        ServiceResponse resp = serviceInteractor.exec(request);
-        if(resp.resultCode.equals(ServiceResponse.SUCCESS))
+        ValueInjectResponse resp = serviceInteractor.exec(request);
+        if(resp.resultCode.equals(ValueInjectResponse.SUCCESS))
             exit(0);
         else
             exit(1);
@@ -103,8 +110,8 @@ public class Bootstrap
         /**
          * Options
          *   d / diff      : diff file  (required)
-         *   v / vals      : value file (required in this version -- prompts not yet supported)
          *   i / inputdir  : base directory (required)
+         *   v / vals      : config values file (required in this version -- prompts not yet supported)
          *   o / outputdir : output directory (required)
          *   s / server    ; server url (optional)
          *   h / help      : help info
@@ -135,7 +142,7 @@ public class Bootstrap
                 Arrays.asList(outputOptions),
                 "Output directory (required)").withRequiredArg().required();
 
-        /** local: output dir */
+        /** server: server url */
         final String[] serverOptions = {SERVER_URL,"server"};
         optionConfig.acceptsAll(
                 Arrays.asList(serverOptions),

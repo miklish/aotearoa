@@ -5,25 +5,35 @@ curl -X POST \
   https://localhost:8443/api/json \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
-  -d '{"host":"lightapi.net","service":"config","action":"initialize-server","version":"0.1.0","data":{"key":"light-config"}}'
+  -d '{"host":"lightapi.net",
+       "service":"config",
+       "action":"initialize-server",
+       "version":"0.1.0",
+       "data":{"key":"light-config"}}'
 
 # Test server
 curl -X POST \
   https://localhost:8443/api/json \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
-  -d '{"host":"lightapi.net","service":"config","action":"create-service","version":"0.1.0", \
-       "data":{"serviceId":"config-service-1.1.0001","encryptionAlgorithm":"AES", \
+  -d '{"host":"lightapi.net",
+       "service":"config",
+       "action":"create-service",
+       "version":"0.1.0", \
+       "data":{"serviceId":"config-service-1.1.0001", "encryptionAlgorithm":"AES", \
                "templateRepository":"git@github.com:networknt/light-config-server.git", \
-               "serviceOwner":"Google","version":"1.1.1","profile":"DEV/DIT","refreshed":false}}'
+               "serviceOwner":"Google", "version":"1.1.1", "profile":"DEV/DIT", "refreshed":false}}'
 
 # Test create config server value: key-value pair:
 curl -X POST \
   https://localhost:8443/api/json \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
-  -d '{"host":"lightapi.net","service":"config","action":"create-service-value","version":"0.1.0", \
-       "data":{"configServiceId":"00000165904d7f75-0242ac1200030000","key":"server/serviceId","value":"1222222"}}'
+  -d '{"host":"lightapi.net",
+       "service":"config",
+       "action":"create-service-value",
+       "version":"0.1.0", \
+       "data":{"configServiceId":"00000165904d7f75-0242ac1200030000", "key":"server/serviceId", "value":"1222222"}}'
 
 # Test config server values: key-value pair array:
 curl -X POST \
@@ -31,9 +41,9 @@ curl -X POST \
   -H 'Cache-Control: no-cache' \
   -H 'Content-Type: application/json' \
   -d '{"host":"lightapi.net","service":"config","action":"create-service-values","version":"0.1.0", \
-       "data":{"configServiceId":"00000165904d7f75-0242ac1200030000","values":[ \
-           {"key":"server/enableHttps","value":"true"}, {"key":"server/httpsPort","value":"true"}]}} \
-'
+       "data":{"configServiceId":"00000165904d7f75-0242ac1200030000",
+       "values":[
+           {"key":"server/enableHttps", "value":"true"}, {"key":"server/httpsPort", "value":"true"}]}}'
 
 # If the config value in to be encrpted in the database create the config server secret values:
 curl -X POST \

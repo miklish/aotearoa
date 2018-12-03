@@ -1,21 +1,15 @@
 package com.christoff.aotearoa.extern.gateway.metadata.local;
 
-import com.christoff.aotearoa.extern.gateway.YamlHelper;
+import com.christoff.aotearoa.extern.gateway.persistence.local.FileSystemHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.io.FileUtils.getFile;
-import static org.apache.commons.io.FilenameUtils.normalize;
 
 /***
     This class returns both the variable metadata and the values of variables
@@ -27,7 +21,7 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
     public static final String VARIABLES = "variables";
-    private YamlHelper _yamlHelper;
+    FileSystemHelper _fileSysHelper;
     private Map<String, VariableMetadata> _allVarMetadata;
 
     public VariableMetadataFileGateway(
@@ -38,37 +32,8 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
         _diffFilename = diffFilename;
         _valueGateway = valueGateway;
         _transformGateway = transformGateway;
-        _yamlHelper = new YamlHelper();
+        _fileSysHelper = new FileSystemHelper();
         _allVarMetadata = getAllConfigMetadata();
-    }
-
-    private class FileInfo
-    {
-        String id = null;
-        String nId = null;
-        File file = null;
-        boolean exists;
-        boolean isFile = true;
-        Map<String, Object> map = null;
-    }
-
-    private FileInfo getFileInfo(String configId, boolean buildYaml)
-    {
-        FileInfo info = new FileInfo();
-        info.id = configId;
-        info.nId = normalize(configId);
-        info.file = getFile(info.nId);
-        info.exists = info.file.exists();
-        info.isFile = info.file.isFile();
-
-        if(info.exists && buildYaml) {
-            try {
-                info.map = _yamlHelper.loadYaml(info.file);
-            } catch (IOException e) {
-                throw new MetadataFormatException(e.getMessage());
-            }
-        }
-        return info;
     }
 
     // get all config values
@@ -80,7 +45,7 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
     private Map<String,VariableMetadata> allConfigMetadata()
     {
         Map<String, Object> metadataMap =
-            (Map<String, Object>) getFileInfo(_diffFilename, true).map.get(VARIABLES);
+            (Map<String, Object>) _fileSysHelper.getFileInfo(_diffFilename, true).map.get(VARIABLES);
 
         Map<String, VariableMetadata> allVarMetadata = new HashMap<>();
         for(Map.Entry<String,Object> varMetadataEntry : metadataMap.entrySet())
@@ -118,38 +83,5 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
     public VariableMetadata getMetadata(String variableId) {
         return _allVarMetadata.get(variableId);
-    }
-
-    private static String getConfigGroupId(String configId) {
-        // get first part
-        String[] parts = configId.split("/");
-
-        // ensure at least 2 parts
-        if(parts.length < 2)
-            return null;
-
-        String format = parts[0].trim().toLowerCase();
-
-        if(format.endsWith(".yml"))
-            format = format.substring(0,parts[0].length()-4);
-
-        return format;
-    }
-
-    private static String getConfigFileName(String configId)
-    {
-        // get first part
-        String[] parts = configId.split("/");
-
-        // ensure at least 2 parts
-        if(parts.length < 2)
-            return null;
-
-        String format = parts[0].trim().toLowerCase();
-
-        if(!format.endsWith(".yml"))
-            return format + ".yml";
-        else
-            return format;
     }
 }
