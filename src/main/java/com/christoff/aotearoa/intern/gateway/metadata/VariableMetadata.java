@@ -9,14 +9,14 @@ import java.util.Map;
 public class VariableMetadata
 {
     private String _varName;
-    private Map<String,String> _varPropertiesMap;
+    private Map<String,List<String>> _varPropertiesMap;
     private List<String> _values;
     private ITransform _transform;
     
     public VariableMetadata(
         String varName,
         List<Object> values,
-        Map<String,String> varPropertiesMap,
+        Map<String,List<String>> varPropertiesMap,
         ITransform tx)
     {
         _varName = varName;
@@ -36,7 +36,7 @@ public class VariableMetadata
         return _varName;
     }
     
-    public String getProperty(String key) {
+    public List<String> getProperty(String key) {
         return _varPropertiesMap.get(key);
     }
     

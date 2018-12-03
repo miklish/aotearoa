@@ -4,7 +4,9 @@ import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
 
+import com.christoff.aotearoa.extern.gateway.persistence.local.PersistenceFileGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
@@ -70,7 +72,11 @@ public class Bootstrap
 
         // - Select Presenter Gateway
         IServicePresenter presenter = new CLIServicePresenter();
-
+        
+        // - Select Persistence Gateway
+        IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
+            (String) optionInput.valueOf(TEMPLATE_DIR));
+    
         // - Select Value Gateway
         IValueGateway valueGateway;
         if(usingFileSystemValues)
@@ -94,7 +100,7 @@ public class Bootstrap
 
         // Construct ValueInjectInteractor
         ValueInjectInteractor serviceInteractor =
-            new ValueInjectInteractor(metadataGateway, presenter);
+            new ValueInjectInteractor(metadataGateway, persistenceGateway, presenter);
         
 
         // Process response

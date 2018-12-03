@@ -8,6 +8,7 @@ import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
         _valueGateway = valueGateway;
         _transformGateway = transformGateway;
         _fileSysHelper = new FileSystemHelper();
-        _allVarMetadata = getAllConfigMetadata();
+        _allVarMetadata = allConfigMetadata();
     }
 
     // get all config values
@@ -55,18 +56,32 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
             // convert the value, and Object, from its native type (Map<String,Object>)
             // to Map<String,String> to ensure consistent single value-type for processing
-            Map<String,String> varMetadataPropertiesMap = new HashMap<>();
+            Map<String,List<String>> varMetadataPropertiesMap = new HashMap<>();
 
             for(Map.Entry<String,Object> e : ((Map<String,Object>) varMetadataEntry.getValue()).entrySet())
             {
+                // TODO: Must convert this to a LIST of Strings
+                // TODO: Must update the VariableMetadata getProperty methods t return List<String>
+                // TODO: Must check String elements in Lists (or single value) to ensure we remove '[' ']' from them
+    
                 String key = e.getKey().trim().toLowerCase();
-                String val = e.getValue().toString().trim().toLowerCase();
-                if(val.startsWith("[") && val.endsWith("]"))
-                    val = val.substring(1, val.length()-1);
+                
+                List<String> val = new LinkedList<>();
+                Object valueObj = e.getValue();
+                if(valueObj instanceof List)
+                    for(Object o : (List) valueObj)
+                        val.add((String) o);
+                else if(valueObj instanceof String)
+                    val.add((String) valueObj);
+                else if(valueObj instanceof Integer)
+                    val.add(Integer.toString((Integer) valueObj));
+                else
+                    throw new RuntimeException("Incompatable Type");
+                
                 varMetadataPropertiesMap.put(key, val);
             }
 
-            ITransform transform = _transformGateway.get(varMetadataPropertiesMap.get("output"));
+            ITransform transform = _transformGateway.get(varMetadataPropertiesMap.get("output").get(0));
             List<Object> values = _valueGateway.get(varName);
 
             VariableMetadata varMetadataClass = new VariableMetadata(

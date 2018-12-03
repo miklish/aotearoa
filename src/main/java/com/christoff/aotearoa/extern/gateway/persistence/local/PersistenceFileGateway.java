@@ -1,12 +1,12 @@
 package com.christoff.aotearoa.extern.gateway.persistence.local;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
-import com.christoff.aotearoa.intern.gateway.persistence.PersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PersistenceFileGateway implements PersistenceGateway
+public class PersistenceFileGateway implements IPersistenceGateway
 {
     private String _templateFileFolder;
     private FileSystemHelper _filesysHelp;
@@ -20,11 +20,11 @@ public class PersistenceFileGateway implements PersistenceGateway
     public void persistValue(VariableMetadata varMetadata)
     {
         // extract the file name of the tag
-        String configFilename = getConfigFileName(varMetadata.getName());
+        //String configFilename = varMetadata.getProperty("files")
 
         // open the template file as a String
-        FileSystemHelper.FileInfo fInfo =
-            _filesysHelp.getFileInfo(_templateFileFolder + "/" + configFilename, false);
+        //FileSystemHelper.FileInfo fInfo =
+        //    _filesysHelp.getFileInfo(_templateFileFolder + "/" + configFilename, false);
 
         // use regex replace to inject the actual values
 

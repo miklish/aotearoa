@@ -2,6 +2,7 @@ package com.christoff.aotearoa.bridge;
 
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
 import java.util.*;
@@ -15,15 +16,18 @@ public class ValueInjectInteractor
     public static final String FILES = "files";
 
     private IVariableMetadataGateway _metadataGateway;
+    private IPersistenceGateway _persistenceGateway;
     private IServicePresenter _presenter;
 
     private ValueInjectRequest _rq = null;
 
     public ValueInjectInteractor(
             IVariableMetadataGateway metadataGateway,
+            IPersistenceGateway persistenceGateway,
             IServicePresenter presenter
     ) {
         _metadataGateway = metadataGateway;
+        _persistenceGateway = persistenceGateway;
         _presenter = presenter;
     }
 
@@ -38,8 +42,15 @@ public class ValueInjectInteractor
         Map<String,VariableMetadata> varMetadata = _metadataGateway.getAllConfigMetadata();
     
         // save data
-
-
+        VariableMetadata v1 = null;
+        for(VariableMetadata v2 : varMetadata.values())
+        {
+            v1 = v2;
+            break;
+        }
+        
+        _persistenceGateway.persistValue(v1);
+        
         return new ValueInjectResponse("Success", "SUCCESS");
     }
 
