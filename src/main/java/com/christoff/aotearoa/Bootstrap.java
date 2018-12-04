@@ -75,7 +75,8 @@ public class Bootstrap
         
         // - Select Persistence Gateway
         IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
-            (String) optionInput.valueOf(TEMPLATE_DIR));
+            (String) optionInput.valueOf(TEMPLATE_DIR),
+            (String) optionInput.valueOf(OUTPUT_DIR));
     
         // - Select Value Gateway
         IValueGateway valueGateway;

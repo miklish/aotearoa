@@ -2,42 +2,58 @@ package com.christoff.aotearoa.extern.gateway.persistence.local;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
-import java.util.Arrays;
-import java.util.Map;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PersistenceFileGateway implements IPersistenceGateway
 {
     private String _templateFileFolder;
+    private String _outputDir;
     private FileSystemHelper _filesysHelp;
 
-    public PersistenceFileGateway(String templateFileFolder) {
+    public PersistenceFileGateway(String templateFileFolder, String outputDir) {
         _templateFileFolder = templateFileFolder;
+        _outputDir = outputDir;
         _filesysHelp = new FileSystemHelper();
     }
 
     @Override
     public void persistValues(Map<String,VariableMetadata> allVarMetadata)
     {
-        // collect the list of files
-        
-        
-        
-        for(VariableMetadata varMetadata : allVarMetadata.values()) {
+        Set<String> files = new HashSet<>();
+        for(VariableMetadata varMetadata : allVarMetadata.values())
+        {
             // extract the file name of the tag
             String configFilename = varMetadata.getProperty("files").get(0);
+            if(files.contains(configFilename))
+                continue;
+            else
+                files.add(configFilename);
     
             // open the template file as a String
             String filename = _templateFileFolder + "/" + addYamlExt(configFilename);
             FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
     
             // use regex replace to inject the actual values
-            TemplateResolver.resolve(fInfo.string, allVarMetadata);
+            System.out.println(configFilename);
+            String resolved = TemplateResolver.resolve(fInfo.string, allVarMetadata);
 
             // TODO: Complete the code to write out resolved-template to output folder
             // TODO: Use the commented-out code below to write out the files
             // save the String to the target directory and overrwrite the existing value if exists
-            //
+            String outFilename = _outputDir + "/" + addYamlExt(configFilename);
+            FileSystemHelper.FileInfo outFInfo = _filesysHelp.getFileInfo(outFilename, false, false);
+            
+            try {
+                // writeStringToFile(File file, String data, String encoding)
+                FileUtils.writeStringToFile(outFInfo.file, resolved, (String) null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     

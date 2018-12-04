@@ -26,16 +26,6 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
         _diffFilename = diffFilename;
         _fileSysHelper = new FileSystemHelper();
     }
-
-    public List<String> getAllConfigSetNames() {
-        if(_allConfigSetNames == null) {
-            Set<String> configSet = new HashSet<>();
-            for (VariableMetadata v : _allVarMetadata.values())
-                configSet.addAll(v.getProperty("files"));
-            _allConfigSetNames = new LinkedList<>(configSet);
-        }
-        return _allConfigSetNames;
-    }
     
     public VariableMetadata getMetadata(String variableId) {
         if(_allVarMetadata == null)
