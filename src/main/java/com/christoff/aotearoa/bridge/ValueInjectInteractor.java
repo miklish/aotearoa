@@ -3,11 +3,11 @@ package com.christoff.aotearoa.bridge;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
+import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ValueInjectInteractor
 {
@@ -18,17 +18,23 @@ public class ValueInjectInteractor
     private IVariableMetadataGateway _metadataGateway;
     private IPersistenceGateway _persistenceGateway;
     private IServicePresenter _presenter;
+    private IValueGateway _valueGateway;
+    private ITransformGateway _transformGateway;
 
     private ValueInjectRequest _rq = null;
 
     public ValueInjectInteractor(
             IVariableMetadataGateway metadataGateway,
             IPersistenceGateway persistenceGateway,
+            IValueGateway valueGateway,
+            ITransformGateway transformGateway,
             IServicePresenter presenter
     ) {
         _metadataGateway = metadataGateway;
         _persistenceGateway = persistenceGateway;
         _presenter = presenter;
+        _valueGateway = valueGateway;
+        _transformGateway = transformGateway;
     }
 
     public ValueInjectResponse exec(ValueInjectRequest request)
@@ -39,36 +45,34 @@ public class ValueInjectInteractor
         //Map<String,Object> useMap = getUseMap();
 
         // gather all values and variable metadata
-        Map<String,VariableMetadata> varMetadata = _metadataGateway.getAllConfigMetadata();
-    
-        // save data
-        VariableMetadata v1 = null;
-        for(VariableMetadata v2 : varMetadata.values())
-        {
-            v1 = v2;
-            break;
-        }
+        Map<String,VariableMetadata> allVarMetadata = _metadataGateway.getAllConfigMetadata();
         
-        _persistenceGateway.persistValue(v1);
+        // add values and transforms to metadata
+        for(VariableMetadata varMeta : allVarMetadata.values()) {
+            varMeta.setValues(_valueGateway.get(varMeta.getName()));
+            varMeta.setTransformation(_transformGateway.get(varMeta.getProperty("output").get(0)));
+        }
+
+        _persistenceGateway.persistValues(allVarMetadata);
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }
 
+    /*
     private List<String> getTags(String s)
     {
         List<String> tags = new ArrayList<String>();
-
+        
         Pattern regex = Pattern.compile("\\{(.*?)\\}");
         Matcher regexMatcher = regex.matcher(s);
-
+        
         // fetch groups
         while(regexMatcher.find())
             tags.add(regexMatcher.group(1));
-
+        
         return tags;
     }
-
-    /*
+    
     private Map<String,Object> getUseMap()
     {
         // All tag names must be unique across all config files of the service

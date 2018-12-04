@@ -4,6 +4,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PersistenceFileGateway implements IPersistenceGateway
@@ -17,20 +18,35 @@ public class PersistenceFileGateway implements IPersistenceGateway
     }
 
     @Override
-    public void persistValue(VariableMetadata varMetadata)
+    public void persistValues(Map<String,VariableMetadata> allVarMetadata)
     {
-        // extract the file name of the tag
-        //String configFilename = varMetadata.getProperty("files")
+        // collect the list of files
+        
+        
+        
+        for(VariableMetadata varMetadata : allVarMetadata.values()) {
+            // extract the file name of the tag
+            String configFilename = varMetadata.getProperty("files").get(0);
+    
+            // open the template file as a String
+            String filename = _templateFileFolder + "/" + addYamlExt(configFilename);
+            FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
+    
+            // use regex replace to inject the actual values
+            TemplateResolver.resolve(fInfo.string, allVarMetadata);
 
-        // open the template file as a String
-        //FileSystemHelper.FileInfo fInfo =
-        //    _filesysHelp.getFileInfo(_templateFileFolder + "/" + configFilename, false);
-
-        // use regex replace to inject the actual values
-
-
-        // save the String to the target directory and overrwrite the existing value if exists
-
+            // save the String to the target directory and overrwrite the existing value if exists
+            // ...
+        }
+    }
+    
+    private static String addYamlExt(String f) {
+        if(f == null) return null;
+        String s = f.trim().toLowerCase();
+        if(s.endsWith(".yml"))
+            return f;
+        else
+            return f + ".yml";
     }
 
     private static String getConfigGroupId(String configId) {

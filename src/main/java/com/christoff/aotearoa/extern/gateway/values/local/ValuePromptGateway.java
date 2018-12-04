@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.extern.gateway.values;
+package com.christoff.aotearoa.extern.gateway.values.local;
 
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

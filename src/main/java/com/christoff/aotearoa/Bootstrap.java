@@ -12,8 +12,8 @@ import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
 
 import com.christoff.aotearoa.extern.gateway.metadata.local.VariableMetadataFileGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.values.local.ValueFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.local.ValuePromptGateway;
 import com.christoff.aotearoa.extern.gateway.transform.configserver.TransformServerGateway;
 import com.christoff.aotearoa.extern.gateway.transform.local.TransformFileGateway;
 import com.christoff.aotearoa.extern.view.CLIServicePresenter;
@@ -93,14 +93,12 @@ public class Bootstrap
 
         // - Select Metadata Gateway
         IVariableMetadataGateway metadataGateway = new VariableMetadataFileGateway(
-            (String) optionInput.valueOf(METADATA_ID),
-            valueGateway,
-            transformGateway);
+            (String) optionInput.valueOf(METADATA_ID));
 
 
         // Construct ValueInjectInteractor
         ValueInjectInteractor serviceInteractor =
-            new ValueInjectInteractor(metadataGateway, persistenceGateway, presenter);
+            new ValueInjectInteractor(metadataGateway, persistenceGateway, valueGateway, transformGateway, presenter);
         
 
         // Process response

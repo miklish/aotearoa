@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.extern.gateway.values;
+package com.christoff.aotearoa.extern.gateway.values.local;
 
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;

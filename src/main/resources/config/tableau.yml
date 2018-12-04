@@ -3,7 +3,8 @@ enabled: true
 #enabled: false
 # The tableau server url.
 #serverUrl: https://us-west-2b.online.tableau.com:443
-serverUrl: https://tableaussi-uat.cibcwm.com:443
+#serverUrl: https://tableaussi-uat.cibcwm.com:443
+serverUrl: {tableau-rest-url}
 # The tableau signin API path
 # Docs say that REST API Version for Internal Tableau 10.4.x is 2.7
 #serverPath: /api/3.0/auth/signin
@@ -13,4 +14,4 @@ serverPath: /api/2.7/auth/signin
 
 #tableauUsername: "Service_AIP_Tableau"
 #tableauUsername: "Christof"
-tableauUsername: "service_tabrestapi"
+tableauUsername: "{tableau-username}"

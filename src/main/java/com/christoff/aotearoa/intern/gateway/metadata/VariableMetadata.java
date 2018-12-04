@@ -15,20 +15,27 @@ public class VariableMetadata
     
     public VariableMetadata(
         String varName,
-        List<Object> values,
-        Map<String,List<String>> varPropertiesMap,
-        ITransform tx)
+        Map<String,List<String>> varPropertiesMap)
     {
         _varName = varName;
-        _values = toStringList(values);
         _varPropertiesMap = varPropertiesMap;
-        _transform = tx;
+    }
+    
+    public void setValues(List<Object> values) {
+        _values = toStringList(values);
+    }
+    
+    public void setTransformation(ITransform transform) {
+        _transform = transform;
     }
 
     private static List<String> toStringList(List<Object> objValues) {
         List<String> values = new LinkedList<>();
-        for(Object val : values)
-            values.add(val.toString());
+        for(Object val : objValues)
+            if(val instanceof String)
+                values.add((String) val);
+            else
+                values.add(val.toString());
         return values;
     }
 

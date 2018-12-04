@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
+import org.apache.commons.io.FileUtils;
 
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FilenameUtils.normalize;
@@ -28,9 +29,10 @@ public class FileSystemHelper
         public boolean exists;
         public boolean isFile = true;
         public Map<String, Object> map = null;
+        public String string = null;
     }
 
-    public FileInfo getFileInfo(String configId, boolean buildYaml)
+    public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
     {
         FileInfo info = new FileInfo();
         info.id = configId;
@@ -39,13 +41,22 @@ public class FileSystemHelper
         info.exists = info.file.exists();
         info.isFile = info.file.isFile();
 
-        if(info.exists && buildYaml) {
+        if(info.exists && info.isFile && buildYaml) {
             try {
                 info.map = _yamlHelper.loadYaml(info.file);
             } catch (IOException e) {
                 throw new MetadataFormatException(e.getMessage());
             }
         }
+        
+        if(info.exists && info.isFile && readToString) {
+            try {
+                info.string = FileUtils.readFileToString(info.file, (String) null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
         return info;
     }
 }

@@ -7,10 +7,7 @@ import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /***
     This class returns both the variable metadata and the values of variables
@@ -18,35 +15,44 @@ import java.util.Map;
  */
 public class VariableMetadataFileGateway implements IVariableMetadataGateway
 {
+    public static final String VARIABLES = "variables";
+    
     private String _diffFilename;
+    
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
-    public static final String VARIABLES = "variables";
+    
     FileSystemHelper _fileSysHelper;
+
     private Map<String, VariableMetadata> _allVarMetadata;
+    private List<String> _allConfigSetNames;
 
     public VariableMetadataFileGateway(
-        String diffFilename,
-        IValueGateway valueGateway,
-        ITransformGateway transformGateway)
+        String diffFilename)
     {
         _diffFilename = diffFilename;
-        _valueGateway = valueGateway;
-        _transformGateway = transformGateway;
         _fileSysHelper = new FileSystemHelper();
-        _allVarMetadata = allConfigMetadata();
     }
 
-    // get all config values
-    public Map<String,VariableMetadata> getAllConfigMetadata() {
-        return _allVarMetadata;
-    }
-
-    // get all config values
-    private Map<String,VariableMetadata> allConfigMetadata()
+    public List<String> getAllConfigSetNames()
     {
+        if(_allConfigSetNames == null) {
+            Set<String> configSet = new HashSet<>();
+            for (VariableMetadata v : _allVarMetadata.values())
+                configSet.addAll(v.getProperty("files"));
+            _allConfigSetNames = new LinkedList<>(configSet);
+        }
+        
+        return _allConfigSetNames;
+    }
+    
+    // get all config values
+    public Map<String,VariableMetadata> getAllConfigMetadata()
+    {
+        if(_allVarMetadata != null) return _allVarMetadata;
+        
         Map<String, Object> metadataMap =
-            (Map<String, Object>) _fileSysHelper.getFileInfo(_diffFilename, true).map.get(VARIABLES);
+            (Map<String, Object>) _fileSysHelper.getFileInfo(_diffFilename, true, false).map.get(VARIABLES);
 
         Map<String, VariableMetadata> allVarMetadata = new HashMap<>();
         for(Map.Entry<String,Object> varMetadataEntry : metadataMap.entrySet())
@@ -60,43 +66,36 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
             for(Map.Entry<String,Object> e : ((Map<String,Object>) varMetadataEntry.getValue()).entrySet())
             {
-                // TODO: Must convert this to a LIST of Strings
-                // TODO: Must update the VariableMetadata getProperty methods t return List<String>
-                // TODO: Must check String elements in Lists (or single value) to ensure we remove '[' ']' from them
-    
                 String key = e.getKey().trim().toLowerCase();
                 
                 List<String> val = new LinkedList<>();
                 Object valueObj = e.getValue();
-                if(valueObj instanceof List)
-                    for(Object o : (List) valueObj)
-                        val.add((String) o);
+                if(valueObj instanceof List) {
+                    for (Object o : (List) valueObj) {
+                        if (o instanceof String)
+                            val.add((String) o);
+                        else
+                            val.add(o.toString());
+                    }
+                }
                 else if(valueObj instanceof String)
                     val.add((String) valueObj);
-                else if(valueObj instanceof Integer)
-                    val.add(Integer.toString((Integer) valueObj));
                 else
-                    throw new RuntimeException("Incompatable Type");
+                    val.add(valueObj.toString());
                 
                 varMetadataPropertiesMap.put(key, val);
             }
-
-            ITransform transform = _transformGateway.get(varMetadataPropertiesMap.get("output").get(0));
-            List<Object> values = _valueGateway.get(varName);
-
-            VariableMetadata varMetadataClass = new VariableMetadata(
-                varName,
-                values,
-                varMetadataPropertiesMap,
-                transform);
-
+            VariableMetadata varMetadataClass = new VariableMetadata(varName, varMetadataPropertiesMap);
             allVarMetadata.put(varName, varMetadataClass);
         }
-
         return allVarMetadata;
     }
 
-    public VariableMetadata getMetadata(String variableId) {
+    public VariableMetadata getMetadata(String variableId)
+    {
+        if(_allVarMetadata == null)
+            _allVarMetadata = getAllConfigMetadata();
+        
         return _allVarMetadata.get(variableId);
     }
 }
