@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataNotFoundException;
 import org.apache.commons.io.FileUtils;
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FilenameUtils.normalize;
@@ -29,6 +31,10 @@ public class FileSystemHelper
     }
 
     public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
+        throws
+            MetadataFormatException,
+            MetadataNotFoundException,
+            MetadataIOException
     {
         FileInfo info = new FileInfo();
         info.id = configId;
@@ -37,6 +43,10 @@ public class FileSystemHelper
         info.exists = info.file.exists();
         info.isFile = info.file.isFile();
 
+        // read in file and render as yaml maps
+        if((buildYaml || readToString) && (!info.exists || !info.isFile))
+            throw new MetadataNotFoundException("Cannot locate variable metadata file " + info.id);
+
         if(info.exists && info.isFile && buildYaml) {
             try {
                 info.map = _yamlHelper.loadYaml(info.file);
@@ -44,12 +54,12 @@ public class FileSystemHelper
                 throw new MetadataFormatException(e.getMessage());
             }
         }
-        
+
         if(info.exists && info.isFile && readToString) {
             try {
                 info.string = FileUtils.readFileToString(info.file, (String) null);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new MetadataIOException(e.getMessage());
             }
         }
         

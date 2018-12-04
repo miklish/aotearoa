@@ -1,8 +1,10 @@
 package com.christoff.aotearoa.bridge;
 
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
@@ -37,19 +39,37 @@ public class ValueInjectInteractor
     }
     
     public ValueInjectResponse exec(ValueInjectRequest request)
+        throws MetadataFormatException
     {
         _rq = request;
+
         
         // TODO: decide how to handle 'use-values' in a generic way
         //Map<String,Object> useMap = getUseMap();
+
         
         // gather all values and variable metadata
         Map<String, VariableMetadata> allVarMetadata = _metadataGateway.getAllConfigMetadata();
-        
-        // add values and transforms to metadata
-        for (VariableMetadata varMeta : allVarMetadata.values()) {
+
+
+        // add concrete values and transforms to metadata
+        for (VariableMetadata varMeta : allVarMetadata.values())
+        {
+            // set the variable value
             varMeta.setValues(_valueGateway.get(varMeta.getName()));
-            varMeta.setTransformation(_transformGateway.get(varMeta.getProperty("output").get(0)));
+
+            // set the transform for the variable
+            // - get the transform name
+            List<String> transformNames = varMeta.getProperty("output");
+            if(transformNames == null || transformNames.isEmpty())
+                throw new MetadataFormatException("No transformations specified");
+            // - get the transform
+            ITransform transform = _transformGateway.get(transformNames.get(0));
+            if(transform == null)
+                throw new MetadataFormatException(
+                    "Transformation " + transformNames.get(0) + "is not a valid transform");
+            // set the transform
+            varMeta.setTransformation(transform);
         }
         
         _persistenceGateway.persistValues(allVarMetadata);

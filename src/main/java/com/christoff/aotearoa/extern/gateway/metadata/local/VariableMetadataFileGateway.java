@@ -2,6 +2,7 @@ package com.christoff.aotearoa.extern.gateway.metadata.local;
 
 import com.christoff.aotearoa.extern.gateway.persistence.local.FileSystemHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -25,23 +26,49 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
     public VariableMetadataFileGateway(String diffFilename) {
         _diffFilename = diffFilename;
         _fileSysHelper = new FileSystemHelper();
+        _allVarMetadata = initAllConfigMetadata();
     }
     
     public VariableMetadata getMetadata(String variableId) {
-        if(_allVarMetadata == null)
-            _allVarMetadata = getAllConfigMetadata();
         return _allVarMetadata.get(variableId);
     }
     
     // get all config values
     public Map<String,VariableMetadata> getAllConfigMetadata() {
-        if(_allVarMetadata != null) return _allVarMetadata;
-        
-        Map<String, Object> metadataMap =
-            (Map<String, Object>) _fileSysHelper.getFileInfo(_diffFilename, true, false).map.get(VARIABLES);
+        return _allVarMetadata;
+    }
 
-        Map<String, VariableMetadata> allVarMetadata = new HashMap<>();
-        for(Map.Entry<String,Object> varMetadataEntry : metadataMap.entrySet()) {
+    // initialize all config values
+    public Map<String,VariableMetadata> initAllConfigMetadata()
+        throws MetadataFormatException
+    {
+        // read in the entire metadata file
+        Map<String, Object> allConfigDataMap =  _fileSysHelper.getFileInfo(_diffFilename, true, false).map;
+
+        // check that it contains data
+        if(allConfigDataMap == null || allConfigDataMap.size() == 0)
+            throw new MetadataFormatException("No data found in " + _diffFilename);
+
+
+
+        // get the variable section of the metadata configuration (keys are Objects)
+        Map<String, Object> variablesMetadataMapObjects = (Map<String, Object>) allConfigDataMap.get(VARIABLES);
+
+        // check that the variables section contains data
+        if(variablesMetadataMapObjects == null || variablesMetadataMapObjects.size() == 0)
+            throw new MetadataFormatException("No variable metadata found in " + _diffFilename);
+
+
+
+        // check there are some variable metadata instances to convert
+        if(variablesMetadataMapObjects.size() == 0)
+            throw new MetadataFormatException("No variable metadata found in " + _diffFilename);
+
+        // convert keys to the String type
+        Map<String, VariableMetadata> variablesMetadataMap = new HashMap<>();
+
+        for(Map.Entry<String,Object> varMetadataEntry : variablesMetadataMapObjects.entrySet())
+        {
             // get the key : the variable's name
             String varName = varMetadataEntry.getKey();
 
@@ -70,8 +97,8 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
                 varMetadataPropertiesMap.put(key, val);
             }
             VariableMetadata varMetadataClass = new VariableMetadata(varName, varMetadataPropertiesMap);
-            allVarMetadata.put(varName, varMetadataClass);
+            variablesMetadataMap.put(varName, varMetadataClass);
         }
-        return allVarMetadata;
+        return variablesMetadataMap;
     }
 }

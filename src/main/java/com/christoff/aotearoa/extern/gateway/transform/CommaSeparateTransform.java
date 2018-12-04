@@ -8,11 +8,12 @@ public class CommaSeparateTransform implements ITransform
     @Override
     public String transform(List<String> inputList)
     {
+        if(inputList == null || inputList.size() == 0)
+            return "";
+
         int len = inputList.size();
-        
-        if(len == 0)
-            return inputList.get(0);
-        
+        if(len == 1) return inputList.get(0);
+
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < len - 1; ++i)
             sb.append(inputList.get(i)).append(",");

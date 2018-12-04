@@ -7,6 +7,13 @@ import static org.apache.commons.io.FileUtils.getFile;
 
 
 public class TestFiles {
+
+    // test missing diff file
+    // test missing variables section if diff
+    // test empty variables section
+    // testing missing transform tag
+    // test incorrect transform tab
+    // test mix of ints and strings in config
     
     @Test
     public void testFilenameHandling()

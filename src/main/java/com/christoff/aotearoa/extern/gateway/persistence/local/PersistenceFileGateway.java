@@ -2,12 +2,11 @@ package com.christoff.aotearoa.extern.gateway.persistence.local;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateException;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PersistenceFileGateway implements IPersistenceGateway
 {
@@ -23,36 +22,37 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
     @Override
     public void persistValues(Map<String,VariableMetadata> allVarMetadata)
+        throws TemplateException
     {
-        Set<String> files = new HashSet<>();
-        for(VariableMetadata varMetadata : allVarMetadata.values())
+        // collect the set of files in which tags appear
+        Set<String> templateFileIds = new HashSet<>();
+        for(VariableMetadata varMetadata : allVarMetadata.values()) {
+            // extract the file names that the tag appears in
+            List<String> configFilenames = varMetadata.getProperty("files");
+            templateFileIds.addAll(configFilenames);
+        }
+
+        for(String templateId : templateFileIds)
         {
-            // extract the file name of the tag
-            String configFilename = varMetadata.getProperty("files").get(0);
-            if(files.contains(configFilename))
-                continue;
-            else
-                files.add(configFilename);
-    
             // open the template file as a String
-            String filename = _templateFileFolder + "/" + addYamlExt(configFilename);
+            String filename = _templateFileFolder + "/" + addYamlExt(templateId);
             FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
+            // - ensure file exists
+            if(!fInfo.exists || !fInfo.isFile)
+                throw new TemplateException("Template " + fInfo.nId + " not found");
     
             // use regex replace to inject the actual values
-            System.out.println(configFilename);
             String resolved = TemplateResolver.resolve(fInfo.string, allVarMetadata);
 
-            // TODO: Complete the code to write out resolved-template to output folder
-            // TODO: Use the commented-out code below to write out the files
             // save the String to the target directory and overrwrite the existing value if exists
-            String outFilename = _outputDir + "/" + addYamlExt(configFilename);
+            String outFilename = _outputDir + "/" + addYamlExt(templateId);
             FileSystemHelper.FileInfo outFInfo = _filesysHelp.getFileInfo(outFilename, false, false);
             
             try {
                 // writeStringToFile(File file, String data, String encoding)
                 FileUtils.writeStringToFile(outFInfo.file, resolved, (String) null);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new TemplateException("Could not resolve template " + outFInfo.nId);
             }
         }
     }
@@ -65,6 +65,38 @@ public class PersistenceFileGateway implements IPersistenceGateway
         else
             return f + ".yml";
     }
+}
+
+
+
+
+
+
+
+
+/*
+package com.christoff.aotearoa.extern.gateway;
+
+import com.christoff.aotearoa.intern.gateway.*;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
+import static org.apache.commons.io.FileUtils.deleteDirectory;
+import static org.apache.commons.io.FileUtils.getFile;
+import static org.apache.commons.io.FilenameUtils.*;
+
+public class ServiceConfigFileGateway implements IServiceConfigDataGateway
+{
+    private YamlHelper _yamlHelper;
+
+    public ServiceConfigFileGateway()
+    {
+        _yamlHelper = new YamlHelper();
+    }
+
 
     private static String getConfigGroupId(String configId) {
         // get first part
@@ -110,37 +142,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         else
             return null;
     }
-}
 
-
-
-
-
-
-
-
-/*
-package com.christoff.aotearoa.extern.gateway;
-
-import com.christoff.aotearoa.intern.gateway.*;
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
-import static org.apache.commons.io.FileUtils.deleteDirectory;
-import static org.apache.commons.io.FileUtils.getFile;
-import static org.apache.commons.io.FilenameUtils.*;
-
-public class ServiceConfigFileGateway implements IServiceConfigDataGateway
-{
-    private YamlHelper _yamlHelper;
-
-    public ServiceConfigFileGateway()
-    {
-        _yamlHelper = new YamlHelper();
-    }
 
     private class FileInfo
     {
