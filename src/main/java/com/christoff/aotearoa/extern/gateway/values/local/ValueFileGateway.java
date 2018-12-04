@@ -3,7 +3,6 @@ package com.christoff.aotearoa.extern.gateway.values.local;
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

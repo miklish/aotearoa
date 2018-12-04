@@ -1,15 +1,11 @@
 package com.christoff.aotearoa.extern.gateway.persistence.local;
 
-import com.christoff.aotearoa.extern.gateway.metadata.local.VariableMetadataFileGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
 import org.apache.commons.io.FileUtils;
-
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FilenameUtils.normalize;
 

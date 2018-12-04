@@ -6,7 +6,6 @@ import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
-
 import java.util.*;
 
 public class ValueInjectInteractor
@@ -14,21 +13,21 @@ public class ValueInjectInteractor
     public static final String USE = "use";
     public static final String VARIABLES = "variables";
     public static final String FILES = "files";
-
+    
     private IVariableMetadataGateway _metadataGateway;
     private IPersistenceGateway _persistenceGateway;
     private IServicePresenter _presenter;
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
-
+    
     private ValueInjectRequest _rq = null;
-
+    
     public ValueInjectInteractor(
-            IVariableMetadataGateway metadataGateway,
-            IPersistenceGateway persistenceGateway,
-            IValueGateway valueGateway,
-            ITransformGateway transformGateway,
-            IServicePresenter presenter
+        IVariableMetadataGateway metadataGateway,
+        IPersistenceGateway persistenceGateway,
+        IValueGateway valueGateway,
+        ITransformGateway transformGateway,
+        IServicePresenter presenter
     ) {
         _metadataGateway = metadataGateway;
         _persistenceGateway = persistenceGateway;
@@ -36,29 +35,34 @@ public class ValueInjectInteractor
         _valueGateway = valueGateway;
         _transformGateway = transformGateway;
     }
-
+    
     public ValueInjectResponse exec(ValueInjectRequest request)
     {
         _rq = request;
-
+        
         // TODO: decide how to handle 'use-values' in a generic way
         //Map<String,Object> useMap = getUseMap();
-
+        
         // gather all values and variable metadata
-        Map<String,VariableMetadata> allVarMetadata = _metadataGateway.getAllConfigMetadata();
+        Map<String, VariableMetadata> allVarMetadata = _metadataGateway.getAllConfigMetadata();
         
         // add values and transforms to metadata
-        for(VariableMetadata varMeta : allVarMetadata.values()) {
+        for (VariableMetadata varMeta : allVarMetadata.values()) {
             varMeta.setValues(_valueGateway.get(varMeta.getName()));
             varMeta.setTransformation(_transformGateway.get(varMeta.getProperty("output").get(0)));
         }
-
+        
         _persistenceGateway.persistValues(allVarMetadata);
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }
+}
 
-    /*
+
+
+
+// Do not delete code below -- contains code for 'use' feature
+/*
     private List<String> getTags(String s)
     {
         List<String> tags = new ArrayList<String>();
@@ -149,5 +153,5 @@ public class ValueInjectInteractor
             }
         }
     }
-    */
 }
+*/

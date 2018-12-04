@@ -47,7 +47,6 @@ import java.util.List;
  *     - push changes to web or file system when save() called
  *
  */
-public interface IValueGateway
-{
+public interface IValueGateway {
     public List<Object> get(String configValueId);
 }

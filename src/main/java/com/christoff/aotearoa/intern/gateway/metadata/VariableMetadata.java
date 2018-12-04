@@ -1,7 +1,6 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

@@ -2,7 +2,6 @@ package com.christoff.aotearoa.extern.gateway.persistence.local;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,8 +34,10 @@ public class PersistenceFileGateway implements IPersistenceGateway
             // use regex replace to inject the actual values
             TemplateResolver.resolve(fInfo.string, allVarMetadata);
 
+            // TODO: Complete the code to write out resolved-template to output folder
+            // TODO: Use the commented-out code below to write out the files
             // save the String to the target directory and overrwrite the existing value if exists
-            // ...
+            //
         }
     }
     
@@ -95,8 +96,14 @@ public class PersistenceFileGateway implements IPersistenceGateway
     }
 }
 
-/*
 
+
+
+
+
+
+
+/*
 package com.christoff.aotearoa.extern.gateway;
 
 import com.christoff.aotearoa.intern.gateway.*;

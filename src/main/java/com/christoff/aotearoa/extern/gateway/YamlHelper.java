@@ -3,7 +3,6 @@ package com.christoff.aotearoa.extern.gateway;
 import org.apache.commons.io.FileUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
