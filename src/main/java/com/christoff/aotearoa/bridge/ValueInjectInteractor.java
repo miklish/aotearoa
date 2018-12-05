@@ -46,6 +46,11 @@ public class ValueInjectInteractor
         
         // TODO: decide how to handle 'use-values' in a generic way
         //Map<String,Object> useMap = getUseMap();
+        
+        
+        // TODO: Add code to handle certs
+        // Create a 'certs' section in the _values.yml file
+        // https://www.baeldung.com/java-keystore
 
         
         // gather all values and variable metadata

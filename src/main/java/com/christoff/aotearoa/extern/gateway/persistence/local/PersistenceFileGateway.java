@@ -24,6 +24,10 @@ public class PersistenceFileGateway implements IPersistenceGateway
     public void persistValues(Map<String,VariableMetadata> allVarMetadata)
         throws TemplateIOException
     {
+        // TODO: 1. Delete all files in target directory (ensure target != source)
+        //       2. Copy all files from source into target
+        //       3. Do an in-place update of template files
+        
         // collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
         for(VariableMetadata varMetadata : allVarMetadata.values()) {
