@@ -17,7 +17,7 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 {
     public static final String VARIABLES = "variables";
     private String _metadataFilename;
-    FileSystemHelper _fileSysHelper;
+    private FileSystemHelper _fileSysHelper;
     private Map<String, VariableMetadata> _allVarMetadata;
 
     public VariableMetadataFileGateway(String metadataFilename) {
