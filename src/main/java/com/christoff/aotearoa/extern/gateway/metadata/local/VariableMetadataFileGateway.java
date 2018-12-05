@@ -4,8 +4,6 @@ import com.christoff.aotearoa.extern.gateway.persistence.local.FileSystemHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
-import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
-import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 
 import java.util.*;
 
@@ -16,15 +14,12 @@ import java.util.*;
 public class VariableMetadataFileGateway implements IVariableMetadataGateway
 {
     public static final String VARIABLES = "variables";
-    private IValueGateway _valueGateway;
-    private ITransformGateway _transformGateway;
-    private String _diffFilename;
+    private String _metadataFilename;
     FileSystemHelper _fileSysHelper;
     private Map<String, VariableMetadata> _allVarMetadata;
-    private List<String> _allConfigSetNames;
 
-    public VariableMetadataFileGateway(String diffFilename) {
-        _diffFilename = diffFilename;
+    public VariableMetadataFileGateway(String metadataFilename) {
+        _metadataFilename = metadataFilename;
         _fileSysHelper = new FileSystemHelper();
         _allVarMetadata = initAllConfigMetadata();
     }
@@ -43,11 +38,12 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
         throws MetadataException
     {
         // read in the entire metadata file
-        Map<String, Object> allConfigDataMap =  _fileSysHelper.getFileInfo(_diffFilename, true, false).map;
+        Map<String, Object> allConfigDataMap =
+            _fileSysHelper.getFileInfo(_metadataFilename, true, false).map;
 
         // check that it contains data
         if(allConfigDataMap == null || allConfigDataMap.size() == 0)
-            throw new MetadataException("No data found in " + _diffFilename);
+            throw new MetadataException("No data found in " + _metadataFilename);
 
 
 
@@ -56,13 +52,13 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
         // check that the variables section contains data
         if(variablesMetadataMapObjects == null || variablesMetadataMapObjects.size() == 0)
-            throw new MetadataException("No variable metadata found in " + _diffFilename);
+            throw new MetadataException("No variable metadata found in " + _metadataFilename);
 
 
 
         // check there are some variable metadata instances to convert
         if(variablesMetadataMapObjects.size() == 0)
-            throw new MetadataException("No variable metadata found in " + _diffFilename);
+            throw new MetadataException("No variable metadata found in " + _metadataFilename);
 
         // convert keys to the String type
         Map<String, VariableMetadata> variablesMetadataMap = new HashMap<>();
@@ -81,8 +77,25 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
                 
                 List<String> val = new LinkedList<>();
                 Object valueObj = e.getValue();
-                if(valueObj instanceof List) {
-                    for (Object o : (List) valueObj) {
+                
+                if(valueObj == null)
+                    throw new MetadataException(
+                        "No metadata found in " + key + " section for tag " + varName);
+                
+                if(valueObj instanceof List)
+                {
+                    List valueList = (List) valueObj;
+                    
+                    if(valueList.isEmpty())
+                        throw new MetadataException(
+                            "No metadata found in " + key + " section for tag " + varName);
+                    
+                    for (Object o : valueList) {
+    
+                        if(o == null)
+                            throw new MetadataException(
+                                "Missing metadata for tag " + varName + " in " + key + " section");
+                        
                         if (o instanceof String)
                             val.add((String) o);
                         else

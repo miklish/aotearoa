@@ -24,8 +24,8 @@ public class TestFiles {
         String outBase = userdir + "/src/main/resources/config-out/";
         String baseFake = userdir + "/src/main/resources/config-fake/";
         String newBase = userdir + "/src/main/resources/config3/";
-        String diff = base + "_diff.yml";
-        String diffVals = base + "_diff-values.yml";
+        String diff = base + "_metadata.yml";
+        String diffVals = base + "_values.yml";
         String diffFake = base + "_diff_fake.yml";
     
         //IMetadataGatewayOld g = new MetadataFileGatewayOld();

@@ -4,7 +4,7 @@ import com.christoff.aotearoa.ConfigException;
 
 public class TemplateIOException extends ConfigException {
     public TemplateIOException(String message) {
-        super(message);
+        super("TEMPLATES: " + message);
     }
 }
 

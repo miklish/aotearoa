@@ -4,6 +4,6 @@ import com.christoff.aotearoa.ConfigException;
 
 public class MetadataException extends ConfigException {
     public MetadataException(String message) {
-        super(message);
+        super("METADATA: " + message);
     }
 }

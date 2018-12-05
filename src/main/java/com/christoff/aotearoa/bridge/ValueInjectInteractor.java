@@ -63,14 +63,14 @@ public class ValueInjectInteractor
 
             // set the transform for the variable
             // - get the transform name
-            List<String> transformNames = varMeta.getProperty("output");
+            List<String> transformNames = varMeta.getProperty(VariableMetadata.OUTPUT);
             if(transformNames == null || transformNames.isEmpty())
-                throw new MetadataException("No transformations specified");
+                throw new MetadataException("No transformations specified in metadata for tag " + varMeta.getName());
             // - get the transform
             ITransform transform = _transformGateway.get(transformNames.get(0));
             if(transform == null)
                 throw new MetadataException(
-                    "Transformation " + transformNames.get(0) + "is not a valid transform");
+                    "Transformation " + transformNames.get(0) + "is not a valid transform for metadata tag " + varMeta.getName());
             // set the transform
             varMeta.setTransformation(transform);
         }

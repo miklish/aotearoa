@@ -1,12 +1,23 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
+import com.christoff.aotearoa.intern.gateway.values.ValueException;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class VariableMetadata
 {
+    /** Metadata properties */
+    public static final String MIN = "min";
+    public static final String MAX = "max";
+    public static final String OUTPUT = "output";
+    public static final String TYPE = "type";
+    public static final String REPLACEMENT_STRATEGY = "replacement-strategy";
+    public static final String PROMPT_TEXT = "prompt-text";
+    public static final String FILES = "files";
+    
     private String _varName;
     private Map<String,List<String>> _varPropertiesMap;
     private List<String> _values;
@@ -21,20 +32,25 @@ public class VariableMetadata
     }
     
     public void setValues(List<Object> values) {
-        _values = toStringList(values);
+        _values = toStringList(_varName, values);
     }
     
     public void setTransformation(ITransform transform) {
         _transform = transform;
     }
 
-    private static List<String> toStringList(List<Object> objValues) {
+    private static List<String> toStringList(String varName, List<Object> objValues) {
         List<String> values = new LinkedList<>();
         for(Object val : objValues)
-            if(val instanceof String)
+        {
+            if(val == null)
+                throw new ValueException("No values found for tag " + varName);
+                
+            if (val instanceof String)
                 values.add((String) val);
             else
                 values.add(val.toString());
+        }
         return values;
     }
 

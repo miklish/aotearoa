@@ -3,37 +3,34 @@ package com.christoff.aotearoa;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
-
 import com.christoff.aotearoa.extern.gateway.persistence.local.PersistenceFileGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
-
 import com.christoff.aotearoa.extern.gateway.metadata.local.VariableMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.local.ValueFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.local.ValuePromptGateway;
 import com.christoff.aotearoa.extern.gateway.transform.configserver.TransformServerGateway;
 import com.christoff.aotearoa.extern.gateway.transform.local.TransformFileGateway;
 import com.christoff.aotearoa.extern.view.CLIServicePresenter;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import sun.security.krb5.Config;
-
 import java.io.IOException;
 import java.util.Arrays;
 import static java.lang.System.exit;
 
 public class Bootstrap
 {
-    private static final String METADATA_ID = "d";
-    private static final String TEMPLATE_DIR = "i";
+    private static final String METADATA_ID = "m";
+    private static final String TEMPLATE_DIR = "t";
     private static final String CONFIG_VALS_ID = "v";
     private static final String OUTPUT_DIR = "o";
     private static final String SERVER_URL = "s";
-
+    private static final String HELP = "h";
+    
+    
     public static void main(String[] args)
     {
         try {
@@ -54,11 +51,11 @@ public class Bootstrap
         try {
             optionInput = parseCommandLine(optionConfig, args);
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("ERROR: " + e.getMessage());
             printHelp(optionConfig);
             exit(1);
         }
-        if(optionInput.has("h")) {
+        if(optionInput.has(HELP)) {
             if(printHelp(optionConfig))
                 exit(1);
             else
@@ -66,7 +63,7 @@ public class Bootstrap
         }
         
 
-        // Build Request and invoke Service Interactor
+        // Build Request and invoke Value Injection Interactor
         // - no data put directly in request at the moment
         ValueInjectRequest request = new ValueInjectRequest();
 
@@ -121,29 +118,29 @@ public class Bootstrap
     {
         /**
          * Options
-         *   d / diff      : diff file  (required)
-         *   i / inputdir  : base directory (required)
-         *   v / vals      : config values file (required in this version -- prompts not yet supported)
-         *   o / outputdir : output directory (required)
-         *   s / server    ; server url (optional)
-         *   h / help      : help info
+         *   m / metadata   : variable metadata file (required)
+         *   t / templates  : template directory (required)
+         *   v / values     : config values file (required in this version -- prompts not yet supported)
+         *   o / output     : output directory (required)
+         *   s / server     : server url (optional)
+         *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
 
-        /** diff file */
-        final String[] diffOptions = {METADATA_ID,"diff"};
+        /** variable metadata file */
+        final String[] metadataOptions = {METADATA_ID,"metadata"};
         optionConfig.acceptsAll(
-                Arrays.asList(diffOptions),
-                "_diff file (required)").withRequiredArg().required();
+                Arrays.asList(metadataOptions),
+                "Variable metadata file (required)").withRequiredArg().required();
 
-        /** local: input dir */
-        final String[] inputdirOptions = {TEMPLATE_DIR,"inputdir"};
+        /** local: template dir */
+        final String[] inputdirOptions = {TEMPLATE_DIR,"templates"};
         optionConfig.acceptsAll(
                 Arrays.asList(inputdirOptions),
-                "Config file input folder (required)").withRequiredArg().required();
+                "Template file folder (required)").withRequiredArg().required();
 
-        /** config values */
-        final String[] valsOptions = {CONFIG_VALS_ID,"vals"};
+        /** values */
+        final String[] valsOptions = {CONFIG_VALS_ID,"values"};
         optionConfig.acceptsAll(
                 Arrays.asList(valsOptions),
                 "Value file (required)").withRequiredArg().required();
@@ -161,7 +158,7 @@ public class Bootstrap
                 "Config Server URL (optional)").withRequiredArg();
 
         /** help */
-        final String[] helpOptions = {"h","help"};
+        final String[] helpOptions = {HELP,"help"};
         optionConfig.acceptsAll(
                 Arrays.asList(helpOptions),
                 "Display help/usage information").forHelp();
