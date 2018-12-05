@@ -10,25 +10,27 @@ import java.util.*;
 
 public class PersistenceFileGateway implements IPersistenceGateway
 {
-    private String _templateFileFolder;
+    private String _templateDir;
     private String _outputDir;
     private FileSystemHelper _filesysHelp;
 
     public PersistenceFileGateway(String templateFileFolder, String outputDir) {
-        _templateFileFolder = templateFileFolder;
+        _templateDir = templateFileFolder;
         _outputDir = outputDir;
         _filesysHelp = new FileSystemHelper();
+        
     }
 
     @Override
     public void persistValues(Map<String,VariableMetadata> allVarMetadata)
         throws TemplateIOException
     {
-        // TODO: 1. Delete all files in target directory (ensure target != source)
-        //       2. Copy all files from source into target
-        //       3. Do an in-place update of template files
+        // delete target directory's contents, and copy source folder's contents into it
+        prepareFolders();
         
-        // collect the set of files in which tags appear
+        
+        
+        // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
         for(VariableMetadata varMetadata : allVarMetadata.values()) {
             // extract the file names that the tag appears in
@@ -39,7 +41,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         for(String templateId : templateFileIds)
         {
             // open the template file as a String
-            String filename = _templateFileFolder + "/" + addYamlExt(templateId);
+            String filename = _templateDir + "/" + addYamlExt(templateId);
             FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
             // - ensure file exists
             if(!fInfo.exists || !fInfo.isFile)
@@ -58,6 +60,45 @@ public class PersistenceFileGateway implements IPersistenceGateway
             } catch (IOException e) {
                 throw new TemplateIOException("Could not resolve template " + outFInfo.nId);
             }
+        }
+    }
+    
+    private void prepareFolders()
+        throws TemplateIOException
+    {
+        // clean target directory and copy contents of source directory into
+        // - ensure target and source directories are not the same
+        FileSystemHelper.FileInfo templateDirFile = _filesysHelp.getFileInfo(_templateDir, false, false);
+        FileSystemHelper.FileInfo outputDirFile = _filesysHelp.getFileInfo(_outputDir, false, false);
+        
+        if(!templateDirFile.exists || templateDirFile.isFile)
+            throw new TemplateIOException(
+                "The specified template folder " +
+                templateDirFile.nId +
+                " either does not exist or is not a folder");
+        
+        if(!outputDirFile.exists || outputDirFile.isFile)
+            throw new TemplateIOException(
+                "The specified output folder " +
+                outputDirFile.nId +
+                " either does not exist or is not a folder");
+        
+        if(templateDirFile.file.equals(outputDirFile.file))
+            throw new TemplateIOException("Template " + templateDirFile.nId + " folder and output folder cannot be the same");
+        
+        // - clean target directory
+        try {
+            FileUtils.cleanDirectory(outputDirFile.file);
+        } catch (IOException e) {
+            throw new TemplateIOException("Could not clean output folder " + templateDirFile.nId);
+        }
+        
+        // - copy source to target
+        try {
+            FileUtils.copyDirectory(templateDirFile.file, outputDirFile.file, null);
+        } catch (IOException e) {
+            throw new TemplateIOException(
+                "Could not copy contents of folder" + templateDirFile.nId + " to folder " + outputDirFile.nId);
         }
     }
     
