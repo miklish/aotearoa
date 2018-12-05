@@ -1,7 +1,7 @@
 package com.christoff.aotearoa.bridge;
 
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
@@ -39,7 +39,7 @@ public class ValueInjectInteractor
     }
     
     public ValueInjectResponse exec(ValueInjectRequest request)
-        throws MetadataFormatException
+        throws MetadataException
     {
         _rq = request;
 
@@ -56,17 +56,20 @@ public class ValueInjectInteractor
         for (VariableMetadata varMeta : allVarMetadata.values())
         {
             // set the variable value
-            varMeta.setValues(_valueGateway.get(varMeta.getName()));
+            List<Object> values = _valueGateway.get(varMeta.getName());
+            if(values == null || values.isEmpty())
+                throw new MetadataException("There is no metadata for the value with tag " + varMeta.getName());
+            varMeta.setValues(values);
 
             // set the transform for the variable
             // - get the transform name
             List<String> transformNames = varMeta.getProperty("output");
             if(transformNames == null || transformNames.isEmpty())
-                throw new MetadataFormatException("No transformations specified");
+                throw new MetadataException("No transformations specified");
             // - get the transform
             ITransform transform = _transformGateway.get(transformNames.get(0));
             if(transform == null)
-                throw new MetadataFormatException(
+                throw new MetadataException(
                     "Transformation " + transformNames.get(0) + "is not a valid transform");
             // set the transform
             varMeta.setTransformation(transform);

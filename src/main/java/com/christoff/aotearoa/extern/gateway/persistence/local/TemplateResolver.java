@@ -1,6 +1,6 @@
 package com.christoff.aotearoa.extern.gateway.persistence.local;
 
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,7 +20,7 @@ public class TemplateResolver
         {
             VariableMetadata variableMetadata = map.get(m.group(1));
             if(variableMetadata == null) {
-                throw new MetadataFormatException(
+                throw new MetadataException(
                     "Tag " + m.group(1) + " appears in template but does not have any metadata");
             }
 

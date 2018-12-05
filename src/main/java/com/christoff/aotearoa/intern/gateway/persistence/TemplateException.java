@@ -1,6 +1,8 @@
 package com.christoff.aotearoa.intern.gateway.persistence;
 
-public class TemplateException extends RuntimeException {
+import com.christoff.aotearoa.ConfigException;
+
+public class TemplateException extends ConfigException {
     public TemplateException(String message) {
         super(message);
     }

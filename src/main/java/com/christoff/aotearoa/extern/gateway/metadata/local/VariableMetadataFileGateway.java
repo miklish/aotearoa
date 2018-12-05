@@ -2,7 +2,7 @@ package com.christoff.aotearoa.extern.gateway.metadata.local;
 
 import com.christoff.aotearoa.extern.gateway.persistence.local.FileSystemHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataFormatException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -40,14 +40,14 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
     // initialize all config values
     public Map<String,VariableMetadata> initAllConfigMetadata()
-        throws MetadataFormatException
+        throws MetadataException
     {
         // read in the entire metadata file
         Map<String, Object> allConfigDataMap =  _fileSysHelper.getFileInfo(_diffFilename, true, false).map;
 
         // check that it contains data
         if(allConfigDataMap == null || allConfigDataMap.size() == 0)
-            throw new MetadataFormatException("No data found in " + _diffFilename);
+            throw new MetadataException("No data found in " + _diffFilename);
 
 
 
@@ -56,13 +56,13 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
 
         // check that the variables section contains data
         if(variablesMetadataMapObjects == null || variablesMetadataMapObjects.size() == 0)
-            throw new MetadataFormatException("No variable metadata found in " + _diffFilename);
+            throw new MetadataException("No variable metadata found in " + _diffFilename);
 
 
 
         // check there are some variable metadata instances to convert
         if(variablesMetadataMapObjects.size() == 0)
-            throw new MetadataFormatException("No variable metadata found in " + _diffFilename);
+            throw new MetadataException("No variable metadata found in " + _diffFilename);
 
         // convert keys to the String type
         Map<String, VariableMetadata> variablesMetadataMap = new HashMap<>();

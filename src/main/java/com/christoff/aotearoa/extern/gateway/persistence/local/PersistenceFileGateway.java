@@ -2,7 +2,7 @@ package com.christoff.aotearoa.extern.gateway.persistence.local;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
-import com.christoff.aotearoa.intern.gateway.persistence.TemplateException;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
     @Override
     public void persistValues(Map<String,VariableMetadata> allVarMetadata)
-        throws TemplateException
+        throws TemplateIOException
     {
         // collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
@@ -39,7 +39,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
             // - ensure file exists
             if(!fInfo.exists || !fInfo.isFile)
-                throw new TemplateException("Template " + fInfo.nId + " not found");
+                throw new TemplateIOException("Template " + fInfo.nId + " not found");
     
             // use regex replace to inject the actual values
             String resolved = TemplateResolver.resolve(fInfo.string, allVarMetadata);
@@ -52,7 +52,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
                 // writeStringToFile(File file, String data, String encoding)
                 FileUtils.writeStringToFile(outFInfo.file, resolved, (String) null);
             } catch (IOException e) {
-                throw new TemplateException("Could not resolve template " + outFInfo.nId);
+                throw new TemplateIOException("Could not resolve template " + outFInfo.nId);
             }
         }
     }

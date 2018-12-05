@@ -20,6 +20,7 @@ import com.christoff.aotearoa.extern.view.CLIServicePresenter;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import sun.security.krb5.Config;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,10 +36,16 @@ public class Bootstrap
 
     public static void main(String[] args)
     {
-        new Bootstrap().exec(args);
+        try {
+            new Bootstrap().exec(args);
+        } catch(ConfigException c) {
+            System.out.println("ERROR: " + c.getMessage());
+            exit(1);
+        }
     }
 
     public void exec(String[] args)
+        throws ConfigException
     {
         // Configure command line
         
