@@ -67,4 +67,3 @@ variables:
     prompt-text: Enter the Postgres database password
     files:
     - secret
-
