@@ -42,7 +42,9 @@ certs:
 
 keys:
 
-  # private keys must be in a PKCS12 or JKS keystore
+  # - tool does not support loading private keys into JKS files at this time.
+  #   private keys must be presented pre-loaded into a JKS with the appropriate
+  #   certificate chain
 
   tableau-private-key:
     prompt-text: Tableau Proxy service's private key (for TLS)
@@ -50,25 +52,12 @@ keys:
     alias: tableau-pk-alias                                     # alias field ignored if format = pkcs12
     file-name: tableau-pk.jks
 
-  other-private-key:
-    prompt-text: Tableau Proxy service's private key (for TLS)
-    format: pkcs12                                              # options [ jks / pkcs12 / p12 ]
-    file-name: tableau-pk.p12
-
 keystores:
 
   server.keystore:
     file-name: server.keystore
     password: the-keystore-password
-    certs:
-    - digicert-intermediate-cert:
-        alias: intermediate
-    - digicert-root-cert:
-        alias: root
-    keys:
-    - tableau-private-key:
-        alias: tableau-pk
-        password: the-key-password
+    pk-password: the-keystore-passord
 
   server.truststore:                        # this is an empty keystore
     file-name: server.truststore
