@@ -1,11 +1,6 @@
-# Use a value from an existing part of the config
-use:
-  client:
-    tls:
-      keyStore: '{client-keystore-name}'
-
 variables:
 
+  # Postgres database
   postgres-servers:     # this should be the same as the key (minus the first element) in config-server
     min: 1
     max: inf
@@ -27,7 +22,18 @@ variables:
     files:
     - datasource
 
-  tableau-rest-url:
+  postgres-password:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: Enter the Postgres database password
+    files:
+    - secret
+
+  # Tableau web server
+  tableau-serverUrl:
     min: 1
     max: 1
     output:
@@ -58,12 +64,158 @@ variables:
     files:
     - secret
 
-  postgres-password:
+  # Server keystore
+  server-keystore-filename:
     min: 1
     max: 1
     output:
-    - encrypt
+    - copy
     type: string
-    prompt-text: Enter the Postgres database password
+    prompt-text: Enter the filename of the server keystore
+    files:
+    - server
+
+  server-keystore-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the server keystore password
+    files:
+    - secret
+
+  server-keystore-privatekey-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the server keystore private key password
+    files:
+    - secret
+
+  # Server truststore
+  server-truststore-filename:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Enter the filename of the server truststore
+    files:
+    - server
+
+  server-truststore-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the server truststore password
+    files:
+    - secret
+
+  # Server security
+  jwt-security:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Enable (true) or disable (false) JWT verification security
+    files:
+    - security
+
+  oauth-cert:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Enter the name of the OAuth (Auth Server) certificate
+    files:
+    - security
+
+  # Logging
+  log-level:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Set the log level of the application ('fine' or 'debug' for testing, 'info' for production)
+    files:
+    - logback.xml
+
+  # Client truststore
+  client-truststore-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the client truststore password
+    files:
+    - secret
+
+  client-truststore-filename:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Set the filename of the client truststore
+    files:
+    - client
+
+  client-truststore-load:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Load the client truststore (true), or disbale loading (false)
+    files:
+    - client
+
+  # Client keystore
+  client-keystore-filename:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Set the filename of the client keystore
+    files:
+    - client
+
+  client-keystore-load:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Load the client keystore (true), or disbale loading (false)
+    files:
+    - client
+
+  client-keystore-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the client keystore password
+    files:
+    - secret
+
+  client-keystore-privatekey-pass:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: encrypt
+    prompt-text: Enter the client keystore private key password
     files:
     - secret

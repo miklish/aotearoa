@@ -104,9 +104,12 @@ public class PersistenceFileGateway implements IPersistenceGateway
     
     private static String addYamlExt(String f) {
         if(f == null) return null;
-        String s = f.trim().toLowerCase();
-        if(s.endsWith(".yml"))
+
+        // if filename already has an extension, then use that
+        String ext = f.substring(f.lastIndexOf(".")+1, f.length());
+        if(ext.length() > 0)
             return f;
+        // otherwise, add .yml to the end
         else
             return f + ".yml";
     }

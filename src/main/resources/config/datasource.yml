@@ -1,8 +1,0 @@
-PostgresDataSource:
-  DriverClassName: org.postgresql.ds.PGSimpleDataSource
-  #jdbcUrl: jdbc:postgresql://mccasmapp02.adp1.cibc.pte:8060/workgroup?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
-  #jdbcUrl: jdbc:postgresql://mccasmapp02.adp1.cibc.pte:8060/workgroup?ssl=true
-  jdbcUrl: jdbc:postgresql://{postgres-servers}/workgroup?ssl=true&sslfactory=com.cibc.api.tableau.wbook.desc.PostgresSSLSocketFactory
-  username: {postgres-username}
-  maximumPoolSize: 2
-  connectionTimeout: 2000
