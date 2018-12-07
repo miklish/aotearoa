@@ -1,10 +1,9 @@
 # Security configuration in light framework.
----
+
 # Enable JWT verification flag.
 enableVerifyJwt: true
 
 # Enable JWT scope verification. Only valid when enableVerifyJwt is true.
-#enableVerifyScope: true
 enableVerifyScope: true
 
 # User for test only. should be always be false on official environment.
@@ -13,22 +12,17 @@ enableMockJwt: false
 # JWT signature public certificates. kid and certificate path mappings.
 jwt:
   certificate:
-    # '100': primary.crt
-    # '101': secondary.crt
-    '102': oauth_cert.cer
+    '100': oauth_cert.cer
   clockSkewInSeconds: 60
 
 # Enable or disable JWT token logging
-#logJwtToken: true
 logJwtToken: false
 
 # Enable or disable client_id, user_id and scope logging.
 logClientUserScope: false
 
 # If OAuth2 provider support http2 protocol. If using light-oauth2, set this to true.
-#oauthHttp2Support: true
 oauthHttp2Support: false
 
-# Enable JWT token cache to speed up verification. This will only verify expired time
-# and skip the signature verification as it takes more CPU power and long time.
+# Enable JWT token cache to speed up verification.
 enableJwtCache: true
