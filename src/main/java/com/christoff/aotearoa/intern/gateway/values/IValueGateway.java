@@ -1,5 +1,7 @@
 package com.christoff.aotearoa.intern.gateway.values;
 
+import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+
 import java.util.List;
 
 /***
@@ -48,5 +50,5 @@ import java.util.List;
  *
  */
 public interface IValueGateway {
-    public List<Object> get(String configValueId);
+    public List<Object> get(VariableMetadata vm);
 }

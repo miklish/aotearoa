@@ -4,5 +4,5 @@ import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import java.util.Map;
 
 public interface IPersistenceGateway {
-    void persistValues(Map<String,VariableMetadata> allVarMetadata);
+    void persistValues(TemplateResolver resolver, Map<String,VariableMetadata> allVarMetadata);
 }

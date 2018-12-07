@@ -2,6 +2,7 @@ package com.christoff.aotearoa.extern.gateway.persistence.configserver;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolver;
 
 import java.util.Map;
 
@@ -12,6 +13,6 @@ public class PersistenceServerGateway implements IPersistenceGateway
     }
 
     @Override
-    public void persistValues(Map<String, VariableMetadata> allVarMetadata) {
+    public void persistValues(TemplateResolver resolver, Map<String, VariableMetadata> allVarMetadata) {
     }
 }

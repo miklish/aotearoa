@@ -36,7 +36,7 @@ public class VariableMetadataFileGateway implements IVariableMetadataGateway
     }
 
     // initialize all config values
-    public Map<String,VariableMetadata> initAllConfigMetadata()
+    private Map<String,VariableMetadata> initAllConfigMetadata()
         throws MetadataException
     {
         // read in the entire metadata file

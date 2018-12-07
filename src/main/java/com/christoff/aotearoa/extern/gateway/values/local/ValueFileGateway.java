@@ -1,7 +1,7 @@
 package com.christoff.aotearoa.extern.gateway.values.local;
 
 import com.christoff.aotearoa.extern.gateway.YamlHelper;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
+import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
@@ -26,11 +26,11 @@ public class ValueFileGateway implements IValueGateway
     }
 
     @Override
-    public List<Object> get(String configValueId)
+    public List<Object> get(VariableMetadata vm)
     {
-        if(!(_valueMap.get(configValueId) instanceof List))
-            throw new ValueException("Expected a list of values for " + configValueId);
+        if(!(_valueMap.get(vm.getName()) instanceof List))
+            throw new ValueException("Expected a list of values for " + vm.getName());
         
-        return (List<Object>) _valueMap.get(configValueId);
+        return (List<Object>) _valueMap.get(vm.getName());
     }
 }

@@ -14,6 +14,7 @@ dist/
 *.zip
 *.bak
 *.versionsBackup
+src/main/resources/config/
 src/main/resources/config-out/
 
 

@@ -4,6 +4,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -14,7 +15,6 @@ public class ValueInjectInteractor
 {
     public static final String USE = "use";
     public static final String VARIABLES = "variables";
-    public static final String FILES = "files";
     
     private IVariableMetadataGateway _metadataGateway;
     private IPersistenceGateway _persistenceGateway;
@@ -61,7 +61,7 @@ public class ValueInjectInteractor
         for (VariableMetadata varMeta : allVarMetadata.values())
         {
             // set the variable value
-            List<Object> values = _valueGateway.get(varMeta.getName());
+            List<Object> values = _valueGateway.get(varMeta);
             if(values == null || values.isEmpty())
                 throw new MetadataException("There is no metadata for the value with tag " + varMeta.getName());
             varMeta.setValues(values);
@@ -79,8 +79,14 @@ public class ValueInjectInteractor
             // set the transform
             varMeta.setTransformation(transform);
         }
-        
-        _persistenceGateway.persistValues(allVarMetadata);
+
+        TemplateResolver resolver = new TemplateResolver();
+        _persistenceGateway.persistValues(resolver, allVarMetadata);
+
+        // check if any metadata went unused
+        for(VariableMetadata vm : allVarMetadata.values())
+            if(!vm.getUsed())
+                _presenter.tagDefinedNotUsed(vm.getName());
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }

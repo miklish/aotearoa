@@ -18,7 +18,7 @@ client-truststore-filename:
   - client.truststore
 client-truststore-load:
   - true
-client-load-keystore:
+client-keystore-load:
   - false
 client-keystore-filename:
   - client.keystore

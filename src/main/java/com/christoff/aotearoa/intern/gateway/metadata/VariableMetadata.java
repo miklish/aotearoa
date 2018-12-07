@@ -22,6 +22,7 @@ public class VariableMetadata
     private Map<String,List<String>> _varPropertiesMap;
     private List<String> _values;
     private ITransform _transform;
+    private boolean _isUsed = false;
     
     public VariableMetadata(
         String varName,
@@ -30,6 +31,12 @@ public class VariableMetadata
         _varName = varName;
         _varPropertiesMap = varPropertiesMap;
     }
+
+    public void setUsed() {
+        _isUsed = true;
+    }
+
+    public boolean getUsed() { return _isUsed; }
     
     public void setValues(List<Object> values) {
         _values = toStringList(_varName, values);

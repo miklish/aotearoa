@@ -3,6 +3,7 @@ package com.christoff.aotearoa.extern.gateway.persistence.local;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolver;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -22,14 +23,13 @@ public class PersistenceFileGateway implements IPersistenceGateway
     }
 
     @Override
-    public void persistValues(Map<String,VariableMetadata> allVarMetadata)
+    public void persistValues(TemplateResolver resolver, Map<String,VariableMetadata> allVarMetadata)
         throws TemplateIOException
     {
         // delete target directory's contents, and copy source folder's contents into it
         prepareFolders();
         
-        
-        
+
         // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
         for(VariableMetadata varMetadata : allVarMetadata.values()) {
@@ -48,7 +48,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
                 throw new TemplateIOException("Template " + fInfo.nId + " not found");
     
             // use regex replace to inject the actual values
-            String resolved = TemplateResolver.resolve(fInfo.string, allVarMetadata);
+            String resolved = resolver.resolve(fInfo.file.getName(), fInfo.string, allVarMetadata);
 
             // save the String to the target directory and overrwrite the existing value if exists
             String outFilename = _outputDir + "/" + addYamlExt(templateId);
@@ -105,13 +105,10 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private static String addYamlExt(String f) {
         if(f == null) return null;
 
-        // if filename already has an extension, then use that
-        String ext = f.substring(f.lastIndexOf(".")+1, f.length());
-        if(ext.length() > 0)
-            return f;
-        // otherwise, add .yml to the end
+        if(f.trim().lastIndexOf('.') < 0)
+            return f.trim() + ".yml";
         else
-            return f + ".yml";
+            return f;
     }
 }
 
