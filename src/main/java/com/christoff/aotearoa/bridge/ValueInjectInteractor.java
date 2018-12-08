@@ -1,22 +1,20 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataBuilder;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
-import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolver;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
-import com.christoff.aotearoa.intern.view.IServicePresenter;
+import com.christoff.aotearoa.intern.gateway.view.IServicePresenter;
 import java.util.*;
 
 public class ValueInjectInteractor
 {
-    public static final String USE = "use";
-    public static final String VARIABLES = "variables";
-    
-    private IVariableMetadataGateway _metadataGateway;
+    private IMetadataGateway _metadataGateway;
     private IPersistenceGateway _persistenceGateway;
     private IServicePresenter _presenter;
     private IValueGateway _valueGateway;
@@ -25,7 +23,7 @@ public class ValueInjectInteractor
     private ValueInjectRequest _rq = null;
     
     public ValueInjectInteractor(
-        IVariableMetadataGateway metadataGateway,
+        IMetadataGateway metadataGateway,
         IPersistenceGateway persistenceGateway,
         IValueGateway valueGateway,
         ITransformGateway transformGateway,
@@ -54,13 +52,13 @@ public class ValueInjectInteractor
 
         
         // gather all values and variable metadata
-        Map<String, VariableMetadata> allVarMetadata = _metadataGateway.getAllConfigMetadata();
+        Map<String, Metadata> allVarMetadata = MetadataBuilder.getAllMetadata(_metadataGateway);
 
 
         // add concrete values and transforms to metadata
-        for (VariableMetadata varMeta : allVarMetadata.values())
+        for (Metadata varMeta : allVarMetadata.values())
         {
-            // set the variable value
+            // set the variable values
             List<Object> values = _valueGateway.get(varMeta);
             if(values == null || values.isEmpty())
                 throw new MetadataException("There is no metadata for the value with tag " + varMeta.getName());
@@ -68,7 +66,7 @@ public class ValueInjectInteractor
 
             // set the transform for the variable
             // - get the transform name
-            List<String> transformNames = varMeta.getProperty(VariableMetadata.OUTPUT);
+            List<String> transformNames = varMeta.getProperty(Metadata.OUTPUT);
             if(transformNames == null || transformNames.isEmpty())
                 throw new MetadataException("No transformations specified in metadata for tag " + varMeta.getName());
             // - get the transform
@@ -80,11 +78,11 @@ public class ValueInjectInteractor
             varMeta.setTransformation(transform);
         }
 
-        TemplateResolver resolver = new TemplateResolver();
-        _persistenceGateway.persistValues(resolver, allVarMetadata);
+        // resolve and persist the templates
+        _persistenceGateway.persistValues(TemplateRegexResolver::resolve, allVarMetadata);
 
         // check if any metadata went unused
-        for(VariableMetadata vm : allVarMetadata.values())
+        for(Metadata vm : allVarMetadata.values())
             if(!vm.getUsed())
                 _presenter.tagDefinedNotUsed(vm.getName());
         

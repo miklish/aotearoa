@@ -13,7 +13,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 import java.util.List;
 
-public class TransformFileAESEncryptor implements ITransform {
+public class TransformAESEncryptor implements ITransform {
     private static final String FRAMEWORK_NAME = "light";
     public static final String CRYPT_PREFIX = "CRYPT";
     private static final int ITERATIONS = 65536;
@@ -24,7 +24,7 @@ public class TransformFileAESEncryptor implements ITransform {
     private Cipher cipher;
     private BASE64Encoder base64Encoder;
     
-    public TransformFileAESEncryptor() {
+    public TransformAESEncryptor() {
         try {
             /* Derive the key, given password and salt. */
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");

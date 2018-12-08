@@ -4,17 +4,17 @@ import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
-import com.christoff.aotearoa.intern.view.IServicePresenter;
+import com.christoff.aotearoa.intern.gateway.view.IServicePresenter;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
 import com.christoff.aotearoa.extern.gateway.transform.TransformServerGateway;
 import com.christoff.aotearoa.extern.gateway.transform.TransformFileGateway;
-import com.christoff.aotearoa.extern.view.PresenterCLI;
+import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class Bootstrap
             transformGateway = new TransformFileGateway();
 
         // - Select Metadata Gateway
-        IVariableMetadataGateway metadataGateway = new MetadataFileGateway(
+        IMetadataGateway metadataGateway = new MetadataFileGateway(
             (String) optionInput.valueOf(METADATA_ID));
 
 

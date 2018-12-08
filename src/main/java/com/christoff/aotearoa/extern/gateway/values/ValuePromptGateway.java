@@ -1,6 +1,6 @@
 package com.christoff.aotearoa.extern.gateway.values;
 
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
 
@@ -10,29 +10,29 @@ import java.util.Scanner;
 public class ValuePromptGateway implements IValueGateway
 {
     @Override
-    public List<Object> get(VariableMetadata vm)
+    public List<Object> get(Metadata vm)
         throws ValueException
     {
         // inspect variable metadata
 
-        List<String> sMin = vm.getProperty(VariableMetadata.MIN);
-        errorCheck(vm.getName(), VariableMetadata.MIN, sMin);
+        List<String> sMin = vm.getProperty(Metadata.MIN);
+        errorCheck(vm.getName(), Metadata.MIN, sMin);
         Integer min = Integer.parseInt(sMin.get(0));
 
-        List<String> sMax = vm.getProperty(VariableMetadata.MAX);
-        errorCheck(vm.getName(), VariableMetadata.MAX, sMax);
+        List<String> sMax = vm.getProperty(Metadata.MAX);
+        errorCheck(vm.getName(), Metadata.MAX, sMax);
         Integer max;
         if(sMax.get(0).trim().toLowerCase().equals("inf"))
             max = Integer.MAX_VALUE;
         else
             max = Integer.parseInt(sMax.get(0));
 
-        List<String> sPrompt = vm.getProperty(VariableMetadata.PROMPT_TEXT);
-        errorCheck(vm.getName(), VariableMetadata.PROMPT_TEXT, sPrompt);
+        List<String> sPrompt = vm.getProperty(Metadata.PROMPT_TEXT);
+        errorCheck(vm.getName(), Metadata.PROMPT_TEXT, sPrompt);
         String prompt = sPrompt.get(0);
 
-        List<String> sType = vm.getProperty(VariableMetadata.TYPE);
-        errorCheck(vm.getName(), VariableMetadata.TYPE, sType);
+        List<String> sType = vm.getProperty(Metadata.TYPE);
+        errorCheck(vm.getName(), Metadata.TYPE, sType);
         String type = sType.get(0);
 
 

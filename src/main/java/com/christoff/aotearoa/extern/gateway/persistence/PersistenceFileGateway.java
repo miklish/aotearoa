@@ -1,9 +1,9 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
-import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolver;
+import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -22,8 +22,9 @@ public class PersistenceFileGateway implements IPersistenceGateway
         
     }
 
+
     @Override
-    public void persistValues(TemplateResolver resolver, Map<String,VariableMetadata> allVarMetadata)
+    public void persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
         throws TemplateIOException
     {
         // delete target directory's contents, and copy source folder's contents into it
@@ -32,9 +33,9 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
         // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
-        for(VariableMetadata varMetadata : allVarMetadata.values()) {
+        for(Metadata varMetadata : allVarMetadata.values()) {
             // extract the file names that the tag appears in
-            List<String> configFilenames = varMetadata.getProperty(VariableMetadata.FILES);
+            List<String> configFilenames = varMetadata.getProperty(Metadata.FILES);
             templateFileIds.addAll(configFilenames);
         }
 

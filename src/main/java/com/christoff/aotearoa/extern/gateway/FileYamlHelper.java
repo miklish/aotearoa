@@ -27,9 +27,4 @@ public class FileYamlHelper
     public Map<String,Object> loadYaml(String filename) throws IOException {
         return _yaml.load(FileUtils.openInputStream(FileUtils.getFile(filename)));
     }
-
-    public void dump(Map map, String filename) throws IOException {
-        FileWriter writer = new FileWriter(filename);;
-        _yaml.dump(map, writer);
-    }
 }

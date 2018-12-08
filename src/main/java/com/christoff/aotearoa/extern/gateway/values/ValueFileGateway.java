@@ -1,7 +1,7 @@
 package com.christoff.aotearoa.extern.gateway.values;
 
 import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
@@ -26,10 +26,10 @@ public class ValueFileGateway implements IValueGateway
     }
 
     @Override
-    public List<Object> get(VariableMetadata vm)
+    public List<Object> get(Metadata vm)
     {
         if(!(_valueMap.get(vm.getName()) instanceof List))
-            throw new ValueException("Expected a list of values for " + vm.getName());
+            throw new ValueException("No values found for metadata tag " + vm.getName());
         
         return (List<Object>) _valueMap.get(vm.getName());
     }

@@ -1,6 +1,6 @@
 package com.christoff.aotearoa.intern.gateway.values;
 
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
  *     - should not be an issue, as we only send transformed values (e.g.: once transformed, string are
  *       converted to a single string, in the current version. Specifically, ITransform's only method is
  *       String transform(List<String) val)).
- *     - The way we do this is to always pass variable values wrapped in a VariableMetadata object, so that
+ *     - The way we do this is to always pass variable values wrapped in a Metadata object, so that
  *       implementation of 'save' method can decide the format in which to send the value
  *
  *   - encrypted values:
@@ -34,7 +34,7 @@ import java.util.List;
  *     solution
  *     - we must simply ensure that the implementation of any 'save' methods does not send transformed
  *       strings if the transform happens to be 'encrypt'
- *     - therefore, save functions should save values wrapped inside an accompanying VariableMetadata object
+ *     - therefore, save functions should save values wrapped inside an accompanying Metadata object
  *
  * Additional compatability issue:
  *
@@ -50,5 +50,5 @@ import java.util.List;
  *
  */
 public interface IValueGateway {
-    public List<Object> get(VariableMetadata vm);
+    public List<Object> get(Metadata vm);
 }

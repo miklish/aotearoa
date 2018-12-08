@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class VariableMetadata
+public class Metadata
 {
     /** Metadata properties */
     public static final String MIN = "min";
@@ -24,7 +24,7 @@ public class VariableMetadata
     private ITransform _transform;
     private boolean _isUsed = false;
     
-    public VariableMetadata(
+    public Metadata(
         String varName,
         Map<String,List<String>> varPropertiesMap)
     {

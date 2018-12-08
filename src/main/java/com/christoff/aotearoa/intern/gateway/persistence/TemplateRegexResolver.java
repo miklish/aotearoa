@@ -1,23 +1,24 @@
 package com.christoff.aotearoa.intern.gateway.persistence;
 
+import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
-import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemplateResolver
+public class TemplateRegexResolver //implements TemplateResolverFunction
 {
     private static Pattern p = Pattern.compile("\\{\\{(.*?)\\}\\}");
     
-    public String resolve(String templateName, String template, Map<String, VariableMetadata> map)
+    public static String resolve(String templateName, String template, Map<String, Metadata> map)
     {
         Matcher m = p.matcher(template);
         StringBuffer sb = new StringBuffer();
 
         while (m.find())
         {
-            VariableMetadata variableMetadata = map.get(m.group(1));
+            Metadata variableMetadata = map.get(m.group(1));
             if(variableMetadata == null) {
                 throw new MetadataException(
                     "Tag " + m.group(1) + " appears in template " + templateName + " but does not have any metadata");

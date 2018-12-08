@@ -1,6 +1,6 @@
-package com.christoff.aotearoa.extern.view;
+package com.christoff.aotearoa.extern.gateway.view;
 
-import com.christoff.aotearoa.intern.view.IServicePresenter;
+import com.christoff.aotearoa.intern.gateway.view.IServicePresenter;
 
 public class PresenterCLI implements IServicePresenter
 {
