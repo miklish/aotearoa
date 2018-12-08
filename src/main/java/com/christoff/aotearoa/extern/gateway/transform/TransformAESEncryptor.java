@@ -13,7 +13,8 @@ import java.security.spec.InvalidParameterSpecException;
 import java.security.spec.KeySpec;
 import java.util.List;
 
-public class TransformAESEncryptor implements ITransform {
+public class TransformAESEncryptor implements ITransform
+{
     private static final String FRAMEWORK_NAME = "light";
     public static final String CRYPT_PREFIX = "CRYPT";
     private static final int ITERATIONS = 65536;

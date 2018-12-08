@@ -26,10 +26,11 @@ public class Bootstrap
     private static final String METADATA_ID = "m";
     private static final String TEMPLATE_DIR = "t";
     private static final String CONFIG_VALS_ID = "v";
+    private static final String PROMPTS = "p";
     private static final String OUTPUT_DIR = "o";
     private static final String SERVER_URL = "s";
     private static final String HELP = "h";
-    
+
     
     public static void main(String[] args)
     {
@@ -73,6 +74,15 @@ public class Bootstrap
         // Collect command line options
         boolean usingConfigServer = optionInput.has(SERVER_URL);
         boolean usingFileSystemValues = optionInput.has(CONFIG_VALS_ID);
+        boolean usingConfigFile = optionInput.has(PROMPTS);
+
+        // ensure at least one of prompts and file system config selected
+        if(!usingFileSystemValues && !usingConfigFile)
+        {
+            System.out.println("You must provide values from either a values file or from command line prompts");
+            printHelp(optionConfig);
+            exit(1);
+        }
 
         // - Select Presenter Gateway
         IServicePresenter presenter = new PresenterCLI();
@@ -120,7 +130,8 @@ public class Bootstrap
          * Options
          *   m / metadata   : variable metadata file (required)
          *   t / templates  : template directory (required)
-         *   v / values     : config values file (required in this version -- prompts not yet supported)
+         *   v / values     : config values file (optional)
+         *   p / prompt     : use prompts for values (optional)
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
          *   h / help       : help info
@@ -139,11 +150,17 @@ public class Bootstrap
                 Arrays.asList(inputdirOptions),
                 "Template file folder (required)").withRequiredArg().required();
 
-        /** values */
+        /** values - file */
         final String[] valsOptions = {CONFIG_VALS_ID,"values"};
         optionConfig.acceptsAll(
                 Arrays.asList(valsOptions),
-                "Value file (required)").withRequiredArg().required();
+                "Value file (required)").withRequiredArg();
+
+        /** values - prompts */
+        final String[] promptsOptions = {PROMPTS,"prompts"};
+        optionConfig.acceptsAll(
+                Arrays.asList(promptsOptions),
+                "Use command line prompts to enter values (optional)");
 
         /** local: output dir */
         final String[] outputOptions = {OUTPUT_DIR,"outputdir"};

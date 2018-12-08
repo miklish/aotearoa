@@ -4,6 +4,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,7 +12,7 @@ public class ValuePromptGateway implements IValueGateway
 {
     @Override
     public List<Object> get(Metadata vm)
-        throws ValueException
+            throws ValueException
     {
         // inspect variable metadata
 
@@ -22,7 +23,7 @@ public class ValuePromptGateway implements IValueGateway
         List<String> sMax = vm.getProperty(Metadata.MAX);
         errorCheck(vm.getName(), Metadata.MAX, sMax);
         Integer max;
-        if(sMax.get(0).trim().toLowerCase().equals("inf"))
+        if (sMax.get(0).trim().toLowerCase().equals("inf"))
             max = Integer.MAX_VALUE;
         else
             max = Integer.parseInt(sMax.get(0));
@@ -36,44 +37,27 @@ public class ValuePromptGateway implements IValueGateway
         String type = sType.get(0);
 
 
-
         // create a scanner so we can read the command-line input
         Scanner scanner = new Scanner(System.in);
 
-        //  prompt for the user's name
-        System.out.print("Enter your name: ");
+        // get the variable type
+        System.out.print("[" + vm.getProperty(Metadata.PROMPT_TEXT).get(0) + "]: ");
 
         // get their input as a String
-        String username = scanner.next();
+        String value = scanner.next();
 
-        // prompt for their age
-        System.out.print("Enter your age: ");
+        List<Object> retVal = new LinkedList<>();
+        retVal.add(value);
 
-        // get the age as an int
-        int age = scanner.nextInt();
-
-        System.out.println(String.format("%s, your age is %d", username, age));
-
-        return null;
+        return retVal;
     }
 
     private static void errorCheck(String varName, String paramName, List<String> val)
-        throws ValueException
+            throws ValueException
     {
-        if(val == null || val.size() == 0) error(varName, paramName);
-
-        for(String s : val)
-            if(s == null)
-                error(varName, paramName);
+        if (val == null || val.size() == 0 || !val.stream().allMatch(s -> s != null)) {
+            String msg = "No value found for property " + paramName + " in metadata for tag " + varName;
+            throw new ValueException(msg);
+        }
     }
-
-    private static void error(String varName, String paramName)
-        throws ValueException
-    {
-        String msg = "No value found for property " + paramName + " in metadata for tag " + varName;
-        throw new ValueException(msg);
-    }
-
-
-
 }

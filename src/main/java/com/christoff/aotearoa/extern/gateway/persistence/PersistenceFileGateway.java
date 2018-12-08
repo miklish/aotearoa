@@ -22,7 +22,6 @@ public class PersistenceFileGateway implements IPersistenceGateway
         
     }
 
-
     @Override
     public void persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
         throws TemplateIOException

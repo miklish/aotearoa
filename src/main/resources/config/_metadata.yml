@@ -114,7 +114,7 @@ variables:
     type: encrypt
     prompt-text: Enter the server truststore password
     files:
-    - secret
+    - server
 
   # Server security
   jwt-security:
