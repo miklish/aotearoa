@@ -3,6 +3,7 @@ package com.christoff.aotearoa.intern.gateway.values;
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 
 import java.util.List;
+import java.util.Map;
 
 /***
  * Facilitates access to config values.
@@ -51,4 +52,5 @@ import java.util.List;
  */
 public interface IValueGateway {
     public List<Object> get(Metadata vm);
+    public void setMetadata(Map<String, Metadata> allVarMetadata);
 }

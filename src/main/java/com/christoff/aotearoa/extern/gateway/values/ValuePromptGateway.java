@@ -6,13 +6,17 @@ import com.christoff.aotearoa.intern.gateway.values.ValueException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ValuePromptGateway implements IValueGateway
 {
     @Override
+    public void setMetadata(Map<String, Metadata> allVarMetadata) {}
+
+    @Override
     public List<Object> get(Metadata vm)
-            throws ValueException
+        throws ValueException
     {
         // inspect variable metadata
 

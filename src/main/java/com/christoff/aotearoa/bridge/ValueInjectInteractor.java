@@ -53,7 +53,8 @@ public class ValueInjectInteractor
         
         // gather all values and variable metadata
         Map<String, Metadata> allVarMetadata = MetadataBuilder.getAllMetadata(_metadataGateway);
-
+        // provide all metadata to ValueGateway (some implementations require all metadata at once)
+        _valueGateway.setMetadata(allVarMetadata);
 
         // add concrete values and transforms to metadata
         for (Metadata varMeta : allVarMetadata.values())

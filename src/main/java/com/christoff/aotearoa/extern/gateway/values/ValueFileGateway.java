@@ -26,6 +26,9 @@ public class ValueFileGateway implements IValueGateway
     }
 
     @Override
+    public void setMetadata(Map<String, Metadata> allVarMetadata) {}
+
+    @Override
     public List<Object> get(Metadata vm)
     {
         if(!(_valueMap.get(vm.getName()) instanceof List))
