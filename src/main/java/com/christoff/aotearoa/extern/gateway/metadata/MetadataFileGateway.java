@@ -1,6 +1,6 @@
-package com.christoff.aotearoa.extern.gateway.metadata.local;
+package com.christoff.aotearoa.extern.gateway.metadata;
 
-import com.christoff.aotearoa.extern.gateway.persistence.local.FileSystemHelper;
+import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
@@ -13,16 +13,16 @@ import java.util.LinkedList;
     This class returns both the variable metadata and the values of variables
     required in config files
  */
-public class VariableMetadataFileGateway implements IVariableMetadataGateway
+public class MetadataFileGateway implements IVariableMetadataGateway
 {
     public static final String VARIABLES = "variables";
     private String _metadataFilename;
-    private FileSystemHelper _fileSysHelper;
+    private PersistenceFileHelper _fileSysHelper;
     private Map<String, VariableMetadata> _allVarMetadata;
 
-    public VariableMetadataFileGateway(String metadataFilename) {
+    public MetadataFileGateway(String metadataFilename) {
         _metadataFilename = metadataFilename;
-        _fileSysHelper = new FileSystemHelper();
+        _fileSysHelper = new PersistenceFileHelper();
         _allVarMetadata = initAllConfigMetadata();
     }
     

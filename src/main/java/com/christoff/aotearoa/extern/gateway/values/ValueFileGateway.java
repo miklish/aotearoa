@@ -1,6 +1,6 @@
-package com.christoff.aotearoa.extern.gateway.values.local;
+package com.christoff.aotearoa.extern.gateway.values;
 
-import com.christoff.aotearoa.extern.gateway.YamlHelper;
+import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -13,11 +13,11 @@ import java.util.Map;
 public class ValueFileGateway implements IValueGateway
 {
     private Map<String,Object> _valueMap;
-    private YamlHelper _yamlHelper;
+    private FileYamlHelper _yamlHelper;
 
     public ValueFileGateway(String valueFile) {
 
-        _yamlHelper = new YamlHelper();
+        _yamlHelper = new FileYamlHelper();
         try {
             _valueMap = _yamlHelper.loadYaml(valueFile);
         } catch (IOException e) {

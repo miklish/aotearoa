@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.extern.gateway.persistence.local;
+package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
@@ -13,12 +13,12 @@ public class PersistenceFileGateway implements IPersistenceGateway
 {
     private String _templateDir;
     private String _outputDir;
-    private FileSystemHelper _filesysHelp;
+    private PersistenceFileHelper _filesysHelp;
 
     public PersistenceFileGateway(String templateFileFolder, String outputDir) {
         _templateDir = templateFileFolder;
         _outputDir = outputDir;
-        _filesysHelp = new FileSystemHelper();
+        _filesysHelp = new PersistenceFileHelper();
         
     }
 
@@ -42,7 +42,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         {
             // open the template file as a String
             String filename = _templateDir + "/" + addYamlExt(templateId);
-            FileSystemHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
+            PersistenceFileHelper.FileInfo fInfo = _filesysHelp.getFileInfo(filename, false, true);
             // - ensure file exists
             if(!fInfo.exists || !fInfo.isFile)
                 throw new TemplateIOException("Template " + fInfo.nId + " not found");
@@ -52,7 +52,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
             // save the String to the target directory and overrwrite the existing value if exists
             String outFilename = _outputDir + "/" + addYamlExt(templateId);
-            FileSystemHelper.FileInfo outFInfo = _filesysHelp.getFileInfo(outFilename, false, false);
+            PersistenceFileHelper.FileInfo outFInfo = _filesysHelp.getFileInfo(outFilename, false, false);
             
             try {
                 // writeStringToFile(File file, String data, String encoding)
@@ -68,8 +68,8 @@ public class PersistenceFileGateway implements IPersistenceGateway
     {
         // clean target directory and copy contents of source directory into
         // - ensure target and source directories are not the same
-        FileSystemHelper.FileInfo templateDirFile = _filesysHelp.getFileInfo(_templateDir, false, false);
-        FileSystemHelper.FileInfo outputDirFile = _filesysHelp.getFileInfo(_outputDir, false, false);
+        PersistenceFileHelper.FileInfo templateDirFile = _filesysHelp.getFileInfo(_templateDir, false, false);
+        PersistenceFileHelper.FileInfo outputDirFile = _filesysHelp.getFileInfo(_outputDir, false, false);
         
         if(!templateDirFile.exists || templateDirFile.isFile)
             throw new TemplateIOException(
@@ -135,11 +135,11 @@ import static org.apache.commons.io.FilenameUtils.*;
 
 public class ServiceConfigFileGateway implements IServiceConfigDataGateway
 {
-    private YamlHelper _yamlHelper;
+    private FileYamlHelper _yamlHelper;
 
     public ServiceConfigFileGateway()
     {
-        _yamlHelper = new YamlHelper();
+        _yamlHelper = new FileYamlHelper();
     }
 
 

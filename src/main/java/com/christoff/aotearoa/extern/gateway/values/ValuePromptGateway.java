@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.extern.gateway.values.local;
+package com.christoff.aotearoa.extern.gateway.values;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
@@ -73,6 +73,7 @@ public class ValuePromptGateway implements IValueGateway
         String msg = "No value found for property " + paramName + " in metadata for tag " + varName;
         throw new ValueException(msg);
     }
+
 
 
 }

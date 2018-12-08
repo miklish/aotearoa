@@ -3,18 +3,18 @@ package com.christoff.aotearoa;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
-import com.christoff.aotearoa.extern.gateway.persistence.local.PersistenceFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IVariableMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.view.IServicePresenter;
-import com.christoff.aotearoa.extern.gateway.metadata.local.VariableMetadataFileGateway;
-import com.christoff.aotearoa.extern.gateway.values.local.ValueFileGateway;
-import com.christoff.aotearoa.extern.gateway.values.local.ValuePromptGateway;
-import com.christoff.aotearoa.extern.gateway.transform.configserver.TransformServerGateway;
-import com.christoff.aotearoa.extern.gateway.transform.local.TransformFileGateway;
-import com.christoff.aotearoa.extern.view.CLIServicePresenter;
+import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.transform.TransformServerGateway;
+import com.christoff.aotearoa.extern.gateway.transform.TransformFileGateway;
+import com.christoff.aotearoa.extern.view.PresenterCLI;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class Bootstrap
         boolean usingFileSystemValues = optionInput.has(CONFIG_VALS_ID);
 
         // - Select Presenter Gateway
-        IServicePresenter presenter = new CLIServicePresenter();
+        IServicePresenter presenter = new PresenterCLI();
         
         // - Select Persistence Gateway
         IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
@@ -97,7 +97,7 @@ public class Bootstrap
             transformGateway = new TransformFileGateway();
 
         // - Select Metadata Gateway
-        IVariableMetadataGateway metadataGateway = new VariableMetadataFileGateway(
+        IVariableMetadataGateway metadataGateway = new MetadataFileGateway(
             (String) optionInput.valueOf(METADATA_ID));
 
 

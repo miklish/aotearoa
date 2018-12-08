@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.extern.gateway.persistence.configserver;
+package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.VariableMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;

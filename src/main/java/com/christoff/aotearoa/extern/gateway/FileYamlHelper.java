@@ -8,12 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-public class YamlHelper
+public class FileYamlHelper
 {
     private Yaml _yaml;
     private DumperOptions _options;
 
-    public YamlHelper() {
+    public FileYamlHelper() {
         _options = new DumperOptions();
         _options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         _options.setPrettyFlow(true);

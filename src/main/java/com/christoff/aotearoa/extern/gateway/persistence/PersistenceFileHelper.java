@@ -1,21 +1,22 @@
-package com.christoff.aotearoa.extern.gateway.persistence.local;
+package com.christoff.aotearoa.extern.gateway.persistence;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import com.christoff.aotearoa.extern.gateway.YamlHelper;
+
+import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import org.apache.commons.io.FileUtils;
 import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.commons.io.FilenameUtils.normalize;
 
-public class FileSystemHelper
+public class PersistenceFileHelper
 {
-    private YamlHelper _yamlHelper;
+    private FileYamlHelper _yamlHelper;
 
-    public FileSystemHelper() {
-        _yamlHelper = new YamlHelper();
+    public PersistenceFileHelper() {
+        _yamlHelper = new FileYamlHelper();
     }
 
     public class FileInfo
