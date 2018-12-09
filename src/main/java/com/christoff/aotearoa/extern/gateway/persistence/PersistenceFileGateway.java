@@ -32,12 +32,12 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
         // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
-        for(Metadata varMetadata : allVarMetadata.values()) {
+        for(Metadata vm : allVarMetadata.values()) {
             // extract the file names that the tag appears in
-            List<String> configFilenames = varMetadata.getProperty(Metadata.FILES);
+            List<String> configFilenames = vm.getProperty(Metadata.FILES);
             templateFileIds.addAll(configFilenames);
         }
-
+        
         for(String templateId : templateFileIds)
         {
             // open the template file as a String

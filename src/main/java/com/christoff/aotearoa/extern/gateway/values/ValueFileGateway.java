@@ -3,6 +3,7 @@ package com.christoff.aotearoa.extern.gateway.values;
 import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataValidator;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
 

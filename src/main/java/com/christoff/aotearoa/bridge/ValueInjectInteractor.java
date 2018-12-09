@@ -1,25 +1,21 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataBuilder;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
+import com.christoff.aotearoa.intern.gateway.metadata.*;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
-import com.christoff.aotearoa.intern.gateway.view.IServicePresenter;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 import java.util.*;
 
 public class ValueInjectInteractor
 {
     private IMetadataGateway _metadataGateway;
     private IPersistenceGateway _persistenceGateway;
-    private IServicePresenter _presenter;
+    private IPresenter _presenter;
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
-    
     private ValueInjectRequest _rq = null;
     
     public ValueInjectInteractor(
@@ -27,7 +23,7 @@ public class ValueInjectInteractor
         IPersistenceGateway persistenceGateway,
         IValueGateway valueGateway,
         ITransformGateway transformGateway,
-        IServicePresenter presenter
+        IPresenter presenter
     ) {
         _metadataGateway = metadataGateway;
         _persistenceGateway = persistenceGateway;
@@ -44,48 +40,61 @@ public class ValueInjectInteractor
         
         // TODO: decide how to handle 'use-values' in a generic way
         //Map<String,Object> useMap = getUseMap();
-        
+
         
         // TODO: Add code to handle certs
         // Create a 'certs' section in the _values.yml file
         // https://www.baeldung.com/java-keystore
 
         
-        // gather all values and variable metadata
+        // Gather all values and variable metadata
         Map<String, Metadata> allVarMetadata = MetadataBuilder.getAllMetadata(_metadataGateway);
+        
+        // Validate metadata
+        for(Metadata vm : allVarMetadata.values()) MetadataValidator.validateMetadata(vm);
+        
         // provide all metadata to ValueGateway (some implementations require all metadata at once)
         _valueGateway.setMetadata(allVarMetadata);
 
-        // add concrete values and transforms to metadata
+        // Add concrete values and transforms to metadata
         for (Metadata varMeta : allVarMetadata.values())
         {
-            // set the variable values
+            // Set the variable values
             List<Object> values = _valueGateway.get(varMeta);
             if(values == null || values.isEmpty())
-                throw new MetadataException("There is no metadata for the value with tag " + varMeta.getName());
+                throw new MetadataException(
+                    "There is no metadata for the value with tag " + varMeta.getName());
             varMeta.setValues(values);
 
-            // set the transform for the variable
+            
+            // Set the transform for the variable
+            
             // - get the transform name
             List<String> transformNames = varMeta.getProperty(Metadata.OUTPUT);
             if(transformNames == null || transformNames.isEmpty())
-                throw new MetadataException("No transformations specified in metadata for tag " + varMeta.getName());
+                throw new MetadataException(
+                    "No transformations specified in metadata for tag " + varMeta.getName());
+            
             // - get the transform
             ITransform transform = _transformGateway.get(transformNames.get(0));
             if(transform == null)
                 throw new MetadataException(
-                    "Transformation " + transformNames.get(0) + "is not a valid transform for metadata tag " + varMeta.getName());
+                    "Transformation " + transformNames.get(0) +
+                    "is not a valid transform for metadata tag " + varMeta.getName());
+            
             // set the transform
             varMeta.setTransformation(transform);
         }
 
-        // resolve and persist the templates
-        _persistenceGateway.persistValues(TemplateRegexResolver::resolve, allVarMetadata);
+        // Resolve and persist the templates
+        _presenter.persistingValuesBegin();
+        _persistenceGateway.persistValues(
+            TemplateRegexResolver::resolve, allVarMetadata);
+        _presenter.persistingValuesEnd();
 
-        // check if any metadata went unused
+        // Check if any metadata went unused
         for(Metadata vm : allVarMetadata.values())
-            if(!vm.getUsed())
-                _presenter.tagDefinedNotUsed(vm.getName());
+            if(!vm.getUsed()) _presenter.tagDefinedNotUsed(vm.getName());
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }

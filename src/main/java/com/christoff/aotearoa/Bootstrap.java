@@ -8,7 +8,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
-import com.christoff.aotearoa.intern.gateway.view.IServicePresenter;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
@@ -85,7 +85,7 @@ public class Bootstrap
         }
 
         // - Select Presenter Gateway
-        IServicePresenter presenter = new PresenterCLI();
+        IPresenter presenter = new PresenterCLI();
         
         // - Select Persistence Gateway
         IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
