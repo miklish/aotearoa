@@ -8,7 +8,7 @@ AOtearoa starts with template files. A template is a normal text configuration f
 ##### security.yml
 ```yaml
 # Enable JWT verification flag.
-enableVerifyJwt: {jwt-security}
+enableVerifyJwt: {{jwt-security}}
 
 # Enable JWT scope verification. Only valid when enableVerifyJwt is true.
 enableVerifyScope: true
@@ -19,10 +19,10 @@ enableMockJwt: false
 # JWT signature public certificates. kid and certificate path mappings.
 jwt:
   certificate:
-    '100': {oauth-certificate}
+    '100': {{oauth-certificate}}
   clockSkewInSeconds: 60
   
-oauth-password: {auth-password}
+oauth-password: {{auth-password}}
 ```
 
 The tags `{jwt-security}` and `{oauth-certificate}` take their values from a 'values' file:
