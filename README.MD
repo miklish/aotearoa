@@ -221,7 +221,7 @@ Some examples are below:
  
 ##### Use value file
 ```
-$ java -jar aotearoa             \     
+$ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
     -o ./config-out              \ # output folder
@@ -230,7 +230,7 @@ $ java -jar aotearoa             \
     
 ##### Use prompts
 ```
-$ java -jar aotearoa             \               
+$ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
     -o ./config-out              \ # output folder
