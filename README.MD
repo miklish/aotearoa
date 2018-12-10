@@ -217,7 +217,7 @@ with the appropriate arguments:
 Some examples are below:
 
 ##### Use value file
-```zsh
+```bash
 $ java -jar aotearoa             \     
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
@@ -226,7 +226,7 @@ $ java -jar aotearoa             \
 ```    
     
 ##### Use prompts
-```zsh
+```bash
 $ java -jar aotearoa             \               
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
