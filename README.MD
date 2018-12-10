@@ -61,7 +61,7 @@ oauth-certificate:
 tableau-password:
   - password  
 ```
-
+ 
 As you can see in the examples above, you can use different value files for different environments. 
 
 # Metadata files
@@ -109,7 +109,8 @@ variables:
     files:
     - secret
 ```
-
+ 
+  
 Note that you specify the template file(s) that each value should be injected into, in the file section of the value's metadata entry. If the file name ends in '.yml', then you may omit the extension (e.g.: a file entry of 'secret' will cause aotearo to scan the file 'secret.yml' in the template folder). However, if you need to inject values into a file that ends in an extension that is different than '.yml', you can put in the full filename (e.g.: you could enter 'logback.xml' if you need to inject values into a template for slf4j). 
 
 # Values
@@ -130,6 +131,7 @@ oauth-certificate:
 tableau-password:
   - password
 ```
+ 
 All values must be entered as elements of a Yaml list (even if there is only a single entry).
 
 ##### Transforms
@@ -153,6 +155,7 @@ will be converted to `value1,value2,value3` prior to being inserted.
 
 #### Command line prompts
 If command line prompts are chosen as the method to input values, then on the command line, the user would see the following:  
+  
 ```
 Type \\q to quit
 [Enable (true) or disable (false) JWT verification security]: true
@@ -168,7 +171,7 @@ Next entry requires between 1 and inf values. Enter \\n to complete.
 [Tableau password (this will be encrypted)]: password
 Resolving templates...done.
 ```
-
+ 
 #### Local web form
 Not yet implemented.
 
@@ -213,11 +216,11 @@ with the appropriate arguments:
     <td>Value file (optional)</td>
  </tr>
 </table>
-
+ 
 Some examples are below:
-
+ 
 ##### Use value file
-```bash
+```
 $ java -jar aotearoa             \     
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
@@ -226,7 +229,7 @@ $ java -jar aotearoa             \
 ```    
     
 ##### Use prompts
-```bash
+```
 $ java -jar aotearoa             \               
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
