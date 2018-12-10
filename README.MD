@@ -218,7 +218,7 @@ Some examples are below:
 
 ##### Use value file
 ```zsh
-$ java -jar aotearoa             
+$ java -jar aotearoa             \     
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
     -o ./config-out              \ # output folder
