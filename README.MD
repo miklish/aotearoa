@@ -1,4 +1,4 @@
-# AOtearoa 1.1.0
+# AOtearoa
 ## Overview
 Aotearoa is a command line tool that allows Application Operations teams generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
 
@@ -141,7 +141,7 @@ The metadata file allows the input to be transformed. In the current version, 3 
 
 The `copy` transform simply pastes the value in as-is.
 
-The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. E.g.: The tableau password (set as password above) will appear as CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs= in secret.yml.
+The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. E.g.: The tableau password (set as password above) will appear as `CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs=` in secret.yml.
 
 The `comma-separated` transform concatenates elements in the list and separates them with commas. E.g.: the list
 ```yaml
@@ -175,14 +175,14 @@ Not yet implemented.
 # Command line arguments
 To run aotearoa, you would run
 
-`$ java -jar aotearoa-1.1.0.jar [arguments...]`
+`$ java -jar aotearoa.jar [arguments...]`
 
 with the appropriate arguments:
 
 <table border="0">
  <tr>
-    <td><span pan style="font-size:30px;">Command</td>
-    <td><span style="font-size:30px">Description</b></td>
+    <td><span pan style="font-size:15px;">Command</td>
+    <td><span style="font-size:15px">Description</b></td>
  </tr>
  <tr>
     <td>-h, --help</td>
@@ -212,4 +212,24 @@ with the appropriate arguments:
     <td>-v, --values <String></td>
     <td>Value file (optional)</td>
  </tr>
-</table>  
+</table>
+
+Some examples are below:
+
+##### Use value file
+```zsh
+$ java -jar aotearoa             
+    -m ./templates/_metadata.yml \ # metadata file
+    -t ./templates               \ # template files directory       
+    -o ./config-out              \ # output folder
+    -v ./templates/_values.yml   \ # values file
+```    
+    
+##### Use prompts
+```zsh
+$ java -jar aotearoa             \               
+    -m ./templates/_metadata.yml \ # metadata file
+    -t ./templates               \ # template files directory
+    -o ./config-out              \ # output folder
+    -p                             # values from prompts
+```    
