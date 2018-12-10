@@ -154,7 +154,7 @@ public class Bootstrap
         final String[] valsOptions = {CONFIG_VALS_ID,"values"};
         optionConfig.acceptsAll(
                 Arrays.asList(valsOptions),
-                "Value file (required)").withRequiredArg();
+                "Value file (optional)").withRequiredArg();
 
         /** values - prompts */
         final String[] promptsOptions = {PROMPTS,"prompts"};

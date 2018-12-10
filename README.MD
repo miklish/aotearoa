@@ -75,7 +75,7 @@ variables:
     output:
     - copy
     type: string
-    prompt-text: Set to true to turn on JWT verifcation, false otherwise
+    prompt-text: Enable (true) or disable (false) JWT verification security
     files:
     - security
     
@@ -85,7 +85,7 @@ variables:
     output:
     - comma-separated
     type: string
-    prompt-text: Provide a list of one or more urls for the database (primary and failover instances). Include the ports.
+    prompt-text: Provide a list of one or more urls for the database
     files:
     - datasource    
 
@@ -95,7 +95,7 @@ variables:
     output:
     - copy
     type: string
-    prompt-text: Tableau server certificate file name
+    prompt-text: Enter the name of the OAuth (Auth Server) certificate
     files:
     - security
 
@@ -158,15 +158,14 @@ Type \\q to quit
 [Enable (true) or disable (false) JWT verification security]: true
 
 Next entry requires between 1 and inf values. Enter \\n to complete.
-[Enter the Postgres database urls (including ports)]: 
+[Provide a list of one or more urls for the database]: 
 [Value 1]: tss-postgres-01.biz.com:7373
 [Value 2]: tss-postgres-02.biz.com:7373
 [Value 3]: tss-postgres-03.biz.com:7390
 [Value 4]: \\n
 
 [Enter the name of the OAuth (Auth Server) certificate]: oauth.pem
-[Enter the Tableau functional ID username]: my-tableau-username
-[Enter the Tableau functional ID password]: password
+[Tableau password (this will be encrypted)]: password
 Resolving templates...done.
 ```
 
@@ -176,7 +175,7 @@ Not yet implemented.
 # Command line arguments
 To run aotearoa, you would run
 
-$ java -jar aotearoa-1.1.0.jar
+`$ java -jar aotearoa-1.1.0.jar [arguments...]`
 
 with the appropriate arguments:
 
@@ -211,6 +210,6 @@ with the appropriate arguments:
  </tr>
  <tr>
     <td>-v, --values <String></td>
-    <td>Value file (required)</td>
+    <td>Value file (optional)</td>
  </tr>
 </table>  
