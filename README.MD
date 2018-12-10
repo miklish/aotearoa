@@ -222,7 +222,7 @@ $ java -jar aotearoa             \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
     -o ./config-out              \ # output folder
-    -v ./templates/_values.yml   \ # values file
+    -v ./templates/_values.yml     # values file
 ```    
     
 ##### Use prompts
