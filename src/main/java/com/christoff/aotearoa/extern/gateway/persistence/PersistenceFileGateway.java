@@ -1,9 +1,11 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
+import javafx.scene.media.MediaException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -13,11 +15,13 @@ public class PersistenceFileGateway implements IPersistenceGateway
 {
     private String _templateDir;
     private String _outputDir;
+    private String _keystoreMetadataFilename;
     private PersistenceFileHelper _filesysHelp;
 
-    public PersistenceFileGateway(String templateFileFolder, String outputDir) {
+    public PersistenceFileGateway(String templateFileFolder, String outputDir, String keystoreMetadataFilename) {
         _templateDir = templateFileFolder;
         _outputDir = outputDir;
+        _keystoreMetadataFilename = keystoreMetadataFilename;
         _filesysHelp = new PersistenceFileHelper();
         
     }
@@ -36,6 +40,19 @@ public class PersistenceFileGateway implements IPersistenceGateway
             // extract the file names that the tag appears in
             List<String> configFilenames = vm.getProperty(Metadata.FILES);
             templateFileIds.addAll(configFilenames);
+        }
+        
+        // add the Keystore Metadata file (if it exists)
+        if(_keystoreMetadataFilename != null && !_keystoreMetadataFilename.equals(""))
+        {
+            PersistenceFileHelper.FileInfo fInfo = _filesysHelp.getFileInfo(
+                _keystoreMetadataFilename, false, false);
+            if
+            (!fInfo.isFile || !fInfo.exists)
+                throw new MetadataException(
+                    "Keystore metadata file " + _keystoreMetadataFilename + " either does not exist or is not a file");
+            
+            templateFileIds.add(fInfo.name);
         }
         
         for(String templateId : templateFileIds)

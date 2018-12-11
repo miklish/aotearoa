@@ -24,6 +24,8 @@ public class PersistenceFileHelper
         public String id = null;
         public String nId = null;
         public File file = null;
+        public String path = null;
+        public String name = null;
         public boolean exists;
         public boolean isFile = true;
         public Map<String, Object> map = null;
@@ -41,6 +43,8 @@ public class PersistenceFileHelper
         info.file = getFile(info.nId);
         info.exists = info.file.exists();
         info.isFile = info.file.isFile();
+        info.name = info.file.getName();
+        info.path = info.file.getPath();
 
         // read in file and render as yaml maps
         if((buildYaml || readToString) && (!info.exists || !info.isFile))

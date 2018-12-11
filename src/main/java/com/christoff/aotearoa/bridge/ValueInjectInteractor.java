@@ -1,6 +1,7 @@
 package com.christoff.aotearoa.bridge;
 
 import com.christoff.aotearoa.intern.gateway.metadata.*;
+import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
@@ -12,7 +13,9 @@ import java.util.*;
 public class ValueInjectInteractor
 {
     private IMetadataGateway _metadataGateway;
+    private IKeystoreMetadataGateway _keystoreMetadataGateway;
     private IPersistenceGateway _persistenceGateway;
+    private IKeystorePersistenceGateway _keystorePersistenceGateway;
     private IPresenter _presenter;
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
@@ -20,13 +23,17 @@ public class ValueInjectInteractor
     
     public ValueInjectInteractor(
         IMetadataGateway metadataGateway,
+        IKeystoreMetadataGateway keystoreMetadataGateway,
         IPersistenceGateway persistenceGateway,
+        IKeystorePersistenceGateway keystorePersistenceGateway,
         IValueGateway valueGateway,
         ITransformGateway transformGateway,
         IPresenter presenter
     ) {
         _metadataGateway = metadataGateway;
+        _keystoreMetadataGateway = keystoreMetadataGateway;
         _persistenceGateway = persistenceGateway;
+        _keystorePersistenceGateway = keystorePersistenceGateway;
         _presenter = presenter;
         _valueGateway = valueGateway;
         _transformGateway = transformGateway;
@@ -91,10 +98,20 @@ public class ValueInjectInteractor
         _persistenceGateway.persistValues(
             TemplateRegexResolver::resolve, allVarMetadata);
         _presenter.persistingValuesEnd();
-
+    
         // Check if any metadata went unused
         for(Metadata vm : allVarMetadata.values())
             if(!vm.getUsed()) _presenter.tagDefinedNotUsed(vm.getName());
+        
+        
+        
+        // Load keystore metadata (if it exists)
+        KeystoreMetadataBuilder.buildCertificateMetadata(
+            _keystoreMetadataGateway.getCertificateMap(),
+            _keystoreMetadataGateway.getKeystoreMap());
+        
+        
+        
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }

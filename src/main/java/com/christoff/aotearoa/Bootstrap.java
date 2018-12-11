@@ -3,8 +3,12 @@ package com.christoff.aotearoa;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
+import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
+import com.christoff.aotearoa.intern.gateway.metadata.IKeystoreMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
+import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
@@ -24,6 +28,7 @@ import static java.lang.System.exit;
 public class Bootstrap
 {
     private static final String METADATA_ID = "m";
+    private static final String KEYSTORE_METADATA_ID = "k";
     private static final String TEMPLATE_DIR = "t";
     private static final String CONFIG_VALS_ID = "v";
     private static final String PROMPTS = "p";
@@ -87,9 +92,12 @@ public class Bootstrap
         // - Select Presenter Gateway
         IPresenter presenter = new PresenterCLI();
         
-        // - Select Persistence Gateway
+        // - Select Persistence Gateways
         IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
             (String) optionInput.valueOf(TEMPLATE_DIR),
+            (String) optionInput.valueOf(OUTPUT_DIR),
+            (String) optionInput.valueOf(KEYSTORE_METADATA_ID));
+        IKeystorePersistenceGateway keystorePersistenceGateway = new KeystorePersistenceFileGateway(
             (String) optionInput.valueOf(OUTPUT_DIR));
     
         // - Select Value Gateway
@@ -106,14 +114,24 @@ public class Bootstrap
         else
             transformGateway = new TransformFileGateway();
 
-        // - Select Metadata Gateway
+        // - Select Metadata Gateways
         IMetadataGateway metadataGateway = new MetadataFileGateway(
             (String) optionInput.valueOf(METADATA_ID));
+        IKeystoreMetadataGateway keystoreMetadataGateway = new KeystoreMetadataFileGateway(
+            (String) optionInput.valueOf(KEYSTORE_METADATA_ID),
+            (String) optionInput.valueOf(OUTPUT_DIR));
 
 
         // Construct ValueInjectInteractor
         ValueInjectInteractor serviceInteractor =
-            new ValueInjectInteractor(metadataGateway, persistenceGateway, valueGateway, transformGateway, presenter);
+            new ValueInjectInteractor(
+                metadataGateway,
+                keystoreMetadataGateway,
+                persistenceGateway,
+                keystorePersistenceGateway,
+                valueGateway,
+                transformGateway,
+                presenter);
         
 
         // Process response
@@ -129,6 +147,7 @@ public class Bootstrap
         /**
          * Options
          *   m / metadata   : variable metadata file (required)
+         *   k / ksmetadata : keystore metadata file (optional)
          *   t / templates  : template directory (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
@@ -137,12 +156,18 @@ public class Bootstrap
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
-
+        
         /** variable metadata file */
         final String[] metadataOptions = {METADATA_ID,"metadata"};
         optionConfig.acceptsAll(
                 Arrays.asList(metadataOptions),
                 "Variable metadata file (required)").withRequiredArg().required();
+    
+        /** keystore metadata file */
+        final String[] keystoreMetadataOptions = {KEYSTORE_METADATA_ID,"ksmetadata"};
+        optionConfig.acceptsAll(
+            Arrays.asList(keystoreMetadataOptions),
+            "Keystore metadata file (optional)").withRequiredArg();
 
         /** local: template dir */
         final String[] inputdirOptions = {TEMPLATE_DIR,"templates"};

@@ -1,5 +1,6 @@
-package com.christoff.aotearoa.extern.gateway.cert;
+package com.christoff.aotearoa.extern.gateway.persistence;
 
+import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,11 +12,11 @@ import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-public class CertificateGateway
+public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
 {
     private String _outputDir;
     
-    public CertificateGateway(String outputDir) {
+    public KeystorePersistenceFileGateway(String outputDir) {
         _outputDir = outputDir;
     }
     
