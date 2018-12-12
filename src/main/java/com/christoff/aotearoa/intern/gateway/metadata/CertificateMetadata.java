@@ -48,10 +48,10 @@ public class CertificateMetadata
     @Override
     public String toString() {
         return "CertificateMetadata{" +
-            "_format='" + _format + '\'' +
-            ", _promptText='" + _promptText + '\'' +
-            ", _filename='" + _filename + '\'' +
-            ", _name='" + _name + '\'' +
+            "format='" + _format + '\'' +
+            ", promptText='" + _promptText + '\'' +
+            ", filename='" + _filename + '\'' +
+            ", name='" + _name + '\'' +
             '}';
     }
 }

@@ -106,12 +106,12 @@ public class ValueInjectInteractor
         
         
         // Load keystore metadata (if it exists)
-        KeystoreMetadataBuilder.buildCertificateMetadata(
+        KeystoreMetadataBuilder ksm = new KeystoreMetadataBuilder(
             _keystoreMetadataGateway.getCertificateMap(),
             _keystoreMetadataGateway.getKeystoreMap());
         
-        
-        
+        if(ksm.getKeystores().size() > 0)
+            _keystorePersistenceGateway.persist(ksm.getKeystores());
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }

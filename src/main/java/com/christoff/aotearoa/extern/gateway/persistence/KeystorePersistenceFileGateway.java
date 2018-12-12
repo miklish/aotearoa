@@ -1,5 +1,6 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
+import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Map;
 
 public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
 {
@@ -18,6 +20,10 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
     
     public KeystorePersistenceFileGateway(String outputDir) {
         _outputDir = outputDir;
+    }
+    
+    @Override
+    public void persist(Map<String, KeystoreMetadata> keystores) {
     }
     
     public static KeyStore createJKSKeystore(String password)

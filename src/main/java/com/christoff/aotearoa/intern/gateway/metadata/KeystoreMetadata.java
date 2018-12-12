@@ -1,7 +1,9 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /***
 - output-keystore-filename: {{server.keystore-filename}}: # this will be the output keystore filename
@@ -21,6 +23,7 @@ public class KeystoreMetadata
     private String _baseKeystoreFilename;
     private String _keystorePassword;
     private List<CertificateMetadata> _certificates = new LinkedList<>();
+    private Map<String,CertificateMetadata> _certByAlias = new HashMap<>();
     
     public String getOutputKeystoreFilename() {
         return _outputKeystoreFilename;
@@ -60,5 +63,24 @@ public class KeystoreMetadata
     
     public void setCertificates(List<CertificateMetadata> certificates) {
         _certificates = certificates;
+    }
+    
+    public CertificateMetadata getCertByAlias(String alias) {
+        return _certByAlias.get(alias);
+    }
+    
+    public void addCertByAlias(String alias, CertificateMetadata cert) {
+        _certByAlias.put(alias,cert);
+    }
+    
+    @Override
+    public String toString() {
+        return "KeystoreMetadata{" +
+            "outputKeystoreFilename='" + _outputKeystoreFilename + '\'' +
+            ", baseKeystoreAction='" + _baseKeystoreAction + '\'' +
+            ", baseKeystoreFilename='" + _baseKeystoreFilename + '\'' +
+            ", keystorePassword='" + _keystorePassword + '\'' +
+            ", certificates=" + _certificates.toString() +
+            '}';
     }
 }

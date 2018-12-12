@@ -3,6 +3,7 @@ package com.christoff.aotearoa.extern.gateway.metadata;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.*;
 
+import java.io.File;
 import java.util.*;
 
 /***
@@ -31,7 +32,7 @@ public class KeystoreMetadataFileGateway implements IKeystoreMetadataGateway
     
     private PersistenceFileHelper _fileSysHelper = new PersistenceFileHelper();
     
-    private List<Map<String,Object>> _keystoreMetadata = null;
+    private Map<String,Object> _keystoreMetadata = null;
     private Map<String,Object> _certificateMetadata = null;
     
     public KeystoreMetadataFileGateway(String keystoreMetadataFilename, String outputDir) {
@@ -39,27 +40,43 @@ public class KeystoreMetadataFileGateway implements IKeystoreMetadataGateway
         _outputDir = outputDir;
     }
     
-    private void loadMaps() throws MetadataIOException
+    private void loadMaps()
+        throws MetadataException
     {
-        if(_keystoreMetadataFilename == null || _keystoreMetadataFilename.equals(""))
-            return;
-    
-        Map<String, Object> allKeystoreConfigMap =
-            _fileSysHelper.getFileInfo(_keystoreMetadataFilename, true, false).map;
-    
-
         // Keystore/Cert metadata is optional, so always return a non-null Map
+        _keystoreMetadata = new HashMap<>();
+        _certificateMetadata = new HashMap<>();
+        
+        if(_keystoreMetadataFilename == null) return;
+        
+        // attempt to load/parse yaml (this will throw exception if yaml not valid)
+        File f = new File(_keystoreMetadataFilename);
+        if(!f.exists() || !f.isFile()) return;
+        
+        String resolvedFilename = _outputDir + "/" + f.getName();
+        Map<String, Object> allKeystoreConfigMap =
+            _fileSysHelper.getFileInfo(resolvedFilename, true, false).map;
         
         // - get certificate metadata
-        Map<String,Object> testCerts = (Map<String, Object>) allKeystoreConfigMap.get(CERTIFICATES);
-        _certificateMetadata = testCerts != null ? testCerts : new HashMap<>();
+        Map<String,Object> testCerts = null;
+        try {
+            testCerts = (Map<String, Object>) allKeystoreConfigMap.get(CERTIFICATES);
+        } catch(ClassCastException e) {
+            throw new MetadataException("'certificates' section of keystore metadata has an invalid format");
+        }
+        _certificateMetadata = testCerts != null ? testCerts : _certificateMetadata;
         
         // - get keystore metadata
-        List<Map<String,Object>> testKeystores = (List<Map<String,Object>>) allKeystoreConfigMap.get(KEYSTORES);
-        _keystoreMetadata = (testKeystores != null && testKeystores.size() > 0) ? testKeystores : new ArrayList<>();
+        Map<String,Object> testKeystores = null;
+        try {
+            testKeystores = (Map<String, Object>) allKeystoreConfigMap.get(KEYSTORES);
+        } catch(ClassCastException e) {
+            throw new MetadataException("'keystores' section of keystore metadata has an invalid format");
+        }
+        _keystoreMetadata = testKeystores != null ? testKeystores : _keystoreMetadata;
     }
     
-    public List<Map<String, Object>> getKeystoreMap()
+    public Map<String,Object> getKeystoreMap()
         throws MetadataException
     {
         if(_keystoreMetadata == null) loadMaps();
