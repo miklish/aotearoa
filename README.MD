@@ -290,7 +290,7 @@ In the example shown above, you'll notice the existence of tags throughout. Sinc
 
 #### Example command line
  
-##### Build configuration and keystores from templates and value file
+###### Build configuration and keystores from templates and value file
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
