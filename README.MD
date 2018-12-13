@@ -288,7 +288,7 @@ This subsection contains the certs you want loaded into the keystore. Each line 
 
 In the example shown above, you'll notice the existence of tags throughout. Since the keystore yaml file is processed after values are read (either from user prompts, from a value file, web form, config server etc...), these values can be included in the keystore yaml. These values will be injected into the keystore yaml prior to processing of the keystore yaml file. Tags can appear anywhere in the keystore yaml and are totally optional.
 
-Example command lines:
+#### Example command line
  
 ##### Build configuration and keystores from templates and value file
 ```
