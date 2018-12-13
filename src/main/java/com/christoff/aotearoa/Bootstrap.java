@@ -147,7 +147,7 @@ public class Bootstrap
         /**
          * Options
          *   m / metadata   : variable metadata file (required)
-         *   k / ksmetadata : keystore metadata file (optional)
+         *   k / kmetadata : keystore metadata file (optional)
          *   t / templates  : template directory (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
@@ -164,7 +164,7 @@ public class Bootstrap
                 "Variable metadata file (required)").withRequiredArg().required();
     
         /** keystore metadata file */
-        final String[] keystoreMetadataOptions = {KEYSTORE_METADATA_ID,"ksmetadata"};
+        final String[] keystoreMetadataOptions = {KEYSTORE_METADATA_ID,"kmetadata"};
         optionConfig.acceptsAll(
             Arrays.asList(keystoreMetadataOptions),
             "Keystore metadata file (optional)").withRequiredArg();

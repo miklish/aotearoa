@@ -215,6 +215,10 @@ with the appropriate arguments:
     <td>-v, --values <String></td>
     <td>Value file (optional)</td>
  </tr>
+ <tr>
+    <td>-k, --kmetadata <String></td>
+    <td>Keystore metadata template (optional)</td>
+ </tr>
 </table>
  
 Some examples are below:
@@ -254,11 +258,11 @@ certificates:
     filename: server.pem                                    # filename of keystore
 
 keystores:
-  {{server-truststore-filename}}:            # this will be the output keystore filename
-    base-keystore-filename: servertrust.jks  # base keystore filename 
-    keystore-password: password              # 'create-new' -> new keystore password, 'use-existing' -> existing keystore password
-    certificates:                            # list of certificates to load into keystore
-      tableau-webserver-cert: tableau-uat    # certificate-reference : alias
+  {{server-truststore-filename}}:                           # this will be the output keystore filename
+    base-keystore-filename: servertrust.jks                 # base keystore filename 
+    keystore-password: password                             # keystore password
+    certificates:                                           # list of certificates to load into keystore
+      tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
       postgres-database-cert: postgres-uat
 ```
 
@@ -283,3 +287,16 @@ This subsection contains the certs you want loaded into the keystore. Each line 
 ##### Tags are allowed
 
 In the example shown above, you'll notice the existence of tags throughout. Since the keystore yaml file is processed after values are read (either from user prompts, from a value file, web form, config server etc...), these values can be included in the keystore yaml. These values will be injected into the keystore yaml prior to processing of the keystore yaml file. Tags can appear anywhere in the keystore yaml and are totally optional.
+
+Example command lines:
+ 
+##### Build configuration and keystores from templates and value file
+```
+$ java -jar aotearoa.jar         \
+    -m ./templates/_metadata.yml \ # metadata file
+    -t ./templates               \ # template files directory       
+    -o ./config-out              \ # output folder
+    -v ./templates/_values.yml   \ # keystore template file
+    -k ./templates/_keystore.yml 
+```    
+    
