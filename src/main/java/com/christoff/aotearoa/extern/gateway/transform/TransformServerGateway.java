@@ -1,14 +1,12 @@
 package com.christoff.aotearoa.extern.gateway.transform;
 
-import com.christoff.aotearoa.extern.gateway.transform.TransformCommaSeparate;
-import com.christoff.aotearoa.extern.gateway.transform.TransformCopy;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TransformServerGateway implements ITransformGateway {
-    
+public class TransformServerGateway implements ITransformGateway
+{
     private static final Map<String,ITransform> _transformMap = new HashMap<>();
     static {
         _transformMap.put("copy", new TransformCopy());

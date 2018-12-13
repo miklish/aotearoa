@@ -7,20 +7,31 @@ import java.io.File;
 import java.util.*;
 
 /***
+
 certificates:
+ 
   tableau-webserver-cert:                                   # this is an internal reference name for the keystore
     format: pem                                             # certificate format
     prompt-text: Tableau webserver public certificate       # prompt text
-    file-name: tableauUAT.pem                               # filename of keystore
+    filename: tableauUAT.pem                                # filename of keystore
+
+  postgres-database-cert:                                   # this is an internal reference name for the keystore
+    format: pem                                             # certificate format
+    prompt-text: Postgres self-signed certificate           # prompt text
+    filename: server.pem                                    # filename of keystore
 
 keystores:
-  - output-keystore-filename: {{server.keystore-filename}}: # this will be the output keystore filename
+ 
+  {{server-truststore-filename}}:                           # this will be the output keystore filename
     base-keystore-action: create-new                        # [ create-new , use-existing ]
-    base-keystore-filename:                                 # base keystore filename (leave blank if none used)
-    keystore-password: password                             # if 'create-new' used this is the new password
-                                                            # if 'use-existing' then this is the existing keystore's password
+    base-keystore-filename: x                               # base keystore filename (leave blank if none used)
+    keystore-password: password                             # 'create-new' -> new keystore password,
+                                                            # 'use-existing' -> existing keystore password
+ 
     certificates:                                           # list of certificates to load into keystore
-      - tableau-webserver-cert: tableau-uat                 # certificate-reference : alias
+      tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
+      postgres-database-cert: postgres-uat
+ 
 */
 public class KeystoreMetadataFileGateway implements IKeystoreMetadataGateway
 {

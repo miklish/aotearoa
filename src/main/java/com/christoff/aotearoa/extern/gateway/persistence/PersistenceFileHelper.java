@@ -32,6 +32,7 @@ public class PersistenceFileHelper
         public String string = null;
     }
 
+    
     public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
         throws
             MetadataException,

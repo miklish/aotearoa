@@ -50,7 +50,8 @@ import java.util.Map;
  *     - push changes to web or file system when save() called
  *
  */
-public interface IValueGateway {
-    public List<Object> get(Metadata vm);
-    public void setMetadata(Map<String, Metadata> allVarMetadata);
+public interface IValueGateway
+{
+    List<Object> get(Metadata vm);
+    void setMetadata(Map<String, Metadata> allVarMetadata);
 }

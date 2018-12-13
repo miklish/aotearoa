@@ -1,6 +1,6 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
-/*
+/***
 tableau-webserver-cert:                                   # this is an internal reference name for the keystore
   format: pem                                             # certificate format
   prompt-text: Tableau webserver public certificate       # prompt text

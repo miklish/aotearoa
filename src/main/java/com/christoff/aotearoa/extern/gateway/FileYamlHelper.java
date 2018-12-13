@@ -13,7 +13,8 @@ public class FileYamlHelper
     private Yaml _yaml;
     private DumperOptions _options;
 
-    public FileYamlHelper() {
+    public FileYamlHelper()
+    {
         _options = new DumperOptions();
         _options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         _options.setPrettyFlow(true);

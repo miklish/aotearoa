@@ -18,12 +18,12 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private String _keystoreMetadataFilename;
     private PersistenceFileHelper _filesysHelp;
 
-    public PersistenceFileGateway(String templateFileFolder, String outputDir, String keystoreMetadataFilename) {
+    public PersistenceFileGateway(String templateFileFolder, String outputDir, String keystoreMetadataFilename)
+    {
         _templateDir = templateFileFolder;
         _outputDir = outputDir;
         _keystoreMetadataFilename = keystoreMetadataFilename;
         _filesysHelp = new PersistenceFileHelper();
-        
     }
 
     @Override
@@ -41,6 +41,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             List<String> configFilenames = vm.getProperty(Metadata.FILES);
             templateFileIds.addAll(configFilenames);
         }
+
         
         // add the Keystore Metadata file (if it exists)
         if(_keystoreMetadataFilename != null && !_keystoreMetadataFilename.equals(""))
@@ -54,6 +55,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             
             templateFileIds.add(fInfo.name);
         }
+        
         
         for(String templateId : templateFileIds)
         {
@@ -79,6 +81,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             }
         }
     }
+
     
     private void prepareFolders()
         throws TemplateIOException
@@ -118,6 +121,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
                 "Could not copy contents of folder" + templateDirFile.nId + " to folder " + outputDirFile.nId);
         }
     }
+
     
     private static String addYamlExt(String f) {
         if(f == null) return null;

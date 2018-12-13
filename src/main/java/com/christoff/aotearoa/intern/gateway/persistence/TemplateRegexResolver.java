@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TemplateRegexResolver //implements TemplateResolverFunction
+public class TemplateRegexResolver
 {
     private static Pattern p = Pattern.compile("\\{\\{(.*?)\\}\\}");
     

@@ -44,67 +44,33 @@ public class ValueInjectInteractor
     {
         _rq = request;
 
-        
-        // TODO: decide how to handle 'use-values' in a generic way
-        //Map<String,Object> useMap = getUseMap();
 
         
-        // TODO: Add code to handle certs
-        // Create a 'certs' section in the _values.yml file
-        // https://www.baeldung.com/java-keystore
-
-        
-        // Gather all values and variable metadata
-        Map<String, Metadata> allVarMetadata = MetadataBuilder.getAllMetadata(_metadataGateway);
+        // Gather all variable metadata
+        Map<String, Metadata> allVarMetadata = MetadataBuilder.build(_metadataGateway.getMetadataMap());
         
         // Validate metadata
         for(Metadata vm : allVarMetadata.values()) MetadataValidator.validateMetadata(vm);
         
-        // provide all metadata to ValueGateway (some implementations require all metadata at once)
+        // Provide metadata to ValueGateway (some implementations require all metadata at once)
         _valueGateway.setMetadata(allVarMetadata);
+    
+        // Inject values and transforms into Metadata
+        allVarMetadata = new MetadataInjector(_valueGateway, _transformGateway).inject(allVarMetadata);
 
-        // Add concrete values and transforms to metadata
-        for (Metadata varMeta : allVarMetadata.values())
-        {
-            // Set the variable values
-            List<Object> values = _valueGateway.get(varMeta);
-            if(values == null || values.isEmpty())
-                throw new MetadataException(
-                    "There is no metadata for the value with tag " + varMeta.getName());
-            varMeta.setValues(values);
 
-            
-            // Set the transform for the variable
-            
-            // - get the transform name
-            List<String> transformNames = varMeta.getProperty(Metadata.OUTPUT);
-            if(transformNames == null || transformNames.isEmpty())
-                throw new MetadataException(
-                    "No transformations specified in metadata for tag " + varMeta.getName());
-            
-            // - get the transform
-            ITransform transform = _transformGateway.get(transformNames.get(0));
-            if(transform == null)
-                throw new MetadataException(
-                    "Transformation " + transformNames.get(0) +
-                    "is not a valid transform for metadata tag " + varMeta.getName());
-            
-            // set the transform
-            varMeta.setTransformation(transform);
-        }
-
+        
         // Resolve and persist the templates
         _presenter.persistingValuesBegin();
-        _persistenceGateway.persistValues(
-            TemplateRegexResolver::resolve, allVarMetadata);
+        _persistenceGateway.persistValues(TemplateRegexResolver::resolve, allVarMetadata);
         _presenter.persistingValuesEnd();
     
         // Check if any metadata went unused
         for(Metadata vm : allVarMetadata.values())
             if(!vm.getUsed()) _presenter.tagDefinedNotUsed(vm.getName());
-        
-        
-        
+
+            
+            
         // Load keystore metadata (if it exists)
         KeystoreMetadataBuilder ksm = new KeystoreMetadataBuilder(
             _keystoreMetadataGateway.getCertificateMap(),
@@ -112,6 +78,8 @@ public class ValueInjectInteractor
         
         if(ksm.getKeystores().size() > 0)
             _keystorePersistenceGateway.persist(ksm.getKeystores());
+
+
         
         return new ValueInjectResponse("Success", "SUCCESS");
     }
