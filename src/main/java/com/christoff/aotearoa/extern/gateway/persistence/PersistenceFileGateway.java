@@ -5,7 +5,6 @@ import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
-import javafx.scene.media.MediaException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;

@@ -2,7 +2,6 @@ package com.christoff.aotearoa.intern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
-
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

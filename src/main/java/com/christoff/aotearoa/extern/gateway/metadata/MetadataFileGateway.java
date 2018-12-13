@@ -2,13 +2,9 @@ package com.christoff.aotearoa.extern.gateway.metadata;
 
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
-import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
-
 import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.LinkedList;
+
 
 /***
     This class returns both the variable metadata and the values of variables

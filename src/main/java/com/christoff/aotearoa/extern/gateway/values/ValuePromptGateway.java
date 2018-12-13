@@ -1,11 +1,8 @@
 package com.christoff.aotearoa.extern.gateway.values;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataValidator;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

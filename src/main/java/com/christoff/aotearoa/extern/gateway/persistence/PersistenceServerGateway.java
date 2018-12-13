@@ -3,7 +3,6 @@ package com.christoff.aotearoa.extern.gateway.persistence;
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
-
 import java.util.Map;
 
 public class PersistenceServerGateway implements IPersistenceGateway

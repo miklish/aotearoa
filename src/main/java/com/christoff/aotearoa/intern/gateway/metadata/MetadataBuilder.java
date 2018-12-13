@@ -1,9 +1,5 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
-import com.christoff.aotearoa.intern.gateway.transform.ITransform;
-import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
-import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

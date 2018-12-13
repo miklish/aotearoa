@@ -1,7 +1,6 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
-
 import java.util.List;
 
 public class MetadataValidator
