@@ -250,12 +250,12 @@ certificates:
   tableau-webserver-cert:                                   # certificate reference name
     format: pem                                             # certificate format
     prompt-text: Tableau webserver public certificate       # prompt text
-    filename: {{tableau-cert-filename}}                     # filename of keystore
+    filename: {{tableau-cert-filename}}                     # filename of certificate
 
   postgres-database-cert:                                   # this is an internal reference name for the keystore
     format: pem                                             # certificate format
     prompt-text: Postgres self-signed certificate           # prompt text
-    filename: server.pem                                    # filename of keystore
+    filename: server.pem                                    # filename of certificate
 
 keystores:
   client.truststore:                                        # this will be the output keystore filename
