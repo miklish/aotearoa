@@ -236,3 +236,50 @@ $ java -jar aotearoa.jar         \
     -o ./config-out              \ # output folder
     -p                             # values from prompts
 ```    
+
+# Keystores
+Aotearoa can also simplify the creation of JKS keystores.
+
+###### Example Keystore YAML:
+```yaml
+certificates:
+  tableau-webserver-cert:                                   # certificate reference name
+    format: pem                                             # certificate format
+    prompt-text: Tableau webserver public certificate       # prompt text
+    filename: {{tableau-cert-filename}}                     # filename of keystore
+
+  postgres-database-cert:                                   # this is an internal reference name for the keystore
+    format: pem                                             # certificate format
+    prompt-text: Postgres self-signed certificate           # prompt text
+    filename: server.pem                                    # filename of keystore
+
+keystores:
+  {{server-truststore-filename}}:            # this will be the output keystore filename
+    base-keystore-filename: servertrust.jks  # base keystore filename 
+    keystore-password: password              # 'create-new' -> new keystore password, 'use-existing' -> existing keystore password
+    certificates:                            # list of certificates to load into keystore
+      tableau-webserver-cert: tableau-uat    # certificate-reference : alias
+      postgres-database-cert: postgres-uat
+```
+
+The YAML required to build keystores contains two main sections: a `certificates` section and a `keystores` section.
+
+#### Certificates section
+The main `certificates` section describes the certificates to be loaded into the keystores that are defined in the main `keystores` section. For each certificate, you will need to provide a cert reference name in order to reference the certificate in the `keystores` section. Beyond that, you also need to provide the cert's format (only pem is currently supported), prompt text, and the cert's file name. The certificate must reside in the template folder. 
+
+#### Keystores section
+##### File name
+For each keystore, the first item you specify is the keystore file name. This will be the file name of the keystore in output folder.
+
+##### base-keystore-filename (optional)
+`base-keystore-filename` is an optional value that can be set if you wish to load certs into an existing keystore rather than create a new keystore from scratch. The existing keystore must reside in the template folder.
+
+##### keystore-password
+This is the password to the keystore. If you are creating a new keystore, then this will be the password assigned to the keystore that is created. However, if you have specified that you want to load certs into an existing keystore (by using the `base-keystore-filename` option), then this password must be the password of the existing keystore. 
+
+##### certificates section
+This subsection contains the certs you want loaded into the keystore. Each line contains the reference name of a certificate that has been defined in the main certificates section of the yaml, and the alias you want assigned to the certificate within the keystore. The certificate reference name and its alias are separated by a ':' character.
+
+##### Tags are allowed
+
+In the example shown above, you'll notice the existence of tags throughout. Since the keystore yaml file is processed after values are read (either from user prompts, from a value file, web form, config server etc...), these values can be included in the keystore yaml. These values will be injected into the keystore yaml prior to processing of the keystore yaml file. Tags can appear anywhere in the keystore yaml and are totally optional.
