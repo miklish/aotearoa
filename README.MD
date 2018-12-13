@@ -1,6 +1,6 @@
 # AOtearoa
 ## Overview
-Aotearoa is a command line tool that allows Application Operations teams generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
+Aotearoa is a command line tool that allows Application Operations teams to generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
 
 ## Template, and Value files
 AOtearoa starts with template files. A template is a normal text configuration file that contains 'tags' in which values will be inserted.
@@ -258,8 +258,8 @@ certificates:
     filename: server.pem                                    # filename of keystore
 
 keystores:
-  {{server-truststore-filename}}:                           # this will be the output keystore filename
-    base-keystore-filename: servertrust.jks                 # base keystore filename 
+  client.truststore:                                        # this will be the output keystore filename
+    base-keystore-filename: {{standard-certs}}              # base keystore filename 
     keystore-password: password                             # keystore password
     certificates:                                           # list of certificates to load into keystore
       tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
