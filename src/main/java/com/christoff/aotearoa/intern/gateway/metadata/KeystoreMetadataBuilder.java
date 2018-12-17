@@ -7,25 +7,54 @@ import java.util.Map;
 
 public class KeystoreMetadataBuilder
 {
+    /***
+     * Builds Java objects containing parsed metadata that describes the Keystores that the user
+     * wishes to build.
+     */
+    
     private Map<String,CertificateMetadata> _certMap;
     private Map<String,KeystoreMetadata> _keystoreMap;
     
+    /***
+     *
+     * @param certObjMap Certificate raw metadata map (from IKeystoreMetadataGateway)
+     * @param keyObjMap Keystore raw metadata map (from IKeystoreMetadataGateway)
+     */
     public KeystoreMetadataBuilder(Map<String,Object> certObjMap, Map<String,Object> keyObjMap)
     {
         _certMap = buildCertificates(certObjMap);
         _keystoreMap = buildKeystores(keyObjMap, _certMap);
     }
     
+    /***
+     * Returns a map of certificates, keyed by certificate-reference
+     *
+     * @return A map of certificates, keyed by certificate-reference
+     *         Never null (if no certificates exist, returns an empty map)
+     */
     public Map<String,CertificateMetadata> getCertificates()
     {
         return _certMap;
     }
     
+    /***
+     * Returns a map of Keystores, keyed by keystore file name
+     *
+     * @return A map of keystores, keyed by keystore file name
+     *         Never null (if no keystores exist, returns an empty map)
+     */
     public Map<String,KeystoreMetadata> getKeystores()
     {
         return _keystoreMap;
     }
-
+    
+    /***
+     * Builds a map of Certificates, keyed by certificate-reference
+     *
+     * @param certObjMap Certificate raw metadata map (from IKeystoreMetadataGateway)
+     * @return Certificate metadata map (Map: certificate-reference -> Certificate)
+     *         Never returns null: If no certificates exist, it will return an empty map
+     */
     private Map<String,CertificateMetadata> buildCertificates(Map<String,Object> certObjMap)
     {
         Map<String,CertificateMetadata> certMap = new HashMap<>();
@@ -50,7 +79,15 @@ public class KeystoreMetadataBuilder
         return certMap;
     }
     
-    public Map<String,KeystoreMetadata> buildKeystores(Map<String,Object> keyObjMap, Map<String,CertificateMetadata> certMap)
+    /***
+     * Builds a map of Keystores, keyed by the keystore filename
+     *
+     * @param keyObjMap Keystore raw metadata map (from IKeystoreMetadataGateway)
+     * @param certMap Certificate metadata map (Map: certificate reference -> Certificate)
+     * @return Keystore metadata map (Map: keystore file name -> Keystore)
+     *         Never returns null: If no keystores exist, it will return an empty map
+     */
+    private Map<String,KeystoreMetadata> buildKeystores(Map<String,Object> keyObjMap, Map<String,CertificateMetadata> certMap)
     {
         Map<String,KeystoreMetadata> keyMap = new HashMap<>();
         for(Map.Entry<String,Object> keyEntry : keyObjMap.entrySet())
