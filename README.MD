@@ -241,7 +241,7 @@ $ java -jar aotearoa.jar         \
     -p                             # values from prompts
 ```    
 
-# Keystores
+# Keystores (Not Yet Implemented)
 Aotearoa can also simplify the creation of JKS keystores.
 
 ###### Example Keystore YAML:
