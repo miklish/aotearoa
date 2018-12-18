@@ -47,11 +47,13 @@ public class CertificateMetadata
     
     @Override
     public String toString() {
-        return "CertificateMetadata{" +
-            "format='" + _format + '\'' +
-            ", promptText='" + _promptText + '\'' +
-            ", filename='" + _filename + '\'' +
-            ", name='" + _name + '\'' +
-            '}';
+        return
+            "CertificateMetadata\n" +
+            "  {\n" +
+            "    format='" + _format + "\',\n" +
+            "    promptText='" + _promptText + "\',\n" +
+            "    filename='" + _filename + "\',\n" +
+            "    name='" + _name + "\',\n" +
+            "  }\n";
     }
 }

@@ -29,7 +29,17 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
     }
     
     @Override
-    public void persist(Map<String, KeystoreMetadata> keystores) {
+    /***
+     * Takes a map of resolved KeystoreMetadata (e.g.: values filled-in)  and creates keystores
+     * to output folder.
+     */
+    public void persist(Map<String,KeystoreMetadata> keystores)
+    {
+        for(KeystoreMetadata ks : keystores.values())
+        {
+            // check whether we are building a new keystore, or adding to an existing one
+            System.out.println(ks.toString());
+        }
     }
     
     public static KeyStore createJKSKeystore(String password)

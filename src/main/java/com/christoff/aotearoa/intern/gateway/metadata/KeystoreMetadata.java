@@ -75,12 +75,14 @@ public class KeystoreMetadata
     
     @Override
     public String toString() {
-        return "KeystoreMetadata{" +
-            "outputKeystoreFilename='" + _outputKeystoreFilename + '\'' +
-            ", baseKeystoreAction='" + _baseKeystoreAction + '\'' +
-            ", baseKeystoreFilename='" + _baseKeystoreFilename + '\'' +
-            ", keystorePassword='" + _keystorePassword + '\'' +
-            ", certificates=" + _certificates.toString() +
-            '}';
+        return
+            "KeystoreMetadata" +
+            "{\n" +
+            "  outputKeystoreFilename='" + _outputKeystoreFilename + "\',\n" +
+            "  baseKeystoreAction='" + _baseKeystoreAction + "\',\n" +
+            "  baseKeystoreFilename='" + _baseKeystoreFilename + "\',\n" +
+            "  keystorePassword='" + _keystorePassword + "\',\n" +
+            "  certificates=\n" + _certificates.toString() +
+            "}\n";
     }
 }
