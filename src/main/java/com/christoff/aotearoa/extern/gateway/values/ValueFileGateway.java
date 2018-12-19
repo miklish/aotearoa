@@ -30,9 +30,17 @@ public class ValueFileGateway implements IValueGateway
     @Override
     public List<Object> get(Metadata vm)
     {
-        if(!(_valueMap.get(vm.getName()) instanceof List))
-            throw new ValueException("No values found for metadata tag " + vm.getName());
+        Object values =
+            _valueMap.get(vm.getName()) != null ?
+                _valueMap.get(vm.getName()) :
+                vm.getProperty(Metadata.DEFAULTS);
+
+        if(values == null)
+            throw new ValueException("No values or defaults found for metadata tag " + vm.getName());
+
+        if(!(values instanceof List))
+            throw new ValueException("Incorrectly formatted values found for metadata tag " + vm.getName());
         
-        return (List<Object>) _valueMap.get(vm.getName());
+        return (List<Object>) values;
     }
 }

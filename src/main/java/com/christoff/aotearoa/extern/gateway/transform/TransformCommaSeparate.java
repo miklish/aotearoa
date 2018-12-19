@@ -8,8 +8,7 @@ public class TransformCommaSeparate implements ITransform
     @Override
     public String transform(List<String> inputList)
     {
-        if(inputList == null || inputList.size() == 0)
-            return "";
+        if(inputList == null) return null;
 
         int len = inputList.size();
         if(len == 1) return inputList.get(0);

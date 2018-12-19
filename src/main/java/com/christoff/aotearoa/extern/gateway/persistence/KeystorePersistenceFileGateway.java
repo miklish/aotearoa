@@ -29,7 +29,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
     }
     
     @Override
-    public void persist(Map<String, KeystoreMetadata> keystores) {
+    public void persist(Map<String, KeystoreMetadata> keystores)
+    {
+        // TODO: Test keystore creation with PEMS
+        // 1. test creation of new truststore
+        // 2. test the importing of certs into existing truststore
+
+
     }
     
     public static KeyStore createJKSKeystore(String password)

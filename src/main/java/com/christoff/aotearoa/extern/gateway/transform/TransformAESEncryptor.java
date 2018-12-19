@@ -59,6 +59,8 @@ public class TransformAESEncryptor implements ITransform
          */
     private String transform(String input)
     {
+        if(input == null) return null;
+
         try
         {
             byte[] inputBytes = input.getBytes(STRING_ENCODING);

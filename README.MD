@@ -76,6 +76,8 @@ variables:
     - copy
     type: string
     prompt-text: Enable (true) or disable (false) JWT verification security
+    defaults:
+    - true
     files:
     - security
     
@@ -96,6 +98,8 @@ variables:
     - copy
     type: string
     prompt-text: Enter the name of the OAuth (Auth Server) certificate
+    defaults:
+    - cert.pem
     files:
     - security
 
@@ -171,6 +175,8 @@ Next entry requires between 1 and inf values. Enter \\n to complete.
 [Tableau password (this will be encrypted)]: password
 Resolving templates...done.
 ```
+
+As you can see, the prompts that are shown are specified in the metadata file, and the defaults that are shown are alos specified in the metadata file.
  
 #### Local web form
 Not yet implemented.
@@ -200,9 +206,17 @@ with the appropriate arguments:
     <td>Output directory (required)</td>
  </tr>
  <tr>
+    <td>-v, --values <String></td>
+    <td>Value file (optional)</td>
+ </tr>  
+ <tr>
     <td>-p, --prompts</td>
     <td>Use command line prompts to enter values (optional)</td>
  </tr>
+ <tr>
+    <td>-e, --env<String></td>
+    <td>Get values from environment variables (optional)</td>
+ </tr> 
  <tr>
     <td>-s, --server</td>
     <td>Config Server URL (optional)</td>
@@ -210,10 +224,6 @@ with the appropriate arguments:
  <tr>
     <td>-t, --templates</td>
     <td>Template file folder (required)</td>
- </tr>
- <tr>
-    <td>-v, --values <String></td>
-    <td>Value file (optional)</td>
  </tr>
  <tr>
     <td>-k, --kmetadata <String></td>

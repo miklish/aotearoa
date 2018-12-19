@@ -6,6 +6,7 @@ import com.christoff.aotearoa.bridge.ValueInjectResponse;
 import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueEnvironmentGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IKeystoreMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
@@ -32,6 +33,7 @@ public class Bootstrap
     private static final String TEMPLATE_DIR = "t";
     private static final String CONFIG_VALS_ID = "v";
     private static final String PROMPTS = "p";
+    private static final String ENV_VARS = "e";
     private static final String OUTPUT_DIR = "o";
     private static final String SERVER_URL = "s";
     private static final String HELP = "h";
@@ -80,6 +82,7 @@ public class Bootstrap
         boolean usingConfigServer = optionInput.has(SERVER_URL);
         boolean usingFileSystemValues = optionInput.has(CONFIG_VALS_ID);
         boolean usingConfigFile = optionInput.has(PROMPTS);
+        boolean usingEnvironmentVariables = optionInput.has(ENV_VARS);
 
         // ensure at least one of prompts and file system config selected
         if(!usingFileSystemValues && !usingConfigFile)
@@ -104,6 +107,8 @@ public class Bootstrap
         IValueGateway valueGateway;
         if(usingFileSystemValues)
             valueGateway = new ValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
+        else if(usingEnvironmentVariables)
+            valueGateway = new ValueEnvironmentGateway();
         else
             valueGateway = new ValuePromptGateway();
 
@@ -151,6 +156,7 @@ public class Bootstrap
          *   t / templates  : template directory (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
+         *   e / env        : use environment variables for values or overrides (optional)
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
          *   h / help       : help info
@@ -187,17 +193,24 @@ public class Bootstrap
                 Arrays.asList(promptsOptions),
                 "Use command line prompts to enter values (optional)");
 
-        /** local: output dir */
-        final String[] outputOptions = {OUTPUT_DIR,"outputdir"};
+        /** values - environment variables */
+        final String[] envOptions = {ENV_VARS,"env"};
         optionConfig.acceptsAll(
-                Arrays.asList(outputOptions),
-                "Output directory (required)").withRequiredArg().required();
+                Arrays.asList(envOptions),
+                //"Use environment variables for values or overrides (optional)");  // not yet implemented
+                "Get values from environment variables (optional)");
 
         /** server: server url */
         final String[] serverOptions = {SERVER_URL,"server"};
         optionConfig.acceptsAll(
                 Arrays.asList(serverOptions),
                 "Config Server URL (optional)").withRequiredArg();
+
+        /** local: output dir */
+        final String[] outputOptions = {OUTPUT_DIR,"outputdir"};
+        optionConfig.acceptsAll(
+                Arrays.asList(outputOptions),
+                "Output directory (required)").withRequiredArg().required();
 
         /** help */
         final String[] helpOptions = {HELP,"help"};

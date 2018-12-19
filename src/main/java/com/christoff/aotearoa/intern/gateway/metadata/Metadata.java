@@ -17,12 +17,14 @@ public class Metadata
     public static final String REPLACEMENT_STRATEGY = "replacement-strategy";
     public static final String PROMPT_TEXT = "prompt-text";
     public static final String FILES = "files";
+    public static final String DEFAULTS = "defaults";
     
     private String _varName;
     private Map<String,List<String>> _varPropertiesMap;
     private List<String> _values;
     private ITransform _transform;
     private boolean _isUsed = false;
+    private boolean _defaultUsed = false;
     
     public Metadata(
         String varName,
@@ -37,10 +39,12 @@ public class Metadata
     }
 
     public boolean getUsed() { return _isUsed; }
-    
-    public void setValues(List<Object> values) {
-        _values = toStringList(_varName, values);
-    }
+
+    public void setDefaultUsed() { _defaultUsed = true; }
+
+    public boolean getDefaultUsed() { return _defaultUsed; }
+
+    public void setValues(List<Object> values) { _values = toStringList(_varName, values); }
     
     public void setTransformation(ITransform transform) {
         _transform = transform;
