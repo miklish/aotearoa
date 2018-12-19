@@ -23,21 +23,25 @@ import java.util.Map;
 public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
 {
     private String _outputDir;
-    
+
     public KeystorePersistenceFileGateway(String outputDir) {
         _outputDir = outputDir;
     }
-    
+
     @Override
-    public void persist(Map<String, KeystoreMetadata> keystores)
+    /***
+     * Takes a map of resolved KeystoreMetadata (e.g.: values filled-in)  and creates keystores
+     * to output folder.
+     */
+    public void persist(Map<String,KeystoreMetadata> keystores)
     {
-        // TODO: Test keystore creation with PEMS
-        // 1. test creation of new truststore
-        // 2. test the importing of certs into existing truststore
-
-
+        for(KeystoreMetadata ks : keystores.values())
+        {
+            // check whether we are building a new keystore, or adding to an existing one
+            System.out.println(ks.toString());
+        }
     }
-    
+
     public static KeyStore createJKSKeystore(String password)
     {
         /*
@@ -47,7 +51,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
-    
+
         char[] pwdArray = password.toCharArray();
         try {
             ks.load(null, pwdArray);
@@ -63,7 +67,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
         throw new UnsupportedOperationException("Keystore functionality not yet implemented");
     }
-    
+
     public static void saveKeystore(KeyStore ks, String keystoreName, String password)
     {
         /*
@@ -84,7 +88,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
         throw new UnsupportedOperationException("Keystore functionality not yet implemented");
     }
-    
+
     public static KeyStore loadJKSKeystore(String keystoreFilename, String password)
     {
         /*
@@ -94,7 +98,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
-        
+
         try {
             ks.load(new FileInputStream(keystoreFilename), password.toCharArray());
         } catch (IOException e) {
@@ -104,13 +108,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         } catch (CertificateException e) {
             e.printStackTrace();
         }
-        
+
         return ks;
         */
 
         throw new UnsupportedOperationException("Keystore functionality not yet implemented");
     }
-    
+
     public static void importAsymetricPrivateKey(
         KeyStore ks,
         PrivateKey privateKey,
