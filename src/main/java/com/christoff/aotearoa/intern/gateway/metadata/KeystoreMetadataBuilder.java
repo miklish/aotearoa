@@ -120,6 +120,7 @@ public class KeystoreMetadataBuilder
                 String certAlias = (String) certEntry.getValue();
                 CertificateMetadata cert = certMap.get(certRef);
                 km.addCertByAlias(certAlias,cert);
+                km.addAliasByCertRef(certRef,certAlias);
                 certList.add(cert);
             }
             km.setCertificates(certList);

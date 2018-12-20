@@ -176,7 +176,7 @@ Next entry requires between 1 and inf values. Enter \\n to complete.
 Resolving templates...done.
 ```
 
-As you can see, the prompts that are shown are specified in the metadata file, and the defaults that are shown are alos specified in the metadata file.
+As you can see, the prompts that are shown are specified in the metadata file, and the defaults that are shown are also specified in the metadata file.
  
 #### Local web form
 Not yet implemented.

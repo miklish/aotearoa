@@ -67,7 +67,7 @@ public class KeystoreMetadataFileGateway implements IKeystoreMetadataGateway
         String resolvedFilename = _outputDir + "/" + f.getName();
         Map<String, Object> allKeystoreConfigMap =
             _fileSysHelper.getFileInfo(resolvedFilename, true, false).map;
-        
+
         // - get certificate metadata
         Map<String,Object> testCerts = null;
         try {

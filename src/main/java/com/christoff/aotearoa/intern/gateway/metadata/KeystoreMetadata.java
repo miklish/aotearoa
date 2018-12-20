@@ -24,6 +24,7 @@ public class KeystoreMetadata
     private String _keystorePassword;
     private List<CertificateMetadata> _certificates = new LinkedList<>();
     private Map<String,CertificateMetadata> _certByAlias = new HashMap<>();
+    private Map<String,String> _aliasByCertRef = new HashMap<>();
     
     public String getOutputKeystoreFilename() {
         return _outputKeystoreFilename;
@@ -72,17 +73,21 @@ public class KeystoreMetadata
     public void addCertByAlias(String alias, CertificateMetadata cert) {
         _certByAlias.put(alias,cert);
     }
-    
+
+    public void addAliasByCertRef(String certRef, String alias) { _aliasByCertRef.put(certRef, alias); }
+
+    public String getAliasByCertRef(String certRef) { return _aliasByCertRef.get(certRef); }
+
     @Override
     public String toString() {
         return
-            "KeystoreMetadata" +
+            "KeystoreMetadata\n" +
             "{\n" +
             "  outputKeystoreFilename='" + _outputKeystoreFilename + "\',\n" +
             "  baseKeystoreAction='" + _baseKeystoreAction + "\',\n" +
             "  baseKeystoreFilename='" + _baseKeystoreFilename + "\',\n" +
             "  keystorePassword='" + _keystorePassword + "\',\n" +
-            "  certificates=\n" + _certificates.toString() +
+            "  certificates=\n" + _certificates.toString() + "\n" +
             "}\n";
     }
 }

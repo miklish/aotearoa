@@ -33,9 +33,7 @@ public class PersistenceFileHelper
 
     
     public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
-        throws
-            MetadataException,
-            MetadataIOException
+        throws MetadataIOException
     {
         FileInfo info = new FileInfo();
         info.id = configId;
