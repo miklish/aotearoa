@@ -165,22 +165,22 @@ will be converted to `value1,value2,value3` prior to being inserted.
 #### Command line prompts
 If command line prompts are chosen as the method to input values, then on the command line, the user would see the following:  
   
-```
+<pre><code>
 Type \\q to quit. Type \\d to use default (if default exists)
-[Enable 'true', or disable 'false' JWT verification security : (true)]: \\d
+[Enable 'true', or disable 'false' JWT verification security : (true)]: <b><i>\\d</i></b>
  >> value selected is 'true'
 
 Next entry requires between 1 and inf values. Enter \\n to complete.
 [Provide a list of one or more urls for the database]: 
-[Value 1]: tss-postgres-01.biz.com:7373
-[Value 2]: tss-postgres-02.biz.com:7373
-[Value 3]: tss-postgres-03.biz.com:7390
-[Value 4]: \\n
+[Value 1]: <b><i>tss-postgres-01.biz.com:7373</i></b>
+[Value 2]: <b><i>tss-postgres-02.biz.com:7373</i></b>
+[Value 3]: <b><i>tss-postgres-03.biz.com:7390</i></b>
+[Value 4]: <b><i>\\n</i></b>
 
-[Enter the name of the OAuth (Auth Server) certificate]: oauth.pem
-[Tableau password (this will be encrypted)]: password
+[Enter the name of the OAuth (Auth Server) certificate]: <b><i>oauth.pem</i></i>
+[Tableau password (this will be encrypted)]: <b><i>password</i></b>
 Resolving templates...done.
-```
+</pre></code>
 
 As you can see, the prompts that are shown are specified in the metadata file, and the defaults that are shown are also specified in the metadata file.
 
