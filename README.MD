@@ -177,7 +177,7 @@ Next entry requires between 1 and inf values. Enter \\n to complete.
 [Value 3]: <b><i>tss-postgres-03.biz.com:7390</i></b>
 [Value 4]: <b><i>\\n</i></b>
 
-[Enter the name of the OAuth (Auth Server) certificate]: <b><i>oauth.pem</i></i>
+[Enter the name of the OAuth (Auth Server) certificate]: <b><i>oauth.pem</i></b>
 [Tableau password (this will be encrypted)]: <b><i>password</i></b>
 Resolving templates...done.
 </pre></code>
