@@ -268,6 +268,7 @@ $ java -jar aotearoa.jar         \
     -p                             # values from prompts
 ```     
 
+##### Use environment variables
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
