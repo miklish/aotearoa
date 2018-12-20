@@ -8,12 +8,12 @@ AOtearoa starts with template files. A template is a normal text configuration f
 ##### security.yml
 ```yaml
 # Enable JWT verification flag.
-enableVerifyJwt: {{jwt-security}}
+enableVerifyJwt: {{jwt_security}}
 ...
 # JWT signature public certificates. kid and certificate path mappings.
 jwt:
   certificate:
-    '100': {{oauth-certificate}}
+    '100': {{oauth_certificate}}
   clockSkewInSeconds: 60
 ...
 ```
@@ -22,43 +22,43 @@ jwt:
 ```yaml
 PostgresDataSource:
   DriverClassName: org.postgresql.ds.PGSimpleDataSource
-  jdbcUrl: jdbc:postgresql://{{database-urls}}/users?ssl=true&sslfactory=com.biz.SSLSocketFactory
+  jdbcUrl: jdbc:postgresql://{{database_urls}}/users?ssl=true&sslfactory=com.biz.SSLSocketFactory
 ...
 ```
 
 ##### secret.yml
 ```yaml
 ...
-tableauPassword: {{tableau-password}}
+tableauPassword: {{tableau_password}}
 ...
 ```
 
-The tags `{{jwt-security}}`, `{oauth-certificate}`, `{{postgres-servers}}`, and `{{tableau-password}}` take their values from a 'values' file:
+The tags `{{jwt_security}}`, `{oauth_certificate}`, `{{postgres_servers}}`, and `{{tableau_password}}` take their values from a 'values' file:
 
 ##### dev-values.yml
 ```yaml
-jwt-security:
+jwt_security:
   - false
-database-urls:  
+database_urls:  
   - dev-postgres-01.biz.com:9000
   - dev-postgres-02.biz.com:9000
-oauth-certificate:
+oauth_certificate:
   - oauth-dev.pem
-tableau-password:
+tableau_password:
   - devpassword
 ```
 
 ##### prod-values.yml
 ```yaml
-jwt-security:
+jwt_security:
   - true
-database-urls:  
+database_urls:  
   - tss-postgres-01.biz.com:7373
   - tss-postgres-02.biz.com:7373
   - tss-postgres-03.biz.com:7390  
-oauth-certificate:
+oauth_certificate:
   - oauth.pem
-tableau-password:
+tableau_password:
   - password  
 ```
  
@@ -69,19 +69,19 @@ In addition to templates and values, you must provide a metadata file that descr
 
 ```yaml
 variables:
-  jwt-security:
+  jwt_security:
     min: 1
     max: 1
     output:
     - copy
     type: string
-    prompt-text: Enable (true) or disable (false) JWT verification security
+    prompt-text: Enable 'true', or disable 'false' JWT verification security
     defaults:
     - true
     files:
     - security
     
-  database-urls:
+  database_urls:
     min: 1
     max: inf
     output:
@@ -91,7 +91,7 @@ variables:
     files:
     - datasource    
 
-  oauth-certificate:
+  oauth_certificate:
     min: 1
     max: 1
     output:
@@ -103,7 +103,7 @@ variables:
     files:
     - security
 
-  tableau-password:
+  tableau_password:
     min: 1
     max: 1
     output:
@@ -117,6 +117,9 @@ variables:
   
 Note that you specify the template file(s) that each value should be injected into, in the file section of the value's metadata entry. If the file name ends in '.yml', then you may omit the extension (e.g.: a file entry of 'secret' will cause aotearo to scan the file 'secret.yml' in the template folder). However, if you need to inject values into a file that ends in an extension that is different than '.yml', you can put in the full filename (e.g.: you could enter 'logback.xml' if you need to inject values into a template for slf4j). 
 
+##### Defaults
+Also note that you can set default values in the metadata yaml. These will show up in prompts and web forms, and will be used in cases where values are not entered in values file.
+
 # Values
 There are numerous ways in which values can be specified to the template resolver.
 
@@ -124,19 +127,21 @@ There are numerous ways in which values can be specified to the template resolve
 Below see our example production value file.
 
 ```yaml
-jwt-security:
+jwt_security:
   - true
-database-urls:  
+database_urls:  
   - tss-postgres-01.biz.com:7373
   - tss-postgres-02.biz.com:7373
   - tss-postgres-03.biz.com:7390
-oauth-certificate:
+oauth_certificate:
   - oauth.pem
-tableau-password:
+tableau_password:
   - password
 ```
  
 All values must be entered as elements of a Yaml list (even if there is only a single entry).
+
+If a variable is specified in the metadata yaml but has no value in the values file, then this will cause an error -- unless a default value is specified in the metadata yaml. 
 
 ##### Transforms
 The metadata file allows the input to be transformed. In the current version, 3 types of transforms are supported:
@@ -161,8 +166,9 @@ will be converted to `value1,value2,value3` prior to being inserted.
 If command line prompts are chosen as the method to input values, then on the command line, the user would see the following:  
   
 ```
-Type \\q to quit
-[Enable (true) or disable (false) JWT verification security]: true
+Type \\q to quit. Type \\d to use default (if default exists)
+[Enable 'true', or disable 'false' JWT verification security : (true)]: \\d
+ >> value selected is 'true'
 
 Next entry requires between 1 and inf values. Enter \\n to complete.
 [Provide a list of one or more urls for the database]: 
@@ -177,6 +183,17 @@ Resolving templates...done.
 ```
 
 As you can see, the prompts that are shown are specified in the metadata file, and the defaults that are shown are also specified in the metadata file.
+
+#### Environment variables
+You may also use environment variables as a way to specify variable values. E.g.: prior to running a test, you may wish to temporarily turn off security in your configurations, even though your values file has jwt_security set to 'true':
+
+`$ export jwt_security=false`
+
+##### Roadmap
+
+In a future release, you will be able to use a value file _and_ environment variables, where environment variables can be used to _*override*_ value file settings to enable you to do testing (e.g.: override security to a 'false' setting, or turn the logging level to 'debug' temporarily) without modifying your production values file. 
+
+This will prevent you from having to set environment variables for all your settings, and only specify overrides as environment variables.
  
 #### Local web form
 Not yet implemented.
@@ -249,9 +266,17 @@ $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
     -o ./config-out              \ # output folder
     -p                             # values from prompts
-```    
+```     
 
-# Keystores (Not Yet Implemented)
+```
+$ java -jar aotearoa.jar         \
+    -m ./templates/_metadata.yml \ # metadata file
+    -t ./templates               \ # template files directory
+    -o ./config-out              \ # output folder
+    -e                             # values from environment variables
+```     
+
+# Keystores
 Aotearoa can also simplify the creation of JKS keystores.
 
 ###### Example Keystore YAML:
@@ -260,7 +285,7 @@ certificates:
   tableau-webserver-cert:                                   # certificate reference name
     format: pem                                             # certificate format
     prompt-text: Tableau webserver public certificate       # prompt text
-    filename: {{tableau-cert-filename}}                     # filename of certificate
+    filename: {{tableau_cert_filename}}                     # filename of certificate
 
   postgres-database-cert:                                   # this is an internal reference name for the keystore
     format: pem                                             # certificate format
@@ -269,7 +294,7 @@ certificates:
 
 keystores:
   client.truststore:                                        # this will be the output keystore filename
-    base-keystore-filename: {{standard-certs}}              # base keystore filename 
+    base-keystore-filename: {{standard_certs}}              # base keystore filename 
     keystore-password: password                             # keystore password
     certificates:                                           # list of certificates to load into keystore
       tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
