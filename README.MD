@@ -283,7 +283,7 @@ $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
     -o ./config-out              \ # output folder
-    -v                             # value file...
+    -v ./templates/_values.yml   \ # value file...
     -e                             # with environment variable overrides
 ```     
 
