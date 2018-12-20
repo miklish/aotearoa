@@ -277,6 +277,17 @@ $ java -jar aotearoa.jar         \
     -e                             # values from environment variables
 ```     
 
+##### Value file with environment variable overrides (not yet implemented)
+```
+$ java -jar aotearoa.jar         \
+    -m ./templates/_metadata.yml \ # metadata file
+    -t ./templates               \ # template files directory
+    -o ./config-out              \ # output folder
+    -v                             # value file...
+    -e                             # with environment variable overrides
+```     
+
+
 # Keystores
 Aotearoa can also simplify the creation of JKS keystores.
 
