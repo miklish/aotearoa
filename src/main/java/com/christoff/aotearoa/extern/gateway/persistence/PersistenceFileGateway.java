@@ -48,12 +48,12 @@ public class PersistenceFileGateway implements IPersistenceGateway
         // add the Keystore Metadata file (if it exists)
         if(_keystoreMetadataFilename != null && !_keystoreMetadataFilename.equals(""))
         {
-            File fInfo = new File(_keystoreMetadataFilename);
-            if (!fInfo.isFile() || !fInfo.exists())
+            File keystoreMetadataFile = new File(_keystoreMetadataFilename);
+            if (!keystoreMetadataFile.isFile() || !keystoreMetadataFile.exists())
                 throw new MetadataException(
-                    "Keystore metadata file " + _keystoreMetadataFilename + " either does not exist or is not a file");
+                    "Keystore metadata file " + keystoreMetadataFile.getName() + " either does not exist or is not a file");
             
-            templateFileIds.add(fInfo.getName());
+            templateFileIds.add(keystoreMetadataFile.getName());
         }
 
         // TODO: Complete the case where we create a new keystore

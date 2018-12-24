@@ -7,6 +7,7 @@ import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGatewa
 import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.values.ValueEnvironmentGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueFileEnvironmentGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IKeystoreMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
@@ -49,11 +50,10 @@ public class Bootstrap
         }
     }
 
-    public void exec(String[] args)
-        throws ConfigException
+    public void exec(String[] args) throws ConfigException
     {
-        // Configure command line
-        
+        // Command line
+        // - Parse CLI
         OptionParser optionConfig = configureCommandLineOptions();
         OptionSet optionInput = null;
         try {
@@ -63,71 +63,87 @@ public class Bootstrap
             printHelp(optionConfig);
             exit(1);
         }
-        if(optionInput.has(HELP)) {
-            if(printHelp(optionConfig))
+        if (optionInput.has(HELP)) {
+            if (printHelp(optionConfig))
                 exit(1);
             else
                 exit(0);
         }
-        
-
-        // Build Request and invoke Value Injection Interactor
-        // - no data put directly in request at the moment
-        ValueInjectRequest request = new ValueInjectRequest();
-
-
-        // Construct Gateways for ValueInjectInteractor
-
-        // Collect command line options
+    
+        // - Collect CLI options
         boolean usingConfigServer = optionInput.has(SERVER_URL);
         boolean usingFileSystemValues = optionInput.has(CONFIG_VALS_ID);
         boolean usingConfigFile = optionInput.has(PROMPTS);
         boolean usingEnvironmentVariables = optionInput.has(ENV_VARS);
-
-        // ensure at least one of prompts and file system config selected
-        if(!usingFileSystemValues && !usingConfigFile)
+    
+        // - Ensure at least one of prompts, file system, environment config selected
+        if (!usingFileSystemValues && !usingConfigFile && !usingEnvironmentVariables)
         {
-            System.out.println("You must provide values from either a values file or from command line prompts");
+            System.out.println("You must provide values from either a values file, command line prompts, or environment");
             printHelp(optionConfig);
             exit(1);
         }
+        
 
-        // - Select Presenter Gateway
+        
+        // Build Request and invoke Value Injection Interactor
+        ValueInjectRequest request = new ValueInjectRequest();
+
+
+        
+        // Construct Gateways
+        
+        // - Presenter Gateway
         IPresenter presenter = new PresenterCLI();
         
-        // - Select Persistence Gateways
+        // - Config File Persistence Gateway
         IPersistenceGateway persistenceGateway = new PersistenceFileGateway(
             (String) optionInput.valueOf(TEMPLATE_DIR),
             (String) optionInput.valueOf(OUTPUT_DIR),
             (String) optionInput.valueOf(KEYSTORE_METADATA_ID));
+        
+        // - Keystore Persistence Gateway
         IKeystorePersistenceGateway keystorePersistenceGateway = new KeystorePersistenceFileGateway(
             (String) optionInput.valueOf(OUTPUT_DIR));
-    
-        // - Select Value Gateway
+        
+        // - Value Gateway
         IValueGateway valueGateway;
-        if(usingFileSystemValues)
+        if (usingFileSystemValues && usingEnvironmentVariables)
+            
+            valueGateway = new ValueFileEnvironmentGateway(
+                new ValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID)),
+                new ValueEnvironmentGateway());
+        
+        else if (usingFileSystemValues)
             valueGateway = new ValueFileGateway((String) optionInput.valueOf(CONFIG_VALS_ID));
-        else if(usingEnvironmentVariables)
+        
+        else if (usingEnvironmentVariables)
             valueGateway = new ValueEnvironmentGateway();
+        
         else
             valueGateway = new ValuePromptGateway();
 
-        // - Select Transform Gateway
-        ITransformGateway transformGateway = null;
+        // - Transform Gateway
+        ITransformGateway transformGateway;
         if(usingConfigServer)
             transformGateway = new TransformServerGateway();
+
         else
             transformGateway = new TransformFileGateway();
 
-        // - Select Metadata Gateways
+        // - Metadata Gateway
         IMetadataGateway metadataGateway = new MetadataFileGateway(
             (String) optionInput.valueOf(METADATA_ID));
+        
+        // - Keystore Metadata Gateway
         IKeystoreMetadataGateway keystoreMetadataGateway = new KeystoreMetadataFileGateway(
             (String) optionInput.valueOf(KEYSTORE_METADATA_ID),
             (String) optionInput.valueOf(OUTPUT_DIR));
 
 
+        
         // Construct ValueInjectInteractor
+        
         ValueInjectInteractor serviceInteractor =
             new ValueInjectInteractor(
                 metadataGateway,
@@ -139,9 +155,11 @@ public class Bootstrap
                 presenter);
         
 
+        
         // Process response
+        
         ValueInjectResponse resp = serviceInteractor.exec(request);
-        if(resp.resultCode.equals(ValueInjectResponse.SUCCESS))
+        if (resp.resultCode.equals(ValueInjectResponse.SUCCESS))
             exit(0);
         else
             exit(1);
@@ -226,7 +244,8 @@ public class Bootstrap
         return optionConfig.parse(args);
     }
 
-    private static boolean printHelp(OptionParser optionConfig) {
+    private static boolean printHelp(OptionParser optionConfig)
+    {
         try {
             optionConfig.printHelpOn(System.out);
         } catch (IOException e) {
@@ -234,6 +253,7 @@ public class Bootstrap
             System.out.println("Error printing help message");
             return false;
         }
+        
         return true;
     }
 }

@@ -21,7 +21,7 @@ public class ValueEnvironmentGateway implements IValueGateway
         {
             String val = System.getenv(varName);
             List<Object> valList = new LinkedList<>();
-            valList.add(val);
+            if (val != null) valList.add(val);
             _values.put(varName, valList);
         }
 

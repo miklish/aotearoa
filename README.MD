@@ -113,7 +113,6 @@ variables:
     files:
     - secret
 ```
- 
   
 Note that you specify the template file(s) that each value should be injected into, in the file section of the value's metadata entry. If the file name ends in '.yml', then you may omit the extension (e.g.: a file entry of 'secret' will cause aotearo to scan the file 'secret.yml' in the template folder). However, if you need to inject values into a file that ends in an extension that is different than '.yml', you can put in the full filename (e.g.: you could enter 'logback.xml' if you need to inject values into a template for slf4j). 
 
@@ -189,9 +188,9 @@ You may also use environment variables as a way to specify variable values. E.g.
 
 `$ export jwt_security=false`
 
-##### Roadmap
+#### File values with environment variable overrides
 
-In a future release, you will be able to use a value file _and_ environment variables, where environment variables can be used to _*override*_ value file settings to enable you to do testing (e.g.: override security to a 'false' setting, or turn the logging level to 'debug' temporarily) without modifying your production values file. 
+You can also use a value file _and_ environment variables, where environment variables can be used to _*override*_ value file settings to enable you to do testing (e.g.: override security to a 'false' setting, or turn the logging level to 'debug' temporarily) without modifying your production values file.
 
 This will prevent you from having to set environment variables for all your settings, and only specify overrides as environment variables.
  
@@ -277,7 +276,7 @@ $ java -jar aotearoa.jar         \
     -e                             # values from environment variables
 ```     
 
-##### Value file with environment variable overrides (not yet implemented)
+##### Value file with environment variable overrides
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
@@ -286,7 +285,6 @@ $ java -jar aotearoa.jar         \
     -v ./templates/_values.yml   \ # value file...
     -e                             # with environment variable overrides
 ```     
-
 
 # Keystores
 Aotearoa can also simplify the creation of JKS keystores.

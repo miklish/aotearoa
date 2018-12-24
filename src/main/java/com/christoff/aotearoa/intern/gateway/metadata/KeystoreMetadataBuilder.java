@@ -102,7 +102,6 @@ public class KeystoreMetadataBuilder
             String outputKeystoreFilename = keyEntry.getKey();
             KeystoreMetadata km = new KeystoreMetadata();
             km.setOutputKeystoreFilename(outputKeystoreFilename);
-            km.setBaseKeystoreAction((String) propertiesMap.get("base-keystore-action"));
             km.setBaseKeystoreFilename((String) propertiesMap.get("base-keystore-filename"));
             km.setKeystorePassword((String) propertiesMap.get("keystore-password"));
             
