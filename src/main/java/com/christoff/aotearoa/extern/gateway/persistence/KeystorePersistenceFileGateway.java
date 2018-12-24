@@ -20,16 +20,11 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 
 /***
- * Implementation need only implement
+ *   Documentation/Resources on Keystore API
  *
- *   IKeystorePersistenceGateway.persist(Map<String, KeystoreMetadata> keystores)
- *
- *
- *   https://stackoverflow.com/questions/24137463/how-to-load-public-certificate-from-pem-file/24139603
- *
- *   https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#CertificateFactory
- *
- *   https://www.baeldung.com/java-keystore
+ *     https://stackoverflow.com/questions/24137463/how-to-load-public-certificate-from-pem-file/24139603
+ *     https://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#CertificateFactory
+ *     https://www.baeldung.com/java-keystore
  *
  */
 public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
@@ -43,14 +38,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
     @Override
     /***
-     * Takes a map of resolved KeystoreMetadata (e.g.: values filled-in) and creates keystores
-     * to output folder.
+     * Takes a map of resolved KeystoreMetadata (e.g.: values filled-in), creates keystores,
+     * and saves to output folder.
      */
     public void persist(Map<String,KeystoreMetadata> keystores)
     {
         for(KeystoreMetadata km : keystores.values())
         {
-            // check whether we are building a new keystore, or adding to an existing one
             try {
                 processKeystore(km);
             } catch (Exception e) {
@@ -67,22 +61,21 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
         KeyStore ks;
         String outputFilename = FilenameUtils.normalize(_outputDir + "/" + km.getOutputKeystoreFilename());
-
+    
+        // check whether we are building a new keystore, or adding to an existing one
         if(useExistingKeystore)
         {
             // load existing keystore
             String ksFilename = FilenameUtils.normalize(_outputDir + "/" + km.getBaseKeystoreFilename());
             ks = loadJKSKeystore(ksFilename, km.getKeystorePassword());
         }
-        else {
+        else
             // create new keystore
             ks = createJKSKeystore(km.getKeystorePassword());
-        }
 
         for(CertificateMetadata cm : km.getCertificates())
         {
             String alias = km.getAliasByCertRef(cm.getName());
-            Certificate c = ks.getCertificate(alias);
             importCertificate(km, ks, alias);
         }
 
@@ -118,8 +111,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
     public static void saveKeystore(KeystoreMetadata km, KeyStore ks, String ksFilename)
         throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException
     {
-        ks.store(
-                new FileOutputStream(ksFilename), km.getKeystorePassword().toCharArray());
+        ks.store(new FileOutputStream(ksFilename), km.getKeystorePassword().toCharArray());
     }
 
     public static KeyStore loadJKSKeystore(String keystoreFilename, String password)
@@ -129,31 +121,6 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         ks.load(new FileInputStream(keystoreFilename), password.toCharArray());
         return ks;
     }
-
-
-
-
-
-
-
-
-    /*
-    public static void importAsymetricPrivateKey(
-            KeyStore ks,
-            PrivateKey privateKey,
-            String privateKeyAlias,
-            String privateKeyPassword,
-            X509Certificate[] certificateChain)
-    {
-        try {
-            ks.setKeyEntry(privateKeyAlias, privateKey, privateKeyPassword.toCharArray(), certificateChain);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-
-        throw new UnsupportedOperationException("Keystore functionality not yet implemented");
-    }
-    */
 }
 
 
