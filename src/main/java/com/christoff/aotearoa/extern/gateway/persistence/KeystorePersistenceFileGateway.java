@@ -1,9 +1,9 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
+import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.FileInputStream;
@@ -13,12 +13,10 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 import java.util.Map;
 
 /***
@@ -53,12 +51,12 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         for(KeystoreMetadata km : keystores.values())
         {
             // check whether we are building a new keystore, or adding to an existing one
-            System.out.println(km.toString());
-
             try {
                 processKeystore(km);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new
+                    ConfigException("An error was encountered while attempting to construct your keystores\n" +
+                    e.getMessage());
             }
         }
     }

@@ -7,7 +7,6 @@ import java.util.Map;
 
 /***
 - output-keystore-filename: {{server.keystore-filename}}: # this will be the output keystore filename
-  base-keystore-action: create-new                        # [ create-new , use-existing ]
   base-keystore-filename:                                 # base keystore filename (leave blank if none used)
   keystore-password: password                             # if 'create-new' used this is the new password
                                                           # if 'use-existing' then this is the existing keystore's password
@@ -19,7 +18,6 @@ import java.util.Map;
 public class KeystoreMetadata
 {
     private String _outputKeystoreFilename;
-    private String _baseKeystoreAction;
     private String _baseKeystoreFilename;
     private String _keystorePassword;
     private List<CertificateMetadata> _certificates = new LinkedList<>();
@@ -28,10 +26,6 @@ public class KeystoreMetadata
     
     public String getOutputKeystoreFilename() {
         return _outputKeystoreFilename;
-    }
-    
-    public String getBaseKeystoreAction() {
-        return _baseKeystoreAction;
     }
     
     public String getBaseKeystoreFilename() {
@@ -48,10 +42,6 @@ public class KeystoreMetadata
     
     public void setOutputKeystoreFilename(String outputKeystoreFilename) {
         _outputKeystoreFilename = outputKeystoreFilename;
-    }
-    
-    public void setBaseKeystoreAction(String baseKeystoreAction) {
-        _baseKeystoreAction = baseKeystoreAction;
     }
     
     public void setBaseKeystoreFilename(String baseKeystoreFilename) {
@@ -84,7 +74,6 @@ public class KeystoreMetadata
             "KeystoreMetadata\n" +
             "{\n" +
             "  outputKeystoreFilename='" + _outputKeystoreFilename + "\',\n" +
-            "  baseKeystoreAction='" + _baseKeystoreAction + "\',\n" +
             "  baseKeystoreFilename='" + _baseKeystoreFilename + "\',\n" +
             "  keystorePassword='" + _keystorePassword + "\',\n" +
             "  certificates=\n" + _certificates.toString() + "\n" +
