@@ -327,7 +327,9 @@ For each keystore, the first item you specify is the keystore file name. This wi
 This is the password to the keystore. If you are creating a new keystore, then this will be the password assigned to the keystore that is created. However, if you have specified that you want to load certs into an existing keystore (by using the `base-keystore-filename` option), then this password must be the password of the existing keystore. 
 
 ##### certificates section
-This subsection contains the certs you want loaded into the keystore. Each line contains the reference name of a certificate that has been defined in the main certificates section of the yaml, and the alias you want assigned to the certificate within the keystore. The certificate reference name and its alias are separated by a ':' character.
+This subsection contains the (zero or more) certs you want loaded into the keystore. If you do not enter any certs in this section, Aotearoa will create an empty keystore for you.
+
+For each cert that you do include, each line must contain the reference name of a certificate that has been defined in the main certificates section of the yaml, and the alias you want assigned to the certificate within the keystore. The certificate reference name and its alias are separated by a ':' character.
 
 #### Tags are allowed
 
