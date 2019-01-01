@@ -1,9 +1,5 @@
 target/
-bower_components/
-node_modules/
-dist/
 .idea/
-.tmp/
 .project
 .classpath
 .settings
@@ -13,9 +9,11 @@ dist/
 *.tmp
 *.zip
 *.bak
-*.versionsBackup
 src/main/resources/config/
 src/main/resources/config-out/
+src/test/resources/config/
+src/test/resources/config-out/
+
 
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

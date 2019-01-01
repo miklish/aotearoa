@@ -18,4 +18,9 @@ public class PresenterCLI implements IPresenter
     public void persistingValuesEnd() {
         System.out.println("done.");
     }
+    
+    @Override
+    public void emptyKeystore(String keystoreName) {
+        System.out.println("WARNING: Keystore " + keystoreName + " has no certificates");
+    }
 }

@@ -1,5 +1,7 @@
 package com.christoff.aotearoa.intern.gateway.metadata;
 
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,16 +16,18 @@ public class KeystoreMetadataBuilder
     
     private Map<String,CertificateMetadata> _certMap;
     private Map<String,KeystoreMetadata> _keystoreMap;
+    private IPresenter _presenter;
     
     /***
      *
      * @param certObjMap Certificate raw metadata map (from IKeystoreMetadataGateway)
      * @param keyObjMap Keystore raw metadata map (from IKeystoreMetadataGateway)
      */
-    public KeystoreMetadataBuilder(Map<String,Object> certObjMap, Map<String,Object> keyObjMap)
+    public KeystoreMetadataBuilder(Map<String,Object> certObjMap, Map<String,Object> keyObjMap, IPresenter presenter)
     {
         _certMap = buildCertificates(certObjMap);
-        _keystoreMap = buildKeystores(keyObjMap, _certMap);
+        _keystoreMap = buildKeystores(keyObjMap, _certMap, presenter);
+        _presenter = presenter;
     }
     
     /***
@@ -87,7 +91,8 @@ public class KeystoreMetadataBuilder
      * @return Keystore metadata map (Map: keystore file name -> Keystore)
      *         Never returns null: If no keystores exist, it will return an empty map
      */
-    private Map<String,KeystoreMetadata> buildKeystores(Map<String,Object> keyObjMap, Map<String,CertificateMetadata> certMap)
+    private Map<String,KeystoreMetadata> buildKeystores(
+        Map<String,Object> keyObjMap, Map<String,CertificateMetadata> certMap, IPresenter presenter)
     {
         Map<String,KeystoreMetadata> keyMap = new HashMap<>();
         for(Map.Entry<String,Object> keyEntry : keyObjMap.entrySet())
@@ -113,15 +118,18 @@ public class KeystoreMetadataBuilder
             }
             
             List<CertificateMetadata> certList = new LinkedList<>();
-            for(Map.Entry<String,Object> certEntry : certsObjectMap.entrySet())
-            {
-                String certRef = certEntry.getKey();
-                String certAlias = (String) certEntry.getValue();
-                CertificateMetadata cert = certMap.get(certRef);
-                km.addCertByAlias(certAlias,cert);
-                km.addAliasByCertRef(certRef,certAlias);
-                certList.add(cert);
-            }
+            if(certsObjectMap == null)                                              // allow creation of empty keystores
+                presenter.emptyKeystore(outputKeystoreFilename);
+            else
+                for(Map.Entry<String,Object> certEntry : certsObjectMap.entrySet())
+                {
+                    String certRef = certEntry.getKey();
+                    String certAlias = (String) certEntry.getValue();
+                    CertificateMetadata cert = certMap.get(certRef);
+                    km.addCertByAlias(certAlias,cert);
+                    km.addAliasByCertRef(certRef,certAlias);
+                    certList.add(cert);
+                }
             km.setCertificates(certList);
             keyMap.put(outputKeystoreFilename, km);
         }

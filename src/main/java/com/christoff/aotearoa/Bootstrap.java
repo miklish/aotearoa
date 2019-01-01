@@ -42,15 +42,22 @@ public class Bootstrap
     
     public static void main(String[] args)
     {
+        ValueInjectResponse resp = null;
         try {
-            new Bootstrap().exec(args);
+            resp = new Bootstrap().exec(args);
         } catch(ConfigException c) {
             System.out.println("ERROR: " + c.getMessage());
             exit(1);
         }
+        
+        // Process response
+        if (resp.resultCode.equals(ValueInjectResponse.SUCCESS))
+            exit(0);
+        else
+            exit(1);
     }
 
-    public void exec(String[] args) throws ConfigException
+    public ValueInjectResponse exec(String[] args) throws ConfigException
     {
         // Command line
         // - Parse CLI
@@ -156,13 +163,9 @@ public class Bootstrap
         
 
         
-        // Process response
+        // Return response
         
-        ValueInjectResponse resp = serviceInteractor.exec(request);
-        if (resp.resultCode.equals(ValueInjectResponse.SUCCESS))
-            exit(0);
-        else
-            exit(1);
+        return serviceInteractor.exec(request);
     }
 
     private OptionParser configureCommandLineOptions()

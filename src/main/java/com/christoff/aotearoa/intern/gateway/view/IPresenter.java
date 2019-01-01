@@ -5,4 +5,5 @@ public interface IPresenter
     void tagDefinedNotUsed(String tagName);
     void persistingValuesBegin();
     void persistingValuesEnd();
+    void emptyKeystore(String keystoreName);
 }
