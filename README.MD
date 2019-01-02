@@ -261,8 +261,8 @@ $ java -jar aotearoa.jar         \
 ##### Use prompts
 ```
 $ java -jar aotearoa.jar         \
-    -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
+    -m ./templates/_metadata.yml \ # metadata file
     -o ./config-out              \ # output folder
     -p                             # values from prompts
 ```     
@@ -270,8 +270,8 @@ $ java -jar aotearoa.jar         \
 ##### Use environment variables
 ```
 $ java -jar aotearoa.jar         \
-    -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
+    -m ./templates/_metadata.yml \ # metadata file
     -o ./config-out              \ # output folder
     -e                             # values from environment variables
 ```     
@@ -279,9 +279,9 @@ $ java -jar aotearoa.jar         \
 ##### Value file with environment variable overrides
 ```
 $ java -jar aotearoa.jar         \
-    -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
-    -o ./config-out              \ # output folder
+    -m ./templates/_metadata.yml \ # metadata file
+    -o ./config-out              \ # output folder    
     -v ./templates/_values.yml   \ # value file...
     -e                             # with environment variable overrides
 ```     
@@ -340,10 +340,25 @@ In the example shown above, you'll notice the existence of tags throughout. Sinc
 ###### Build configuration and keystores from templates and value file
 ```
 $ java -jar aotearoa.jar         \
-    -m ./templates/_metadata.yml \ # metadata file
-    -t ./templates               \ # template files directory       
-    -o ./config-out              \ # output folder
-    -v ./templates/_values.yml   \ # keystore template file
-    -k ./templates/_keystore.yml 
+    -t ./templates               \ # template files directory      
+    -m ./templates/_metadata.yml \ # metadata file 
+    -k ./templates/_keystore.yml \ # keystore template file
+    -v ./templates/_values.yml   \ # values file        
+    -o ./config-out                # output folder
 ```    
     
+# Combining Files
+
+While in the examples provided, we separate the metadata and keystore files, it is actually possible to combine these files into one. For example, if you were to combine metadata and keystore configuration into a single file called _combined.yml, then you could use the following command line.
+
+```
+$ java -jar aotearoa.jar         \
+    -t ./templates               \ # template files directory
+    -v ./templates/_values.yml   \ # values file          
+    -o ./config-out              \ # output folder
+    -m ./templates/_combined.yml \ # metadata file
+    -k ./templates/_combined.yml   # keystore template file  
+    
+```    
+
+Note: Value files cannot be combined a single file with metadata and keystore configuration.
