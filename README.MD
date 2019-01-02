@@ -165,8 +165,8 @@ will be converted to `value1,value2,value3` prior to being inserted.
 If command line prompts are chosen as the method to input values, then on the command line, the user would see the following:  
   
 <pre><code>
-Type \\q to quit. Type \\d to use default (if default exists)
-[Enable 'true', or disable 'false' JWT verification security : (true)]: <b><i>\\d</i></b>
+Type \\q to quit. Enter a blank line to use default (if default exists)
+[Enable 'true', or disable 'false' JWT verification security : (true)]: <b><i>&#x23CE;</i></b>
  >> value selected is 'true'
 
 Next entry requires between 1 and inf values. Enter \\n to complete.
