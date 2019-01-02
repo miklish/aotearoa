@@ -166,7 +166,7 @@ If command line prompts are chosen as the method to input values, then on the co
   
 <pre><code>
 Type \\q to quit. Enter a blank line to use default (if default exists)
-[Enable 'true', or disable 'false' JWT verification security : (true)]: <b><i>&#x23CE;</i></b>
+[Enable 'true', or disable 'false' JWT verification security : (true)]: <b>&#x23CE;</b>
  >> value selected is 'true'
 
 Next entry requires between 1 and inf values. Enter \\n to complete.
