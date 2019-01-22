@@ -1,5 +1,16 @@
 package com.christoff.aotearoa.bridge;
 
+import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
+import com.christoff.aotearoa.extern.gateway.transform.TransformFileGateway;
+import com.christoff.aotearoa.extern.gateway.transform.TransformServerGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueEnvironmentGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueFileEnvironmentGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
+import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
 import com.christoff.aotearoa.intern.gateway.metadata.*;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
@@ -7,6 +18,7 @@ import com.christoff.aotearoa.intern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
+
 import java.util.*;
 
 public class ValueInjectInteractor
@@ -20,31 +32,65 @@ public class ValueInjectInteractor
     private ITransformGateway _transformGateway;
     private ValueInjectRequest _rq = null;
     
-    public ValueInjectInteractor(
-        IMetadataGateway metadataGateway,
-        IKeystoreMetadataGateway keystoreMetadataGateway,
-        IPersistenceGateway persistenceGateway,
-        IKeystorePersistenceGateway keystorePersistenceGateway,
-        IValueGateway valueGateway,
-        ITransformGateway transformGateway,
-        IPresenter presenter
-    ) {
-        _metadataGateway = metadataGateway;
-        _keystoreMetadataGateway = keystoreMetadataGateway;
-        _persistenceGateway = persistenceGateway;
-        _keystorePersistenceGateway = keystorePersistenceGateway;
-        _presenter = presenter;
-        _valueGateway = valueGateway;
-        _transformGateway = transformGateway;
-    }
-    
-    public ValueInjectResponse exec(ValueInjectRequest request)
-        throws MetadataException
+    public ValueInjectInteractor(ValueInjectRequest rq)
     {
-        _rq = request;
-
+        boolean usingConfigServer = rq.serverUrl != null;
+        boolean usingFileSystemValues = rq.configValsLoc != null;
+    
 
         
+        // Construct Gateways
+    
+        // - Presenter Gateway
+        _presenter = new PresenterCLI();
+    
+        // - Config File Persistence Gateway
+        _persistenceGateway = new PersistenceFileGateway(
+            rq.templateDir,
+            rq.outputDir,
+            rq.keystoreMetadataLoc);
+    
+        // - Keystore Persistence Gateway
+        _keystorePersistenceGateway = new KeystorePersistenceFileGateway(
+            rq.outputDir);
+    
+        // - Value Gateway
+        if (usingFileSystemValues && rq.usingEnvVars)
+        
+            _valueGateway = new ValueFileEnvironmentGateway(
+                new ValueFileGateway(rq.configValsLoc),
+                new ValueEnvironmentGateway());
+    
+        else if (usingFileSystemValues)
+            _valueGateway = new ValueFileGateway(rq.configValsLoc);
+    
+        else if (rq.usingEnvVars)
+            _valueGateway = new ValueEnvironmentGateway();
+    
+        else
+            _valueGateway = new ValuePromptGateway();
+    
+        // - Transform Gateway
+        if (usingConfigServer)
+            _transformGateway = new TransformServerGateway();
+    
+        else
+            _transformGateway = new TransformFileGateway();
+    
+        // - Metadata Gateway
+        _metadataGateway = new MetadataFileGateway(
+            rq.metedataLoc);
+    
+        // - Keystore Metadata Gateway
+        _keystoreMetadataGateway = new KeystoreMetadataFileGateway(
+            rq.keystoreMetadataLoc,
+            rq.outputDir);
+    }
+
+
+    
+    public ValueInjectResponse exec() throws MetadataException
+    {
         // Gather all variable metadata
         Map<String, Metadata> allVarMetadata = MetadataBuilder.build(_metadataGateway.getMetadataMap());
         
@@ -84,101 +130,3 @@ public class ValueInjectInteractor
         return new ValueInjectResponse("Success", "SUCCESS");
     }
 }
-
-
-
-
-// Do not delete code below -- contains code for 'use' feature
-/*
-    private List<String> getTags(String s)
-    {
-        List<String> tags = new ArrayList<String>();
-        
-        Pattern regex = Pattern.compile("\\{(.*?)\\}");
-        Matcher regexMatcher = regex.matcher(s);
-        
-        // fetch groups
-        while(regexMatcher.find())
-            tags.add(regexMatcher.group(1));
-        
-        return tags;
-    }
-    
-    private Map<String,Object> getUseMap()
-    {
-        // All tag names must be unique across all config files of the service
-
-        Map<String,Object> allFileValues = new HashMap<String,Object>();
-
-        // get root of 'use' section in diff
-        Map<String, Object> useMapInfo = (Map<String, Object>) _diffMap.get(USE);
-        Set<String> useFiles = useMapInfo.keySet();
-
-        // loop through the files in the 'use' section
-        for(String useFileKey : useFiles)
-        {
-            // Root of the 'pointers' section for a single file in the 'use' section
-            System.out.println("current use-file : " + useFileKey);
-            Map<String,Object> pointerRoot = (Map<String,Object>) useMapInfo.get(useFileKey);
-            System.out.println("use-file: templateDir= " + _rq.templateDir + " dataId=" + useFileKey);
-
-            // load the source data
-            Map<String, Object> srcRoot = _configGateway.get(_rq.templateDir, useFileKey);
-
-            // now we pair (a) the root of the data-location pointers + (b) root of the source data
-            Map<String,Object> fileResolutions = resolveUseFileVariables(pointerRoot, srcRoot);
-
-            allFileValues.putAll(fileResolutions);
-        }
-
-        return allFileValues;
-    }
-
-    private Map<String,Object> resolveUseFileVariables(
-        Map<String,Object> pointerRoot, Map<String,Object> srcRoot)
-    {
-        final Map<String,Object> fileMap = new HashMap<String,Object>();
-        yamlWalker(pointerRoot, srcRoot, (searchKey, searchTag, srcValue) -> fileMap.put(searchTag, srcValue));
-        return fileMap;
-    }
-    
-    @FunctionalInterface
-    private interface YamlVisitor { void visit(String searchKey, String searchTag, Object srcValue); }
-    
-    private void yamlWalker(Map<String,Object> pointer, Map<String,Object> src, YamlVisitor visitor)
-    {
-        // invariant: pointer and srcValue are at same level in respective hierarchies
-        
-        if(pointer == null) return;
-        
-        for(Map.Entry<String,Object> pEntry : pointer.entrySet())
-        {
-            // assumption: All Entry values are either a List or  a Map
-            
-            if(pEntry.getValue() instanceof String)
-            {
-                // In pointer tree, node is a leaf iff node is a String
-                // Therefore Entry key is the search-key, and Entry value is the search-tag
-                // Note: The node in a src tree that corresponds to a pointer tree leaf, may not itself be
-                // a leaf (e.g.: it may be a list or Map)
-                String searchKey = pEntry.getKey();
-                String searchTag = (String) pEntry.getValue();
-                
-                // find the value for the same key in src -- note: src value may not be a String
-                Object srcValue = src.get(searchKey);
-                
-                // provide to visitor for processing
-                visitor.visit(searchKey, searchTag, srcValue);
-            }
-            else
-            {
-                // bring src down a level to match pEntry.value to match pointer's level (and maintain invariant)
-                Map<String,Object> newPointer = (Map<String,Object>) pEntry.getValue();
-                Map<String,Object> newSrc = (Map<String,Object>) src.get(pEntry.getKey());
-                
-                yamlWalker(newPointer, newSrc, visitor);
-            }
-        }
-    }
-}
-*/
