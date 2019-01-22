@@ -357,8 +357,7 @@ $ java -jar aotearoa.jar         \
     -v ./templates/_values.yml   \ # values file          
     -o ./config-out              \ # output folder
     -m ./templates/_combined.yml \ # metadata file
-    -k ./templates/_combined.yml   # keystore template file  
-    
+    -k ./templates/_combined.yml   # keystore template file      
 ```    
 
-Note: Value files cannot be combined a single file with metadata and keystore configuration.
+Note: Value files cannot be combined into a single file with metadata and keystore configuration.
