@@ -27,7 +27,7 @@ public class ValueInjectCLIStart
         OptionParser optionConfig = configureCommandLineOptions();
         OptionSet optionInput = null;
         try {
-            optionInput = parseCommandLine(optionConfig, args);
+            optionInput = optionConfig.parse(args);
         } catch(Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             printHelp(optionConfig);
@@ -88,8 +88,6 @@ public class ValueInjectCLIStart
             System.out.println("ERROR: " + c.getMessage());
             exit(1);
         }
-        
-        
         
         // Process response
         if (resp.resultCode.equals(ValueInjectResponse.SUCCESS))
@@ -170,11 +168,6 @@ public class ValueInjectCLIStart
             "Display help/usage information").forHelp();
         
         return optionConfig;
-    }
-    
-    private static OptionSet parseCommandLine(OptionParser optionConfig, String[] args) throws RuntimeException
-    {
-        return optionConfig.parse(args);
     }
     
     private static boolean printHelp(OptionParser optionConfig)

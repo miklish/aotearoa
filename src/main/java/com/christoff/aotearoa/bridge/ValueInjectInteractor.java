@@ -30,7 +30,6 @@ public class ValueInjectInteractor
     private IPresenter _presenter;
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
-    private ValueInjectRequest _rq = null;
     
     public ValueInjectInteractor(ValueInjectRequest rq)
     {
