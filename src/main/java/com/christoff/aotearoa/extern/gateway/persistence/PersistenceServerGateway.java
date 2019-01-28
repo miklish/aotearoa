@@ -12,7 +12,7 @@ public class PersistenceServerGateway implements IPersistenceGateway
     }
 
     @Override
-    public void persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata) {
+    public Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata) {
         throw new UnsupportedOperationException("config-server persistence not supported yet");
     }
 }

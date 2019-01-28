@@ -5,6 +5,10 @@ Aotearoa is a command line tool that allows Application Operations teams to gene
 ## Template, and Value files
 AOtearoa starts with template files. A template is a normal text configuration file that contains 'tags' in which values will be inserted.
 
+> **_NOTE_**:
+>
+> The default regex replacement pattern used by Aotearoa is `\{\{(.*?)\}\}` (e.g.: `{{my-tag}}`), however, the regex pattern can be easily configured using the -r command line option (or via argument if called as a method). For example, using the -r option you could use the common `\$\{(.*?)\}` pattern, and then you could have tags in your templates such as `${my-tag}`. 
+
 ##### security.yml
 ```yaml
 # Enable JWT verification flag.
@@ -236,6 +240,10 @@ with the appropriate arguments:
  <tr>
     <td>-s, --server</td>
     <td>Config Server URL (optional)</td>
+ </tr>
+ <tr>
+    <td>-r, --regex</td>
+    <td>regex pattern (optional - default is '\{\{(.*?)\}\}' )</td>
  </tr>
  <tr>
     <td>-t, --templates</td>

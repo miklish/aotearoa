@@ -29,7 +29,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
     }
 
     @Override
-    public void persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
+    public Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
         throws TemplateIOException
     {
         // delete target directory's contents, and copy source folder's contents into it
@@ -84,6 +84,8 @@ public class PersistenceFileGateway implements IPersistenceGateway
                 throw new TemplateIOException("Could not resolve template " + outFInfo.getName());
             }
         }
+        
+        return null;
     }
 
     

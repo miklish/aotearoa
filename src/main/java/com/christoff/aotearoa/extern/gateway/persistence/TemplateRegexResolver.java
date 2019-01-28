@@ -1,4 +1,4 @@
-package com.christoff.aotearoa.intern.gateway.persistence;
+package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
@@ -8,11 +8,19 @@ import java.util.regex.Pattern;
 
 public class TemplateRegexResolver
 {
-    private static Pattern p = Pattern.compile("\\{\\{(.*?)\\}\\}");
+    private Pattern _p;
     
-    public static String resolve(String templateName, String template, Map<String, Metadata> map)
+    public TemplateRegexResolver() {
+        _p = Pattern.compile("\\{\\{(.*?)\\}\\}");
+    }
+    
+    public TemplateRegexResolver(String pattern) {
+        _p = Pattern.compile(pattern);
+    }
+    
+    public String resolve(String templateName, String template, Map<String, Metadata> map)
     {
-        Matcher m = p.matcher(template);
+        Matcher m = _p.matcher(template);
         StringBuffer sb = new StringBuffer();
 
         while (m.find())

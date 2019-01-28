@@ -5,5 +5,11 @@ import java.util.Map;
 
 public interface IPersistenceGateway
 {
-    void persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata);
+    /***
+     *
+     * @param resolver regex resolver
+     * @param allVarMetadata contains data on metadata
+     * @return may return null, or can return resolved YAML as standard Map/List structure
+     */
+    Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata);
 }

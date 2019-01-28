@@ -19,6 +19,7 @@ public class ValueInjectCLIStart
     private static final String ENV_VARS = "e";
     private static final String OUTPUT_DIR = "o";
     private static final String SERVER_URL = "s";
+    private static final String REGEX = "r";
     private static final String HELP = "h";
     
     public static void main(String[] args)
@@ -53,6 +54,7 @@ public class ValueInjectCLIStart
          *   e / env        : use environment variables for values or overrides (optional)
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
+         *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   h / help       : help info
          */
         ValueInjectRequest request = new ValueInjectRequest();
@@ -62,6 +64,7 @@ public class ValueInjectCLIStart
         request.metedataLoc = (String) optionInput.valueOf(ValueInjectCLIStart.METADATA_LOC);
         request.outputDir = (String) optionInput.valueOf(ValueInjectCLIStart.OUTPUT_DIR);
         request.serverUrl = (String) optionInput.valueOf(ValueInjectCLIStart.SERVER_URL);
+        request.regex = (String) optionInput.valueOf(ValueInjectCLIStart.REGEX);
         request.showHelp = optionInput.has(ValueInjectCLIStart.HELP);
         request.templateDir = (String) optionInput.valueOf(ValueInjectCLIStart.TEMPLATE_DIR);
         request.usingPrompts = optionInput.has(PROMPTS);
@@ -108,6 +111,7 @@ public class ValueInjectCLIStart
          *   e / env        : use environment variables for values or overrides (optional)
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
+         *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )         *
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
@@ -154,6 +158,12 @@ public class ValueInjectCLIStart
         optionConfig.acceptsAll(
             Arrays.asList(serverOptions),
             "Config Server URL (optional)").withRequiredArg();
+    
+        /** regex: regex pattern */
+        final String[] regexOptions = {REGEX,"regex"};
+        optionConfig.acceptsAll(
+            Arrays.asList(regexOptions),
+            "Regex pattern to locate tags in templates (optional - default is '\\{\\{(.*?)\\}\\}')").withRequiredArg();
         
         /** local: output dir */
         final String[] outputOptions = {OUTPUT_DIR,"outputdir"};

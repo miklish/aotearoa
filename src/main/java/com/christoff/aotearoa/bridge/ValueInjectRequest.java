@@ -8,6 +8,7 @@ public class ValueInjectRequest
     public String configValsLoc;
     public String outputDir;
     public String serverUrl;
+    public String regex;
     public boolean showHelp;
     public boolean usingPrompts;
     public boolean usingEnvVars;

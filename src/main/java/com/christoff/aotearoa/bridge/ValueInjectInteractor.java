@@ -1,5 +1,6 @@
 package com.christoff.aotearoa.bridge;
 
+import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
@@ -14,12 +15,13 @@ import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
 import com.christoff.aotearoa.intern.gateway.metadata.*;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
-import com.christoff.aotearoa.intern.gateway.persistence.TemplateRegexResolver;
+import com.christoff.aotearoa.extern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 
 import java.util.*;
+import java.util.regex.PatternSyntaxException;
 
 public class ValueInjectInteractor
 {
@@ -30,12 +32,13 @@ public class ValueInjectInteractor
     private IPresenter _presenter;
     private IValueGateway _valueGateway;
     private ITransformGateway _transformGateway;
+    private TemplateRegexResolver _regexResolver;
     
     public ValueInjectInteractor(ValueInjectRequest rq)
     {
         boolean usingConfigServer = rq.serverUrl != null;
         boolean usingFileSystemValues = rq.configValsLoc != null;
-    
+        boolean usingCustomRegex = rq.regex != null;
 
         
         // Construct Gateways
@@ -68,6 +71,18 @@ public class ValueInjectInteractor
     
         else
             _valueGateway = new ValuePromptGateway();
+        
+        
+        // Regex pattern
+        if (usingCustomRegex)
+            try {
+                _regexResolver = new TemplateRegexResolver(rq.regex);
+            } catch(PatternSyntaxException e) {
+                throw new ConfigException("Custom regex pattern '" + rq.regex + "' is invalid");
+            }
+        else
+            _regexResolver = new TemplateRegexResolver();
+        
     
         // - Transform Gateway
         if (usingConfigServer)
@@ -106,7 +121,7 @@ public class ValueInjectInteractor
         
         // Resolve and persist the templates
         _presenter.persistingValuesBegin();
-        _persistenceGateway.persistValues(TemplateRegexResolver::resolve, allVarMetadata);
+        _persistenceGateway.persistValues(_regexResolver::resolve, allVarMetadata);
         _presenter.persistingValuesEnd();
     
         // Check if any metadata went unused
