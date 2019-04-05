@@ -5,6 +5,8 @@ import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,9 @@ public class ValueFileGateway implements IValueGateway
         } catch (IOException e) {
             throw new MetadataIOException(e.getMessage());
         }
+
+        if(_valueMap == null)
+            throw new MetadataIOException("Error loading value file  + valueFile -- file exists, but may be empty");
     }
 
     @Override
