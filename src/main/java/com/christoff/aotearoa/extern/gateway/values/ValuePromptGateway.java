@@ -13,6 +13,7 @@ public class ValuePromptGateway implements IValueGateway
     private static final String QUIT = "\\\\q";
     private static final String COMPLETE_MULTIPLE = "\\\\n";
     private static final String DEFAULT = "";
+    private static final String OUTPUT_ENCRYPT = "encrypt";
     
     @Override
     public void setMetadata(Map<String, Metadata> allVarMetadata)
@@ -36,7 +37,7 @@ public class ValuePromptGateway implements IValueGateway
         String prompt = vm.getProperty(Metadata.PROMPT_TEXT).get(0);
         String type = vm.getProperty(Metadata.TYPE).get(0);
         String dflt = vm.getProperty(Metadata.DEFAULTS) == null ? null : vm.getProperty(Metadata.DEFAULTS).get(0);
-
+        boolean isEncrypted = vm.getProperty(Metadata.OUTPUT).get(0).trim().equalsIgnoreCase(OUTPUT_ENCRYPT);
 
         Scanner scanner = new Scanner(System.in).useDelimiter(" ");
         List<Object> retVal = new LinkedList<>();
@@ -57,7 +58,17 @@ public class ValuePromptGateway implements IValueGateway
                 System.out.print("[Value " + (i+1) + "]: ");
                 
                 // get their input as a String
-                String value = scanner.nextLine().split(" ")[0];
+                String value;
+                if(!isEncrypted)
+                    value = scanner.nextLine().split(" ")[0];
+                else
+                {
+                    if (System.console() != null)
+                        value = new String(System.console().readPassword());
+                    else
+                        value = scanner.nextLine().split(" ")[0];
+                }
+
                 if(value.equals(COMPLETE_MULTIPLE)) break;
         
                 if(value.equals(QUIT))
@@ -85,7 +96,18 @@ public class ValuePromptGateway implements IValueGateway
                 System.out.print("[" + prompt + dfltPrompt + "]: ");
 
                 // get their input as a String
-                String value = scanner.nextLine();
+                String value;
+
+                // get their input as a String
+                if(!isEncrypted)
+                    value = scanner.nextLine();
+                else
+                {
+                    if (System.console() != null)
+                        value = new String(System.console().readPassword());
+                    else
+                        value = scanner.nextLine();
+                }
 
                 if (value.equals(QUIT))
                     throw new ValueException("User exited");
