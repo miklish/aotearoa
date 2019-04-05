@@ -1,5 +1,8 @@
 package com.christoff.aotearoa.bridge;
 
+/***
+ * TODO: Update to return fully injected output as Map/List structure
+ */
 public class ValueInjectResponse
 {
     public static final String SUCCESS = "SUCCESS";
