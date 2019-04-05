@@ -41,8 +41,6 @@ public class ValueInjectCLIStart
                 exit(0);
         }
 
-
-        
         // extract command line values
         /**
          * Options
@@ -71,11 +69,12 @@ public class ValueInjectCLIStart
         
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
-        
-        
-    
+
+        System.out.println("Custom Regex = " + request.regex);
+
+
         // - Ensure at least one of prompts, file system, environment config selected
-        if (!usingFileSystemValues && !usingConfigFile && !request.usingEnvVars)
+        if (!usingFileSystemValues && !usingConfigFile && !request.usingEnvVars && !request.usingPrompts)
         {
             System.out.println("You must provide values from either a values file, command line prompts, or environment");
             printHelp(optionConfig);
@@ -104,7 +103,7 @@ public class ValueInjectCLIStart
         /**
          * Options
          *   m / metadata   : variable metadata file (required)
-         *   k / kmetadata : keystore metadata file (optional)
+         *   k / kmetadata  : keystore metadata file (optional)
          *   t / templates  : template directory (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
