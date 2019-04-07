@@ -6,23 +6,22 @@ import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class PersistenceFileGateway implements IPersistenceGateway
+public class PersistenceInMemoryGateway implements IPersistenceGateway
 {
     private String _templateDir;
-    private String _outputDir;
     private String _keystoreMetadataFilename;
     private PersistenceFileHelper _filesysHelp;
 
-    public PersistenceFileGateway(String templateFileFolder, String outputDir, String keystoreMetadataFilename)
+    public PersistenceInMemoryGateway(String templateFileFolder, String keystoreMetadataFilename)
     {
         _templateDir = templateFileFolder;
-        _outputDir = outputDir;
         _keystoreMetadataFilename = keystoreMetadataFilename;
         _filesysHelp = new PersistenceFileHelper();
     }
@@ -31,10 +30,6 @@ public class PersistenceFileGateway implements IPersistenceGateway
     public Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
         throws TemplateIOException
     {
-        // delete target directory's contents, and copy source folder's contents into it
-        prepareFolders();
-        
-
         // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
         for(Metadata vm : allVarMetadata.values()) {
@@ -63,70 +58,27 @@ public class PersistenceFileGateway implements IPersistenceGateway
             String filename = _templateDir + "/" + addYamlExt(templateId);
             PersistenceFileHelper.FileInfo fInfo = null;
             try {
-                fInfo = _filesysHelp.getFileInfo(filename, false, true);
+                fInfo = _filesysHelp.getFileInfo(filename, true, false);
             } catch(MetadataIOException e) {
                 throw new TemplateIOException("Template file " + addYamlExt(templateId) + " is specified in the " +
                         "Metadata yaml, but it cannot be found or is incorrectly formatted");
             }
 
+            // TODO: convert file to YAML
+            Map yaml = fInfo.map;
+            
+            // TODO: use dfs and inject leaf nodes with tags with their values
+            //
+            
+            
+            
             // use regex replace to inject the actual values
             String resolved = resolver.resolve(fInfo.file.getName(), fInfo.string, allVarMetadata);
-
-            // save the String to the target directory and overrwrite the existing value if exists
-            String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + addYamlExt(templateId));
-            File outFInfo = new File(outFilename);
             
-            try {
-                // writeStringToFile(File file, String data, String encoding)
-                FileUtils.writeStringToFile(outFInfo, resolved, (String) null);
-            } catch (IOException e) {
-                throw new TemplateIOException("Could not resolve template " + outFInfo.getName());
-            }
         }
         
         return null;
     }
-
-    
-    private void prepareFolders()
-        throws TemplateIOException
-    {
-        // clean target directory and copy contents of source directory into
-        // - ensure target and source directories are not the same
-        File templateDirFile = new File(_templateDir);
-        File outputDirFile = new File(_outputDir);
-
-        if(!templateDirFile.exists() || templateDirFile.isFile())
-            throw new TemplateIOException(
-                "The specified template folder " +
-                templateDirFile.getName() +
-                " either does not exist or is not a folder");
-        
-        if(!outputDirFile.exists() || outputDirFile.isFile())
-            throw new TemplateIOException(
-                "The specified output folder " +
-                outputDirFile.getName() +
-                " either does not exist or is not a folder");
-
-        if(templateDirFile.equals(outputDirFile))
-            throw new TemplateIOException("Template " + templateDirFile.getName() + " folder and output folder cannot be the same");
-        
-        // - clean target directory
-        try {
-            FileUtils.cleanDirectory(outputDirFile);
-        } catch (IOException e) {
-            throw new TemplateIOException("Could not clean output folder " + templateDirFile.getName());
-        }
-        
-        // - copy source to target
-        try {
-            FileUtils.copyDirectory(templateDirFile, outputDirFile, null);
-        } catch (IOException e) {
-            throw new TemplateIOException(
-                "Could not copy contents of folder" + templateDirFile.getName() + " to folder " + outputDirFile.getName());
-        }
-    }
-
     
     private static String addYamlExt(String f) {
         if(f == null) return null;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
-import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import org.apache.commons.io.FileUtils;
 import static org.apache.commons.io.FileUtils.getFile;
@@ -31,13 +30,34 @@ public class PersistenceFileHelper
         public String string = null;
     }
 
+    /**
+     * Normalizes filenames
+     * Converts relative filesname to full paths
+     *
+     * @param filename
+     * @return cleaned filename
+     */
+    public static String cleanFilename(String filename)
+    {
+        // try to normalize path
+        String cleanFilename = normalize(filename);
+        if(cleanFilename == null)                // likely means path is relative
+            try {
+                cleanFilename = new File(filename).getCanonicalPath();
+            } catch (IOException e) {
+                throw new MetadataIOException("Cannot locate variable metadata file " + filename);
+            }
+
+        return cleanFilename;
+    }
+
     
     public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
         throws MetadataIOException
     {
         FileInfo info = new FileInfo();
         info.id = configId;
-        info.nId = normalize(configId);
+        info.nId = cleanFilename(configId);
         info.file = getFile(info.nId);
         info.exists = info.file.exists();
         info.isFile = info.file.isFile();

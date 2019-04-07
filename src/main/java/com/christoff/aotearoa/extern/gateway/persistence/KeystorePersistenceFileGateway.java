@@ -4,7 +4,6 @@ import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -60,13 +59,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         boolean useExistingKeystore = km.getBaseKeystoreFilename() != null;
 
         KeyStore ks;
-        String outputFilename = FilenameUtils.normalize(_outputDir + "/" + km.getOutputKeystoreFilename());
+        String outputFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + km.getOutputKeystoreFilename());
     
         // check whether we are building a new keystore, or adding to an existing one
         if(useExistingKeystore)
         {
             // load existing keystore
-            String ksFilename = FilenameUtils.normalize(_outputDir + "/" + km.getBaseKeystoreFilename());
+            String ksFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + km.getBaseKeystoreFilename());
             ks = loadJKSKeystore(ksFilename, km.getKeystorePassword());
         }
         else
@@ -91,7 +90,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
     public Certificate loadCertificate(String name) throws Exception
     {
-        String certFilename = FilenameUtils.normalize(_outputDir + "/" + name);
+        String certFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + name);
         CertificateFactory fact = CertificateFactory.getInstance("X.509");
         FileInputStream is = new FileInputStream (certFilename);
         X509Certificate cer = (X509Certificate) fact.generateCertificate(is);
