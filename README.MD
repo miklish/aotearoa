@@ -7,7 +7,11 @@ AOtearoa starts with template files. A template is a normal text configuration f
 
 > **_NOTE_**:
 >
-> The default regex replacement pattern used by Aotearoa is `\{\{(.*?)\}\}` (e.g.: `{{my-tag}}`), however, the regex pattern can be easily configured using the -r command line option (or via argument if called as a method). For example, using the -r option you could use the common `\$\{(.*?)\}` pattern, and then you could have tags in your templates such as `${my-tag}`. 
+> The default regex replacement pattern used by Aotearoa handles patterns of the form `{{my-tag}}`. The regex for this is `\{\{(.*?)\}\}`. However, the regex pattern can be easily configured to handle any pattern, including the popular form `${my-tag}` as well. For example, using the command line option `--regex \\$\{(.*?)\}`,  you could use tags in your templates in the form `${my-tag}`. 
+> 
+> **_NOTE_**:
+> 
+> The pattern to handle tags of the type `${my-tag}` should be `\\$\{(.*?)\}` on the command line, however, in IntelliJ's Run/Debug Configuration, it should be `\$\{(.*?)\}` (i.e.: omit the initial slash), since the `$` character does not need to be escaped for IntelliJ, but it does need to be escaped for bash (and related) shells.
 
 ##### security.yml
 ```yaml
