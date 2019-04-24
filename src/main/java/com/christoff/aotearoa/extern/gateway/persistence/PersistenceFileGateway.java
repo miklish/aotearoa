@@ -6,6 +6,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.IPersistenceGateway;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateIOException;
 import com.christoff.aotearoa.intern.gateway.persistence.TemplateResolverFunction;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -18,13 +19,16 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private String _outputDir;
     private String _keystoreMetadataFilename;
     private PersistenceFileHelper _filesysHelp;
+    private IPresenter _presenter;
 
-    public PersistenceFileGateway(String templateFileFolder, String outputDir, String keystoreMetadataFilename)
+    public PersistenceFileGateway(
+            String templateFileFolder, String outputDir, String keystoreMetadataFilename, IPresenter presenter)
     {
         _templateDir = templateFileFolder;
         _outputDir = outputDir;
         _keystoreMetadataFilename = PersistenceFileHelper.cleanFilename(keystoreMetadataFilename);
         _filesysHelp = new PersistenceFileHelper();
+        _presenter = presenter;
     }
 
     @Override
@@ -65,8 +69,8 @@ public class PersistenceFileGateway implements IPersistenceGateway
             try {
                 fInfo = _filesysHelp.getFileInfo(filename, false, true);
             } catch(MetadataIOException e) {
-                throw new TemplateIOException("Template file " + addYamlExt(templateId) + " is specified in the " +
-                        "Metadata yaml, but it cannot be found or is incorrectly formatted");
+                _presenter.templateFileNotFoundOrMalformed(addYamlExt(templateId));
+                continue;
             }
 
             // use regex replace to inject the actual values

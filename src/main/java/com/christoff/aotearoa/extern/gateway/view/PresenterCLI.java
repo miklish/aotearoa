@@ -23,4 +23,12 @@ public class PresenterCLI implements IPresenter
     public void emptyKeystore(String keystoreName) {
         System.out.println("WARNING: Keystore " + keystoreName + " has no certificates");
     }
+
+    @Override
+    public void templateFileNotFoundOrMalformed(String templateFile) {
+        System.out.println(
+            "WARNING: Template file " +
+            templateFile +
+            " is specified in the Metadata yaml, but it cannot be found or is incorrectly formatted");
+    }
 }

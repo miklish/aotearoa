@@ -6,4 +6,5 @@ public interface IPresenter
     void persistingValuesBegin();
     void persistingValuesEnd();
     void emptyKeystore(String keystoreName);
+    void templateFileNotFoundOrMalformed(String templateFile);
 }
