@@ -39,6 +39,8 @@ public class PersistenceFileHelper
      */
     public static String cleanFilename(String filename)
     {
+        if(filename == null) return filename;
+
         // try to normalize path
         String cleanFilename = normalize(filename);
         if(cleanFilename == null)                // likely means path is relative
