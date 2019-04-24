@@ -14,7 +14,14 @@ public interface IValueGateway
      * @return A list of variable values
      */
     List<Object> get(Metadata vm);
-    
+
+    /***
+     * Check if a value for this metadata variable exists
+     *
+     * Will not throw exceptions
+     */
+    boolean exists(Metadata vm);
+
     /***
      * Provide all metadata to gateway so that it may present forms etc... to illicit values from users
      * @param allVarMetadata All variable metadata object keyed by tag name

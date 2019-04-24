@@ -19,9 +19,15 @@ public class ValueFileEnvironmentGateway implements IValueGateway
     }
 
     @Override
+    public boolean exists(Metadata vm)
+    {
+        return _valueEnvGateway.exists(vm) || _valueFileGateway.exists(vm);
+    }
+
+    @Override
     public List<Object> get(Metadata vm)
     {
-        return _valueEnvGateway.get(vm).size() > 0 ?    // check whether environment has a value
+        return _valueEnvGateway.exists(vm) ?    // check whether environment has a value
             _valueEnvGateway.get(vm) :                  //   yes: use the environment valaue
             _valueFileGateway.get(vm);                  //   no : use file value
     }

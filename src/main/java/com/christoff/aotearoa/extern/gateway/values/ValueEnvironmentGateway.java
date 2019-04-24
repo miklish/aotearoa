@@ -13,6 +13,11 @@ public class ValueEnvironmentGateway implements IValueGateway
     private Map<String,List<Object>> _values = new HashMap<>();
 
     @Override
+    public boolean exists(Metadata vm) {
+        return System.getenv(vm.getName()) != null;
+    }
+
+    @Override
     public List<Object> get(Metadata vm)
     {
         String varName = vm.getName();

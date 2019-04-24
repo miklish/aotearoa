@@ -33,6 +33,17 @@ public class ValueFileGateway implements IValueGateway
     public void setMetadata(Map<String, Metadata> allVarMetadata) {}
 
     @Override
+    public boolean exists(Metadata vm)
+    {
+        Object values =
+            _valueMap.get(vm.getName()) != null ?
+                _valueMap.get(vm.getName()) :
+                vm.getProperty(Metadata.DEFAULTS);
+
+        return values != null && values instanceof List;
+    }
+
+    @Override
     public List<Object> get(Metadata vm)
     {
         Object values =

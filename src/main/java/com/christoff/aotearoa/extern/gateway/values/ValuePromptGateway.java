@@ -27,6 +27,9 @@ public class ValuePromptGateway implements IValueGateway
     }
 
     @Override
+    public boolean exists(Metadata vm) { return true; }
+
+    @Override
     public List<Object> get(Metadata vm)
         throws ValueException
     {
