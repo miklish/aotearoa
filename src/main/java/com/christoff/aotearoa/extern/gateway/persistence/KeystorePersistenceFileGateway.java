@@ -1,6 +1,7 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.ConfigException;
+import com.christoff.aotearoa.extern.gateway.transform.TransformAESDecryptor;
 import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
@@ -30,8 +31,10 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 {
     private String _outputDir;
     private PersistenceFileHelper _fileHelper = new PersistenceFileHelper();
+    private static TransformAESDecryptor _decrypt = new TransformAESDecryptor();
 
-    public KeystorePersistenceFileGateway(String outputDir) {
+    public KeystorePersistenceFileGateway(String outputDir)
+    {
         _outputDir = outputDir;
     }
 
@@ -66,11 +69,11 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         {
             // load existing keystore
             String ksFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + km.getBaseKeystoreFilename());
-            ks = loadJKSKeystore(ksFilename, km.getKeystorePassword());
+            ks = loadJKSKeystore(ksFilename, _decrypt.decrypt(km.getKeystorePassword()));
         }
         else
             // create new keystore
-            ks = createJKSKeystore(km.getKeystorePassword());
+            ks = createJKSKeystore(_decrypt.decrypt(km.getKeystorePassword()));
 
         for(CertificateMetadata cm : km.getCertificates())
         {
@@ -102,7 +105,7 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException
     {
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        char[] pwdArray = password.toCharArray();
+        char[] pwdArray = _decrypt.decrypt(password).toCharArray();
         ks.load(null, pwdArray);
         return ks;
     }
@@ -110,14 +113,14 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
     public static void saveKeystore(KeystoreMetadata km, KeyStore ks, String ksFilename)
         throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException
     {
-        ks.store(new FileOutputStream(ksFilename), km.getKeystorePassword().toCharArray());
+        ks.store(new FileOutputStream(ksFilename), _decrypt.decrypt(km.getKeystorePassword()).toCharArray());
     }
 
     public static KeyStore loadJKSKeystore(String keystoreFilename, String password)
         throws KeyStoreException, FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException
     {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(keystoreFilename), password.toCharArray());
+        ks.load(new FileInputStream(keystoreFilename), _decrypt.decrypt(password).toCharArray());
         return ks;
     }
 }

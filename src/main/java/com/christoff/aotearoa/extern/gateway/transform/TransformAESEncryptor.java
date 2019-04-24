@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TransformAESEncryptor implements ITransform
 {
-    private static final String FRAMEWORK_NAME = "light";
+    public static final String FRAMEWORK_NAME = "light";
     public static final String CRYPT_PREFIX = "CRYPT";
     private static final int ITERATIONS = 65536;
     private static final int KEY_SIZE = 128;
