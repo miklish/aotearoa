@@ -7,10 +7,7 @@ import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFile
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.transform.TransformFileGateway;
 import com.christoff.aotearoa.extern.gateway.transform.TransformServerGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValueEnvironmentGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValueFileEnvironmentGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValueFileGateway;
-import com.christoff.aotearoa.extern.gateway.values.ValuePromptGateway;
+import com.christoff.aotearoa.extern.gateway.values.*;
 import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
 import com.christoff.aotearoa.intern.gateway.metadata.*;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
@@ -56,18 +53,27 @@ public class ValueInjectInteractor
         _keystorePersistenceGateway = new KeystorePersistenceFileGateway(
             rq.outputDir);
     
+
         // - Value Gateway
-        if (usingFileSystemValues && rq.usingEnvVars)
-        
+
+        // TODO: 1. Build a more generic way of handling the many value types
+        // TODO: 2. Determine a way to specify the order of each method
+
+        if (usingFileSystemValues && rq.usingEnvVars && !rq.usingPrompts)
             _valueGateway = new ValueFileEnvironmentGateway(
                 new ValueFileGateway(rq.configValsLoc),
                 new ValueEnvironmentGateway());
     
-        else if (usingFileSystemValues)
+        else if (usingFileSystemValues && !rq.usingEnvVars && !rq.usingPrompts)
             _valueGateway = new ValueFileGateway(rq.configValsLoc);
     
-        else if (rq.usingEnvVars)
+        else if (usingFileSystemValues & rq.usingEnvVars && !rq.usingPrompts)
             _valueGateway = new ValueEnvironmentGateway();
+
+        else if (usingFileSystemValues && !rq.usingEnvVars && rq.usingPrompts)
+            _valueGateway = new ValueFilePromptGateway(
+                new ValueFileGateway(rq.configValsLoc),
+                new ValuePromptGateway());
     
         else
             _valueGateway = new ValuePromptGateway();
