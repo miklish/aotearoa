@@ -23,7 +23,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
     {
         _templateDir = templateFileFolder;
         _outputDir = outputDir;
-        _keystoreMetadataFilename = keystoreMetadataFilename;
+        _keystoreMetadataFilename = PersistenceFileHelper.cleanFilename(keystoreMetadataFilename);
         _filesysHelp = new PersistenceFileHelper();
     }
 
@@ -60,7 +60,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         for(String templateId : templateFileIds)
         {
             // open the template file as a String
-            String filename = _templateDir + "/" + addYamlExt(templateId);
+            String filename = PersistenceFileHelper.cleanFilename(_templateDir + "/" + addYamlExt(templateId));
             PersistenceFileHelper.FileInfo fInfo = null;
             try {
                 fInfo = _filesysHelp.getFileInfo(filename, false, true);
