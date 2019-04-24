@@ -26,6 +26,11 @@ public class MetadataInjector
         for (Metadata varMeta : variablesMetadataMap.values())
         {
             // Set the variable values
+            if(!_valueGateway.exists(varMeta)) {
+                System.out.println("WARNING: No Value found for Metadata tag " + varMeta.getName());
+                continue;
+            }
+
             List<Object> values = _valueGateway.get(varMeta);
             if(values == null || values.isEmpty())
                 throw new MetadataException(
@@ -50,6 +55,7 @@ public class MetadataInjector
             
             // set the transform
             varMeta.setTransformation(transform);
+
         }
         
         return variablesMetadataMap;
