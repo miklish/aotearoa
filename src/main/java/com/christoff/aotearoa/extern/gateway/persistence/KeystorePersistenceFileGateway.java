@@ -6,10 +6,7 @@ import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -29,12 +26,14 @@ import java.util.Map;
  */
 public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
 {
+    private String _keystoreMetadataFile;
     private String _outputDir;
     private PersistenceFileHelper _fileHelper = new PersistenceFileHelper();
     private static TransformAESDecryptor _decrypt = new TransformAESDecryptor();
 
-    public KeystorePersistenceFileGateway(String outputDir)
+    public KeystorePersistenceFileGateway(String keystoreMetadatafile, String outputDir)
     {
+        _keystoreMetadataFile = keystoreMetadatafile;
         _outputDir = outputDir;
     }
 
@@ -67,8 +66,12 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         // check whether we are building a new keystore, or adding to an existing one
         if(useExistingKeystore)
         {
+            // get key data base dir
+            File ksMetaFile = new File(_keystoreMetadataFile);
+            String ksMetaDir = ksMetaFile.getParentFile().getCanonicalPath();
+
             // load existing keystore
-            String ksFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + km.getBaseKeystoreFilename());
+            String ksFilename = PersistenceFileHelper.cleanFilename(ksMetaDir + "/" + km.getBaseKeystoreFilename());
             ks = loadJKSKeystore(ksFilename, _decrypt.decrypt(km.getKeystorePassword()));
         }
         else

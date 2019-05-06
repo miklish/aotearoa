@@ -52,6 +52,7 @@ public class ValueInjectInteractor
     
         // - Keystore Persistence Gateway
         _keystorePersistenceGateway = new KeystorePersistenceFileGateway(
+            rq.keystoreMetadataLoc,
             rq.outputDir);
     
 
