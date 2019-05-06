@@ -73,7 +73,10 @@ public class TransformAESEncryptor implements ITransform
             byte[] out = new byte[iv.length + ciphertext.length];
             System.arraycopy(iv, 0, out, 0, iv.length);
             System.arraycopy(ciphertext, 0, out, iv.length, ciphertext.length);
-            return CRYPT_PREFIX + ":" + base64Encoder.encode(out);
+            return (CRYPT_PREFIX + ":" + base64Encoder.encode(out))
+                    .replaceAll("\n", "")
+                    .replaceAll("\r", "");
+
         } catch (IllegalBlockSizeException e) {
             throw new RuntimeException("Unable to encrypt", e);
         } catch (BadPaddingException e) {
