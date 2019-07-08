@@ -22,7 +22,7 @@ public class TestValuesCustomRegex2
         String MAC_ROOT = "/Users/christof/";
         String root = MAC_ROOT;
 
-        rq.metedataLoc = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config2\\_metadata.yml");
+        rq.metadataLoc = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config2\\_metadata.yml");
         rq.outputDir = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config2-out");
         rq.templateDir = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config2");
         rq.configValsLoc = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config2\\_values.yml");

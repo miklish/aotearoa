@@ -21,6 +21,7 @@ public class ValueInjectCLIStart
     private static final String SERVER_URL = "s";
     private static final String REGEX = "r";
     private static final String HELP = "h";
+    private static final String SYMMETRIC_KEY = "y";
     
     public static void main(String[] args)
     {
@@ -53,19 +54,21 @@ public class ValueInjectCLIStart
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
+         *   y / key        : symmetric key used to encrypt secrets
          *   h / help       : help info
          */
         ValueInjectRequest request = new ValueInjectRequest();
         request.configValsLoc = (String) optionInput.valueOf(ValueInjectCLIStart.CONFIG_VALS_LOC);
         request.usingEnvVars = optionInput.has(ValueInjectCLIStart.ENV_VARS);
         request.keystoreMetadataLoc = (String) optionInput.valueOf(ValueInjectCLIStart.KEYSTORE_METADATA_LOC);
-        request.metedataLoc = (String) optionInput.valueOf(ValueInjectCLIStart.METADATA_LOC);
+        request.metadataLoc = (String) optionInput.valueOf(ValueInjectCLIStart.METADATA_LOC);
         request.outputDir = (String) optionInput.valueOf(ValueInjectCLIStart.OUTPUT_DIR);
         request.serverUrl = (String) optionInput.valueOf(ValueInjectCLIStart.SERVER_URL);
         request.regex = (String) optionInput.valueOf(ValueInjectCLIStart.REGEX);
         request.showHelp = optionInput.has(ValueInjectCLIStart.HELP);
         request.templateDir = (String) optionInput.valueOf(ValueInjectCLIStart.TEMPLATE_DIR);
         request.usingPrompts = optionInput.has(PROMPTS);
+        request.symmetricKey = (String) optionInput.valueOf(ValueInjectCLIStart.SYMMETRIC_KEY);
         
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
@@ -110,7 +113,8 @@ public class ValueInjectCLIStart
          *   e / env        : use environment variables for values or overrides (optional)
          *   o / output     : output directory (required)
          *   s / server     : server url (optional)
-         *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )         *
+         *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
+         *   y / key        : symmetric key used to encrypt secrets
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
@@ -169,6 +173,12 @@ public class ValueInjectCLIStart
         optionConfig.acceptsAll(
             Arrays.asList(outputOptions),
             "Output directory (required)").withRequiredArg().required();
+    
+        /** key: symmetric key */
+        final String[] symmetricKeyOptions = {SYMMETRIC_KEY,"key"};
+        optionConfig.acceptsAll(
+            Arrays.asList(symmetricKeyOptions),
+            "Symmetric key used to encrypt secrets (optional)").withRequiredArg();
         
         /** help */
         final String[] helpOptions = {HELP,"help"};

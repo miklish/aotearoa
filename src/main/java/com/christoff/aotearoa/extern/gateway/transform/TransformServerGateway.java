@@ -9,12 +9,13 @@ public class TransformServerGateway implements ITransformGateway
 {
     private static final Map<String,ITransform> _transformMap = new HashMap<>();
     static {
-        _transformMap.put("copy", new TransformCopy());
+        _transformMap.put(ITransformGateway.COPY, new TransformCopy());
 
-        // config-server does encryption server-side, so encrypt-transform does nothing locally
-        _transformMap.put("encrypt", new TransformCopy());
+        // config-server does encryption server-side, so encrypt/decrypt transform does nothing locally
+        _transformMap.put(ITransformGateway.ENCRYPT, new TransformCopy());
+        _transformMap.put(ITransformGateway.DECRYPT, new TransformCopy());
 
-        _transformMap.put("comma-separated", new TransformCommaSeparate());
+        _transformMap.put(ITransformGateway.COMMA_SEPARATED, new TransformCommaSeparate());
     }
     
     @Override

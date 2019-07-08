@@ -43,6 +43,14 @@ public class ValueInjectInteractor
         // - Presenter Gateway
         _presenter = new PresenterCLI();
     
+    
+        // - Transform Gateway
+        if (usingConfigServer)
+            _transformGateway = new TransformServerGateway();
+        else
+            _transformGateway = new TransformFileGateway(rq.symmetricKey);
+        
+    
         // - Config File Persistence Gateway
         _persistenceGateway = new PersistenceFileGateway(
             rq.templateDir,
@@ -53,7 +61,8 @@ public class ValueInjectInteractor
         // - Keystore Persistence Gateway
         _keystorePersistenceGateway = new KeystorePersistenceFileGateway(
             rq.keystoreMetadataLoc,
-            rq.outputDir);
+            rq.outputDir,
+            _transformGateway);
     
 
         // - Value Gateway
@@ -90,18 +99,11 @@ public class ValueInjectInteractor
             }
         else
             _regexResolver = new TemplateRegexResolver();
-        
-    
-        // - Transform Gateway
-        if (usingConfigServer)
-            _transformGateway = new TransformServerGateway();
-    
-        else
-            _transformGateway = new TransformFileGateway();
+
     
         // - Metadata Gateway
         _metadataGateway = new MetadataFileGateway(
-            rq.metedataLoc);
+            rq.metadataLoc);
     
         // - Keystore Metadata Gateway
         _keystoreMetadataGateway = new KeystoreMetadataFileGateway(

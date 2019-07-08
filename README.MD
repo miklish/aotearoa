@@ -156,10 +156,15 @@ The metadata file allows the input to be transformed. In the current version, 3 
 - `copy`
 - `comma-separated`
 - `encrypt`
+- `decrypt`
 
 The `copy` transform simply pastes the value in as-is.
 
-The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. E.g.: The tableau password (set as password above) will appear as `CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs=` in secret.yml.
+The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. The encryption secret can be set on the command line using the `-y` or `-key` option. If an encryption secret is not specified on the command line, the default Light4j secret will be used. E.g.: The tableau password (set as password above) will appear as `CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs=` in secret.yml.
+
+The `decrypt` transform will decrypt the password using Light4j's default symmetric encryption. The decryption secret can be set on the command line using the `-y` or `-key` option. If a decryption secret is not specified on the command line, the default Light4j secret will be used to decrypt values.
+
+_Note: The encryption and decryption key are the same, since Light4j's default encryption/decryption is symmetric._
 
 The `comma-separated` transform concatenates elements in the list and separates them with commas. E.g.: the list
 ```yaml
@@ -257,6 +262,10 @@ with the appropriate arguments:
     <td>-k, --kmetadata <String></td>
     <td>Keystore metadata template (optional)</td>
  </tr>
+ <tr>
+    <td>-y, --key <String></td>
+    <td>Symmetric encryption/decryption secret (optional)</td>
+ </tr> 
 </table>
  
 Some examples are below:
@@ -268,6 +277,16 @@ $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory       
     -o ./config-out              \ # output folder
     -v ./templates/_values.yml     # values file
+```
+
+##### Use value file and set the symmetric encryption/decryption secret
+```
+$ java -jar aotearoa.jar            \
+    -m    ./templates/_metadata.yml \ # metadata file
+    -t    ./templates               \ # template files directory       
+    -o    ./config-out              \ # output folder
+    -v    ./templates/_values.yml   \ # values file
+    --key the_secret                  # the symmetric encryption/decryption secret
 ```    
     
 ##### Use prompts

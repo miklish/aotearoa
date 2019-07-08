@@ -2,7 +2,7 @@ package com.christoff.aotearoa.bridge;
 
 public class ValueInjectRequest
 {
-    public String metedataLoc;
+    public String metadataLoc;
     public String keystoreMetadataLoc;
     public String templateDir;
     public String configValsLoc;
@@ -12,4 +12,5 @@ public class ValueInjectRequest
     public boolean showHelp;
     public boolean usingPrompts;
     public boolean usingEnvVars;
+    public String symmetricKey;
 }

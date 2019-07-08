@@ -1,6 +1,7 @@
 package com.christoff.aotearoa.extern.gateway.transform;
 
 import com.christoff.aotearoa.ConfigException;
+import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import sun.misc.BASE64Decoder;
 
 import javax.crypto.Cipher;
@@ -10,10 +11,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.spec.KeySpec;
+import java.util.List;
 
-public class TransformAESDecryptor {
+public class TransformAESDecryptor implements ITransform
+{
     private static final int ITERATIONS = 65536;
-
     private static final String STRING_ENCODING = "UTF-8";
 
     /**
@@ -22,23 +24,24 @@ public class TransformAESDecryptor {
      * Cryptography Extension 128
      */
     private static final int KEY_SIZE = 128;
-
     private static final byte[] SALT = { (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0 };
-
     private SecretKeySpec secret;
-
     private Cipher cipher;
-
     private BASE64Decoder base64Decoder;
+    private String symmetricKey;
 
-    public TransformAESDecryptor() {
+    public TransformAESDecryptor(String symmetricKey)
+    {
+        this.symmetricKey = symmetricKey == null || symmetricKey.length() == 0 ?
+            TransformAESEncryptor.DEFAULT_SYMMETRIC_KEY : symmetricKey;
+        
         try
         {
             /* Derive the key, given password and salt. */
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             KeySpec spec;
 
-            spec = new PBEKeySpec(TransformAESEncryptor.FRAMEWORK_NAME.toCharArray(), SALT, ITERATIONS, KEY_SIZE);
+            spec = new PBEKeySpec(this.symmetricKey.toCharArray(), SALT, ITERATIONS, KEY_SIZE);
             SecretKey tmp = factory.generateSecret(spec);
             secret = new SecretKeySpec(tmp.getEncoded(), "AES");
 
@@ -54,8 +57,12 @@ public class TransformAESDecryptor {
             throw new RuntimeException("Unable to initialize TransformAESDecryptor", e);
         }
     }
+    
+    public String transform(List<String> inputList) {
+        return transform(inputList.get(0));
+    }
 
-    public String decrypt(String input)
+    public String transform(String input)
     {
         if (!input.startsWith(TransformAESEncryptor.CRYPT_PREFIX))  return input;
 

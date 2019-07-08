@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TransformAESEncryptor implements ITransform
 {
-    public static final String FRAMEWORK_NAME = "light";
+    public static final String DEFAULT_SYMMETRIC_KEY = "light";
     public static final String CRYPT_PREFIX = "CRYPT";
     private static final int ITERATIONS = 65536;
     private static final int KEY_SIZE = 128;
@@ -24,14 +24,19 @@ public class TransformAESEncryptor implements ITransform
     private SecretKeySpec secret;
     private Cipher cipher;
     private BASE64Encoder base64Encoder;
+    private String symmetricKey;
     
-    public TransformAESEncryptor() {
+    public TransformAESEncryptor(String symmetricKey)
+    {
+        this.symmetricKey = symmetricKey == null || symmetricKey.length() == 0 ?
+            DEFAULT_SYMMETRIC_KEY : symmetricKey;
+        
         try {
             /* Derive the key, given password and salt. */
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             KeySpec spec;
             
-            spec = new PBEKeySpec(FRAMEWORK_NAME.toCharArray(), SALT, ITERATIONS, KEY_SIZE);
+            spec = new PBEKeySpec(this.symmetricKey.toCharArray(), SALT, ITERATIONS, KEY_SIZE);
             SecretKey tmp = factory.generateSecret(spec);
             secret = new SecretKeySpec(tmp.getEncoded(), "AES");
             

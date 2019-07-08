@@ -5,6 +5,7 @@ import com.christoff.aotearoa.extern.gateway.transform.TransformAESDecryptor;
 import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;
+import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 
 import java.io.*;
 import java.security.KeyStore;
@@ -14,6 +15,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -28,13 +31,18 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 {
     private String _keystoreMetadataFile;
     private String _outputDir;
+    private ITransformGateway _transformGateway;
     private PersistenceFileHelper _fileHelper = new PersistenceFileHelper();
-    private static TransformAESDecryptor _decrypt = new TransformAESDecryptor();
+    private List toDecrypt = new LinkedList<String>();
 
-    public KeystorePersistenceFileGateway(String keystoreMetadatafile, String outputDir)
+    public KeystorePersistenceFileGateway(
+        String keystoreMetadatafile,
+        String outputDir,
+        ITransformGateway transformGateway)
     {
         _keystoreMetadataFile = keystoreMetadatafile;
         _outputDir = outputDir;
+        _transformGateway = transformGateway;
     }
 
     @Override
@@ -55,6 +63,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
             }
         }
     }
+    
+    private String decrypt(String s)
+    {
+        toDecrypt.clear();
+        toDecrypt.add(s);
+        return _transformGateway.get(ITransformGateway.DECRYPT).transform(toDecrypt);
+    }
 
     private void processKeystore(KeystoreMetadata km) throws Exception
     {
@@ -72,11 +87,11 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
             // load existing keystore
             String ksFilename = PersistenceFileHelper.cleanFilename(ksMetaDir + "/" + km.getBaseKeystoreFilename());
-            ks = loadJKSKeystore(ksFilename, _decrypt.decrypt(km.getKeystorePassword()));
+            ks = loadJKSKeystore(ksFilename, decrypt(km.getKeystorePassword()));
         }
         else
             // create new keystore
-            ks = createJKSKeystore(_decrypt.decrypt(km.getKeystorePassword()));
+            ks = createJKSKeystore(decrypt(km.getKeystorePassword()));
 
         for(CertificateMetadata cm : km.getCertificates())
         {
@@ -104,26 +119,26 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         return cer;
     }
 
-    public static KeyStore createJKSKeystore(String password)
+    public KeyStore createJKSKeystore(String password)
         throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException
     {
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        char[] pwdArray = _decrypt.decrypt(password).toCharArray();
+        char[] pwdArray = decrypt(password).toCharArray();
         ks.load(null, pwdArray);
         return ks;
     }
 
-    public static void saveKeystore(KeystoreMetadata km, KeyStore ks, String ksFilename)
+    public void saveKeystore(KeystoreMetadata km, KeyStore ks, String ksFilename)
         throws FileNotFoundException, KeyStoreException, NoSuchAlgorithmException, IOException, CertificateException
     {
-        ks.store(new FileOutputStream(ksFilename), _decrypt.decrypt(km.getKeystorePassword()).toCharArray());
+        ks.store(new FileOutputStream(ksFilename), decrypt(km.getKeystorePassword()).toCharArray());
     }
 
-    public static KeyStore loadJKSKeystore(String keystoreFilename, String password)
+    public KeyStore loadJKSKeystore(String keystoreFilename, String password)
         throws KeyStoreException, FileNotFoundException, IOException, NoSuchAlgorithmException, CertificateException
     {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(keystoreFilename), _decrypt.decrypt(password).toCharArray());
+        ks.load(new FileInputStream(keystoreFilename), decrypt(password).toCharArray());
         return ks;
     }
 }

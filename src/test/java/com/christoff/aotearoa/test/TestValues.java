@@ -18,7 +18,7 @@ public class TestValues
     public void testValues()
     {
         ValueInjectRequest rq = new ValueInjectRequest();
-        rq.metedataLoc = "C:\\Users\\mikle\\localrepo\\aotearoa\\src\\test\\resources\\config\\_metadata.yml";
+        rq.metadataLoc = "C:\\Users\\mikle\\localrepo\\aotearoa\\src\\test\\resources\\config\\_metadata.yml";
         rq.outputDir = "C:\\Users\\mikle\\localrepo\\aotearoa\\src\\test\\resources\\config-out";
         rq.templateDir = "C:\\Users\\mikle\\localrepo\\aotearoa\\src\\test\\resources\\config";
         rq.configValsLoc = "C:\\Users\\mikle\\localrepo\\aotearoa\\src\\test\\resources\\config\\_values.yml";
