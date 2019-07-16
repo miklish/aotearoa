@@ -3,6 +3,7 @@ package com.christoff.aotearoa.intern.gateway.metadata;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 
 import java.util.List;
 import java.util.Map;
@@ -11,11 +12,13 @@ public class MetadataInjector
 {
     private ITransformGateway _transformGateway;
     private IValueGateway _valueGateway;
+    private IPresenter _presenter;
     
-    public MetadataInjector(IValueGateway valueGateway, ITransformGateway transformGateway)
+    public MetadataInjector(IValueGateway valueGateway, ITransformGateway transformGateway, IPresenter presenter)
     {
         _valueGateway = valueGateway;
         _transformGateway = transformGateway;
+        _presenter = presenter;
     }
     
     public Map<String, Metadata> inject(Map<String,Metadata> variablesMetadataMap)
@@ -27,7 +30,7 @@ public class MetadataInjector
         {
             // Set the variable values
             if(!_valueGateway.exists(varMeta)) {
-                System.out.println("WARNING: No Value found for Metadata tag " + varMeta.getName());
+                _presenter.tagDefinedNoValueFound(varMeta.getName());
                 continue;
             }
 

@@ -125,7 +125,7 @@ public class ValueInjectInteractor
         _valueGateway.setMetadata(allVarMetadata);
     
         // Inject values and transforms into Metadata
-        allVarMetadata = new MetadataInjector(_valueGateway, _transformGateway).inject(allVarMetadata);
+        allVarMetadata = new MetadataInjector(_valueGateway, _transformGateway, _presenter).inject(allVarMetadata);
 
 
         

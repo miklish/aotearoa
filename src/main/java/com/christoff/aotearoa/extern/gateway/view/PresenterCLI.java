@@ -10,6 +10,11 @@ public class PresenterCLI implements IPresenter
     }
     
     @Override
+    public void tagDefinedNoValueFound(String tagName) {
+        System.out.println("WARNING: No Value found for Metadata tag " + tagName);
+    }
+    
+    @Override
     public void persistingValuesBegin() {
         System.out.print("Resolving templates...");
     }
