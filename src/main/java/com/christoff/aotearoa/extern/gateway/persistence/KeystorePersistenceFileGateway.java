@@ -1,7 +1,6 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.ConfigException;
-import com.christoff.aotearoa.extern.gateway.transform.TransformAESDecryptor;
 import com.christoff.aotearoa.intern.gateway.metadata.CertificateMetadata;
 import com.christoff.aotearoa.intern.gateway.metadata.KeystoreMetadata;
 import com.christoff.aotearoa.intern.gateway.persistence.IKeystorePersistenceGateway;

@@ -2,9 +2,6 @@ package com.christoff.aotearoa.extern.gateway.values;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 

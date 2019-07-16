@@ -6,7 +6,6 @@ import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.values.ValueException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
