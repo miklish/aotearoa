@@ -16,6 +16,7 @@ import com.christoff.aotearoa.extern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
+import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
@@ -36,12 +37,25 @@ public class ValueInjectInteractor
         boolean usingConfigServer = rq.serverUrl != null;
         boolean usingFileSystemValues = rq.configValsLoc != null;
         boolean usingCustomRegex = rq.regex != null;
+    
+        /**
+         * If no log level switch is on the CLI, default to DEBUG
+         * If a log level switch exists with no value, then set to QUIET (no output)
+         * If a log level switch with a value exists, then use that value
+         */
+        String logLevel =
+            !rq.logLevelExists ?
+                IPresenter.DEBUG.levelId() :
+                rq.logLevelValue == null ?
+                    IPresenter.QUIET.levelId() :
+                    rq.logLevelValue;
 
-        
+
+            
         // Construct Gateways
     
         // - Presenter Gateway
-        _presenter = new PresenterCLI();
+        _presenter = new PresenterCLI(logLevel);
     
     
         // - Transform Gateway
