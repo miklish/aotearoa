@@ -22,6 +22,7 @@ public class ValueInjectCLIStart
     private static final String REGEX = "r";
     private static final String HELP = "h";
     private static final String SYMMETRIC_KEY = "y";
+    private static final String LOG_LEVEL = "l";
     
     public static void main(String[] args)
     {
@@ -46,7 +47,7 @@ public class ValueInjectCLIStart
         /**
          * Options
          *   m / metadata   : variable metadata file (required)
-         *   k / kmetadata : keystore metadata file (optional)
+         *   k / kmetadata  : keystore metadata file (optional)
          *   t / templates  : template directory (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
@@ -55,6 +56,7 @@ public class ValueInjectCLIStart
          *   s / server     : server url (optional)
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
+         *   l / loglevel   : set logging level
          *   h / help       : help info
          */
         ValueInjectRequest request = new ValueInjectRequest();
@@ -69,6 +71,8 @@ public class ValueInjectCLIStart
         request.templateDir = (String) optionInput.valueOf(ValueInjectCLIStart.TEMPLATE_DIR);
         request.usingPrompts = optionInput.has(PROMPTS);
         request.symmetricKey = (String) optionInput.valueOf(ValueInjectCLIStart.SYMMETRIC_KEY);
+        request.logLevelValue = (String) optionInput.valueOf(ValueInjectCLIStart.LOG_LEVEL);
+        request.logLevelExists = optionInput.has(LOG_LEVEL);
         
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
@@ -115,6 +119,7 @@ public class ValueInjectCLIStart
          *   s / server     : server url (optional)
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
+         *   l / loglevel   : set logging level
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
@@ -179,6 +184,12 @@ public class ValueInjectCLIStart
         optionConfig.acceptsAll(
             Arrays.asList(symmetricKeyOptions),
             "Symmetric key used to encrypt secrets (optional)").withRequiredArg();
+    
+        /** log: log level */
+        final String[] logLevelOptions = {LOG_LEVEL,"loglevel"};
+        optionConfig.acceptsAll(
+            Arrays.asList(logLevelOptions),
+            "Log output level (optional)").withOptionalArg();
         
         /** help */
         final String[] helpOptions = {HELP,"help"};

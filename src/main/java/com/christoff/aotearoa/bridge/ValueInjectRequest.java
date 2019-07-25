@@ -13,4 +13,6 @@ public class ValueInjectRequest
     public boolean usingPrompts;
     public boolean usingEnvVars;
     public String symmetricKey;
+    public String logLevelValue;
+    public boolean logLevelExists;
 }

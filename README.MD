@@ -210,6 +210,73 @@ This will prevent you from having to set environment variables for all your sett
 #### Local web form
 Not yet implemented.
 
+# Log Level Output
+You can select the verbosity of output that Aotearoa generates. There are 4 levels that exist: DEBUG, WARN, INFO, and QUIET. DEBUG messages are low level operational messages, whereas INFO messages are higher level status messages.
+
+On the most verbose extreme, a log level of DEBUG will output messages of all levels. On the other end, a log level of QUIET will supress all output except for the ERROR messages that are displayed if Aotearoa is forced to exit.
+
+The table below shows what types of message are outputted for each log level. 
+  
+<table border="0">
+ <tr>
+    <td><span pan style="font-size:15px;font-weight:bold">Log Level</td>
+    <td><span style="font-size:15px;font-weight:bold">Debug</b></td>
+    <td><span style="font-size:15px;font-weight:bold">Warn</b></td>
+    <td><span style="font-size:15px;font-weight:bold">Info</b></td>
+ </tr>
+ <tr>
+    <td>Debug (d)</td>
+    <td>Y</td>
+    <td>Y</td>
+    <td>Y</td>
+ </tr>
+ <tr>
+    <td>Warn (w)</td>
+    <td>N</td>
+    <td>Y</td>
+    <td>Y</td>
+ </tr>
+ <tr>
+    <td>Info (i)</td>
+    <td>N</td>
+    <td>N</td>
+    <td>Y</td>
+ </tr>
+ <tr>
+    <td>Quiet (q)</td>
+    <td>N</td>
+    <td>N</td>
+    <td>N</td>
+ </tr> 
+ </table>
+ 
+The command line switch for log levels is `-l` (or equivalently `--loglevel`), and the switch values are listed below:
+ 
+<table border="0">
+ <tr>
+    <td><span pan style="font-size:15px;font-weight:bold">Log Level</td>
+    <td><span pan style="font-size:15px;font-weight:bold">Value</td>
+ </tr>
+ <tr>
+    <td>Debug</td>
+    <td>d</td>
+ </tr>
+ <tr>
+    <td>Warn</td>
+    <td>w</td>
+ </tr>
+ <tr>
+    <td>Info</td>
+    <td>i</td>
+ </tr>
+ <tr>
+    <td>Quiet</td>
+    <td>q (or no value)</td>
+ </tr>
+ </table>
+  
+The default log level is DEBUG (this is used when no switch is used). QUIET can be specified by either `-l q`, `--loglevel q`, or by simply `-l` (with no value) or `--loglevel` (with no value). 
+
 # Command line arguments
 To run aotearoa, you would run
 
@@ -265,18 +332,23 @@ with the appropriate arguments:
  <tr>
     <td>-y, --key <String></td>
     <td>Symmetric encryption/decryption secret (optional)</td>
- </tr> 
+ </tr>
+ <tr>
+    <td>-l, --loglevel <String></td>
+    <td>Sets the log level (optional)</td>
+ </tr>   
 </table>
  
 Some examples are below:
  
-##### Use value file
+##### Use value file with log level set to QUIET
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory       
     -o ./config-out              \ # output folder
-    -v ./templates/_values.yml     # values file
+    -v ./templates/_values.yml   \ # values file
+    -l
 ```
 
 ##### Use value file and set the symmetric encryption/decryption secret
@@ -298,13 +370,14 @@ $ java -jar aotearoa.jar         \
     -p                             # values from prompts
 ```     
 
-##### Use environment variables
+##### Use environment variables with log level set to WARN
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
     -m ./templates/_metadata.yml \ # metadata file
     -o ./config-out              \ # output folder
-    -e                             # values from environment variables
+    -e                           \ # values from environment variables
+    -loglevel w
 ```     
 
 ##### Value file with environment variable overrides
