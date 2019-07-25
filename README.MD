@@ -275,7 +275,7 @@ The command line switch for log levels is `-l` (or equivalently `--loglevel`), a
  </tr>
  </table>
   
-The default log level is DEBUG (this is used when no switch is used). QUIET can be specified by either `-l q`, `--loglevel q`, or by simply `-l` (no value) or `--loglevel` (no value). 
+The default log level is DEBUG (this is used when no switch is used). QUIET can be specified by either `-l q`, `--loglevel q`, or by simply `-l` (with no value) or `--loglevel` (with no value). 
 
 # Command line arguments
 To run aotearoa, you would run

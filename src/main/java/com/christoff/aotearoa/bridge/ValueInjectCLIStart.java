@@ -56,7 +56,7 @@ public class ValueInjectCLIStart
          *   s / server     : server url (optional)
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
-         *   l / log        : set logging level
+         *   l / loglevel   : set logging level
          *   h / help       : help info
          */
         ValueInjectRequest request = new ValueInjectRequest();
@@ -119,7 +119,7 @@ public class ValueInjectCLIStart
          *   s / server     : server url (optional)
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
-         *   l / log        : set logging level
+         *   l / loglevel   : set logging level
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
