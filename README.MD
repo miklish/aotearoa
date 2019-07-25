@@ -206,8 +206,11 @@ You may also use environment variables as a way to specify variable values. E.g.
 You can also use a value file _and_ environment variables, where environment variables can be used to _*override*_ value file settings to enable you to do testing (e.g.: override security to a 'false' setting, or turn the logging level to 'debug' temporarily) without modifying your production values file.
 
 This will prevent you from having to set environment variables for all your settings, and only specify overrides as environment variables.
+ 
+#### Local web form
+Not yet implemented.
 
-#### Log Level Output
+# Log Level Output
 You can select the verbosity of output that Aotearoa generates. There are 4 levels that exist: DEBUG, WARN, INFO, and QUIET. DEBUG messages are low level operational messages, whereas INFO messages are higher level status messages.
 
 On the most verbose extreme, a log level of DEBUG will output messages of all levels. On the other end, a log level of QUIET will supress all output except for the ERROR messages that are displayed if Aotearoa is forced to exit.
@@ -273,9 +276,6 @@ The command line switch for log levels is `-l` (or equivalently `--loglevel`), a
  </table>
   
 The default log level is DEBUG (this is used when no switch is used). QUIET can be specified by either `-l q`, `--loglevel q`, or by simply `-l` (no value) or `--loglevel` (no value). 
- 
-#### Local web form
-Not yet implemented.
 
 # Command line arguments
 To run aotearoa, you would run
