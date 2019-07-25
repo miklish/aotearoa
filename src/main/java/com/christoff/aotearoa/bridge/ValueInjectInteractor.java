@@ -16,7 +16,6 @@ import com.christoff.aotearoa.extern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.intern.gateway.transform.ITransformGateway;
 import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
-import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 
 import java.util.*;
 import java.util.regex.PatternSyntaxException;

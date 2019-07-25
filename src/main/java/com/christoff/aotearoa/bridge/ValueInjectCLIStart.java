@@ -186,7 +186,7 @@ public class ValueInjectCLIStart
             "Symmetric key used to encrypt secrets (optional)").withRequiredArg();
     
         /** log: log level */
-        final String[] logLevelOptions = {LOG_LEVEL,"log"};
+        final String[] logLevelOptions = {LOG_LEVEL,"loglevel"};
         optionConfig.acceptsAll(
             Arrays.asList(logLevelOptions),
             "Log output level (optional)").withOptionalArg();
