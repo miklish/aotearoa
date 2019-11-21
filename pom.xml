@@ -10,6 +10,8 @@
 
     <properties>
         <jdk.version>1.8</jdk.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <jodatime.version>2.5</jodatime.version>
         <joptsimple.version>5.0.4</joptsimple.version>
         <apachecommonsio.version>2.6</apachecommonsio.version>
