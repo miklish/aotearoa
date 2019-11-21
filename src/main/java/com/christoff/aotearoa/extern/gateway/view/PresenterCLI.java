@@ -11,11 +11,10 @@ public class PresenterCLI implements IPresenter
     public PresenterCLI(String logLevel) { _logLevel = toLogLevel(logLevel); }
     public PresenterCLI() { this(null); }
     
-    private String clean(String s) { return s == null ? null : s.trim().toLowerCase().substring(0, 1); }
+    private String clean(String s) { return s == null ? LogLevel.DEBUG.levelId() : s.trim().toLowerCase().substring(0, 1); }
     
     private LogLevel toLogLevel(String logLevelValue) {
         String logLevelId = clean(logLevelValue);
-        if(logLevelId == null) return LogLevel.DEBUG;
         if(logLevelId.equals(LogLevel.DEBUG.levelId())) return LogLevel.DEBUG;
         if(logLevelId.equals(LogLevel.WARN.levelId())) return LogLevel.WARN;
         if(logLevelId.equals(LogLevel.INFO.levelId())) return LogLevel.INFO;
