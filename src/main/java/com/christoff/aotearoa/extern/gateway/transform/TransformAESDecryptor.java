@@ -2,7 +2,6 @@ package com.christoff.aotearoa.extern.gateway.transform;
 
 import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
-import sun.misc.BASE64Decoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -11,6 +10,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 import java.util.List;
 
 public class TransformAESDecryptor implements ITransform
@@ -27,7 +27,7 @@ public class TransformAESDecryptor implements ITransform
     private static final byte[] SALT = { (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0, (byte) 0x0 };
     private SecretKeySpec secret;
     private Cipher cipher;
-    private BASE64Decoder base64Decoder;
+    private Base64.Decoder base64Decoder = Base64.getDecoder();
     private String symmetricKey;
 
     public TransformAESDecryptor(String symmetricKey)
@@ -49,11 +49,7 @@ public class TransformAESDecryptor implements ITransform
             // PKCS5Padding Indicates that the keys are padded
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-            // For production use commons base64 encoder
-            base64Decoder = new BASE64Decoder();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException("Unable to initialize TransformAESDecryptor", e);
         }
     }
@@ -68,7 +64,8 @@ public class TransformAESDecryptor implements ITransform
 
         try
         {
-            byte[] data = base64Decoder.decodeBuffer(input.substring(6, input.length()));
+            String encodedValue = input.substring(6, input.length());
+            byte[] data = base64Decoder.decode(encodedValue);
             int keylen = KEY_SIZE / 8;
             byte[] iv = new byte[keylen];
             System.arraycopy(data, 0, iv, 0, keylen);

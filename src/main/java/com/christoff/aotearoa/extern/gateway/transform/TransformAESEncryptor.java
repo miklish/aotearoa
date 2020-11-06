@@ -1,7 +1,7 @@
 package com.christoff.aotearoa.extern.gateway.transform;
 
 import com.christoff.aotearoa.intern.gateway.transform.ITransform;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
@@ -23,7 +23,7 @@ public class TransformAESEncryptor implements ITransform
     private static final String STRING_ENCODING = "UTF-8";
     private SecretKeySpec secret;
     private Cipher cipher;
-    private BASE64Encoder base64Encoder;
+    private Base64.Encoder base64Encoder = Base64.getEncoder();
     private String symmetricKey;
     
     public TransformAESEncryptor(String symmetricKey)
@@ -44,8 +44,6 @@ public class TransformAESEncryptor implements ITransform
             // PKCS5Padding Indicates that the keys are padded
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             
-            // For production use commons base64 encoder
-            base64Encoder = new BASE64Encoder();
         } catch (Exception e) {
             throw new RuntimeException("Unable to initialize", e);
         }
@@ -69,9 +67,11 @@ public class TransformAESEncryptor implements ITransform
         try
         {
             byte[] inputBytes = input.getBytes(STRING_ENCODING);
+
             // CBC = Cipher Block chaining
             // PKCS5Padding Indicates that the keys are padded
             cipher.init(Cipher.ENCRYPT_MODE, secret);
+
             AlgorithmParameters params = cipher.getParameters();
             byte[] iv = params.getParameterSpec(IvParameterSpec.class).getIV();
             byte[] ciphertext = cipher.doFinal(inputBytes);
