@@ -67,18 +67,16 @@ public class TransformAESEncryptor implements ITransform
         try
         {
             byte[] inputBytes = input.getBytes(STRING_ENCODING);
-
             // CBC = Cipher Block chaining
             // PKCS5Padding Indicates that the keys are padded
             cipher.init(Cipher.ENCRYPT_MODE, secret);
-
             AlgorithmParameters params = cipher.getParameters();
             byte[] iv = params.getParameterSpec(IvParameterSpec.class).getIV();
             byte[] ciphertext = cipher.doFinal(inputBytes);
             byte[] out = new byte[iv.length + ciphertext.length];
             System.arraycopy(iv, 0, out, 0, iv.length);
             System.arraycopy(ciphertext, 0, out, iv.length, ciphertext.length);
-            return (CRYPT_PREFIX + ":" + base64Encoder.encode(out))
+            return (CRYPT_PREFIX + ":" + base64Encoder.encodeToString(out))
                     .replaceAll("\n", "")
                     .replaceAll("\r", "");
 
