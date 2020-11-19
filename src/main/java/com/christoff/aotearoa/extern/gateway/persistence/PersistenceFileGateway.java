@@ -33,7 +33,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
     @Override
     public Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
-        throws TemplateIOException
+        throws TemplateIOException, MetadataException
     {
         // delete target directory's contents, and copy source folder's contents into it
         prepareFolders();
@@ -44,7 +44,10 @@ public class PersistenceFileGateway implements IPersistenceGateway
         for(Metadata vm : allVarMetadata.values()) {
             // extract the file names that the tag appears in
             List<String> configFilenames = vm.getProperty(Metadata.FILES);
-            templateFileIds.addAll(configFilenames);
+            if(configFilenames != null)
+                templateFileIds.addAll(configFilenames);
+            else
+                throw new MetadataException("Metadata for value " + vm.getName() + " is missing the 'file' property");
         }
 
         
@@ -76,7 +79,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             // use regex replace to inject the actual values
             String resolved = resolver.resolve(fInfo.file.getName(), fInfo.string, allVarMetadata);
 
-            // save the String to the target directory and overrwrite the existing value if exists
+            // save the String to the target directory and overwrite the existing value if exists
             String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + addYamlExt(templateId));
             File outFInfo = new File(outFilename);
             
