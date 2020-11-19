@@ -33,18 +33,21 @@ public class PersistenceFileGateway implements IPersistenceGateway
 
     @Override
     public Object persistValues(TemplateResolverFunction resolver, Map<String, Metadata> allVarMetadata)
-        throws TemplateIOException
+        throws TemplateIOException, MetadataException
     {
         // delete target directory's contents, and copy source folder's contents into it
         prepareFolders();
-        
+
 
         // Collect the set of files in which tags appear
         Set<String> templateFileIds = new HashSet<>();
         for(Metadata vm : allVarMetadata.values()) {
             // extract the file names that the tag appears in
             List<String> configFilenames = vm.getProperty(Metadata.FILES);
-            templateFileIds.addAll(configFilenames);
+            if(configFilenames != null)
+                templateFileIds.addAll(configFilenames);
+            else
+                throw new MetadataException("Metadata for value " + vm.getName() + " is missing the 'file' property");
         }
 
         
