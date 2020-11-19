@@ -79,7 +79,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
             // use regex replace to inject the actual values
             String resolved = resolver.resolve(fInfo.file.getName(), fInfo.string, allVarMetadata);
 
-            // save the String to the target directory and overrwrite the existing value if exists
+            // save the String to the target directory and overwrite the existing value if exists
             String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + addYamlExt(templateId));
             File outFInfo = new File(outFilename);
             
