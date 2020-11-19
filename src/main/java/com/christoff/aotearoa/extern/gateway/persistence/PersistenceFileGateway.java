@@ -21,6 +21,8 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private PersistenceFileHelper _filesysHelp;
     private IPresenter _presenter;
 
+    private static boolean IS_RECURSIVE = false;
+
     public PersistenceFileGateway(
             String templateFileFolder, String outputDir, String keystoreMetadataFilename, IPresenter presenter)
     {
@@ -37,20 +39,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
     {
         // delete target directory's contents, and copy source folder's contents into it
         prepareFolders();
-        
 
-        // Collect the set of files in which tags appear
-        Set<String> templateFileIds = new HashSet<>();
-        for(Metadata vm : allVarMetadata.values()) {
-            // extract the file names that the tag appears in
-            List<String> configFilenames = vm.getProperty(Metadata.FILES);
-            if(configFilenames != null)
-                templateFileIds.addAll(configFilenames);
-            else
-                throw new MetadataException("Metadata for value " + vm.getName() + " is missing the 'file' property");
-        }
-
-        
         // add the Keystore Metadata file (if it exists)
         if(_keystoreMetadataFilename != null && !_keystoreMetadataFilename.equals(""))
         {
@@ -58,33 +47,34 @@ public class PersistenceFileGateway implements IPersistenceGateway
             if (!keystoreMetadataFile.isFile() || !keystoreMetadataFile.exists())
                 throw new MetadataException(
                     "Keystore metadata file " + keystoreMetadataFile.getName() + " either does not exist or is not a file");
-            
-            templateFileIds.add(keystoreMetadataFile.getName());
         }
 
         // TODO: Complete the case where we create a new keystore
         //
-        for(String templateId : templateFileIds)
+        File templateFolderFile = new File(_templateDir);
+        // TODO: User must specify template folder extensions on CLI
+        String[] extensions = {"yml"};
+
+        List<File> files = (List<File>) FileUtils.listFiles(templateFolderFile, extensions, IS_RECURSIVE);
+        for (File file : files)
         {
             // open the template file as a String
-            String filename = PersistenceFileHelper.cleanFilename(_templateDir + "/" + addYamlExt(templateId));
             PersistenceFileHelper.FileInfo fInfo = null;
             try {
-                fInfo = _filesysHelp.getFileInfo(filename, false, true);
+                fInfo = _filesysHelp.getFileInfo(file, false, true);
             } catch(MetadataIOException e) {
-                _presenter.templateFileNotFoundOrMalformed(addYamlExt(templateId));
+                _presenter.templateFileNotFoundOrMalformed(fInfo.name);
                 continue;
             }
 
             // use regex replace to inject the actual values
-            String resolved = resolver.resolve(fInfo.file.getName(), fInfo.string, allVarMetadata);
+            String resolved = resolver.resolve(fInfo.name, fInfo.string, allVarMetadata);
 
             // save the String to the target directory and overwrite the existing value if exists
-            String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + addYamlExt(templateId));
+            String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + fInfo.name);
             File outFInfo = new File(outFilename);
             
             try {
-                // writeStringToFile(File file, String data, String encoding)
                 FileUtils.writeStringToFile(outFInfo, resolved, (String) null);
             } catch (IOException e) {
                 throw new TemplateIOException("Could not resolve template " + outFInfo.getName());
