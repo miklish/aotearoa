@@ -30,6 +30,30 @@ public class PersistenceFileHelper
         public String string = null;
     }
 
+
+    /**
+     * Normalizes filenames
+     * Converts relative filesname to full paths
+     *
+     * @param file
+     * @return cleaned filename
+     */
+    public static String cleanFilename(File file)
+        throws MetadataIOException
+    {
+        if(file == null) return null;
+
+        String filename;
+        try {
+            filename = file.getCanonicalPath();
+        } catch(IOException e) {
+            throw new MetadataIOException("Cannot locate variable metadata file " + file.getName());
+        }
+
+        return filename;
+    }
+
+
     /**
      * Normalizes filenames
      * Converts relative filesname to full paths
@@ -38,8 +62,9 @@ public class PersistenceFileHelper
      * @return cleaned filename
      */
     public static String cleanFilename(String filename)
+        throws MetadataIOException
     {
-        if(filename == null) return filename;
+        if(filename == null) return null;
 
         // try to normalize path
         String cleanFilename = normalize(filename);
@@ -66,6 +91,30 @@ public class PersistenceFileHelper
         info.name = info.file.getName();
         info.path = info.file.getPath();
 
+        return buildFileInfo(info, buildYaml, readToString);
+    }
+
+
+    public FileInfo getFileInfo(File file, boolean buildYaml, boolean readToString)
+        throws MetadataIOException
+    {
+        FileInfo info = new FileInfo();
+        String filename = cleanFilename(file);
+
+        info.id = filename;
+        info.nId = filename;
+        info.file = file;
+        info.exists = info.file.exists();
+        info.isFile = info.file.isFile();
+        info.name = info.file.getName();
+        info.path = info.file.getPath();
+
+        return buildFileInfo(info, buildYaml, readToString);
+    }
+
+
+    public FileInfo buildFileInfo(FileInfo info, boolean buildYaml, boolean readToString)
+    {
         // read in file and render as yaml maps
         if((buildYaml || readToString) && (!info.exists || !info.isFile))
             throw new MetadataIOException("Cannot locate variable metadata file " + info.nId);
@@ -85,7 +134,7 @@ public class PersistenceFileHelper
                 throw new MetadataIOException(e.getMessage());
             }
         }
-        
+
         return info;
     }
 }
