@@ -67,6 +67,7 @@ public class ValueInjectInteractor
         // - Config File Persistence Gateway
         _persistenceGateway = new PersistenceFileGateway(
             rq.templateDir,
+            rq.templateFileExtensions,
             rq.outputDir,
             rq.keystoreMetadataLoc,
             _presenter);
@@ -129,6 +130,8 @@ public class ValueInjectInteractor
     public ValueInjectResponse exec() throws MetadataException
     {
         // Gather all variable metadata
+        // TODO: AO2: Need to create default metadata (if not defined in _metadata.yml)
+        // TODO: AO2: Need to handle case where _metadata.yml is not used at all
         Map<String, Metadata> allVarMetadata = MetadataBuilder.build(_metadataGateway.getMetadataMap());
         
         // Validate metadata

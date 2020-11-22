@@ -16,6 +16,7 @@ import java.util.*;
 public class PersistenceFileGateway implements IPersistenceGateway
 {
     private String _templateDir;
+    private String[] _extensions;
     private String _outputDir;
     private String _keystoreMetadataFilename;
     private PersistenceFileHelper _filesysHelp;
@@ -24,9 +25,11 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private static boolean IS_RECURSIVE = false;
 
     public PersistenceFileGateway(
-            String templateFileFolder, String outputDir, String keystoreMetadataFilename, IPresenter presenter)
+            String templateFileFolder, List<String> extensions, String outputDir, String keystoreMetadataFilename, IPresenter presenter)
     {
         _templateDir = templateFileFolder;
+        _extensions = new String[extensions.size()];
+        _extensions = extensions.toArray(_extensions);
         _outputDir = outputDir;
         _keystoreMetadataFilename = PersistenceFileHelper.cleanFilename(keystoreMetadataFilename);
         _filesysHelp = new PersistenceFileHelper();
@@ -52,10 +55,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         // TODO: Complete the case where we create a new keystore
         //
         File templateFolderFile = new File(_templateDir);
-        // TODO: User must specify template folder extensions on CLI
-        String[] extensions = {"yml"};
-
-        List<File> files = (List<File>) FileUtils.listFiles(templateFolderFile, extensions, IS_RECURSIVE);
+        List<File> files = (List<File>) FileUtils.listFiles(templateFolderFile, _extensions, IS_RECURSIVE);
         for (File file : files)
         {
             // open the template file as a String
