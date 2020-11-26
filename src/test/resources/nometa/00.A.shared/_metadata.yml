@@ -1,0 +1,393 @@
+variables:
+
+  JWT_EXPIRY_MINUTES:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the JWT expiry time (in minutes)"
+    defaults:
+    - true
+
+  JWT_ISSUER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the JWT issuer name"
+    defaults:
+    - true
+
+  JWT_KID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the initial KID for JWT generation"
+    defaults:
+    - true
+
+  ENABLE_MTLS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Enable mutual TLS? ( true / false)"
+    defaults:
+    - true
+
+  ENABLE_TLS_CLIENT_VERIFIER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Enable mutual TLS client verification? ( true / false)"
+    defaults:
+    - true
+
+  # 4.c
+  MTLS_CLIENT_CN:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "CLASS client cert CN (zOS/Connect)"
+
+  AUTH_SERVER_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the url of the Auth Server?"
+
+  AUTH_SERVER_TOKEN_PATH:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the path of the AS token endpoint?"
+
+  AUTH_SERVER_CLIENT_ID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the client id for the AS?"
+
+  BASE_SERVER_KS_FILE:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the BASE SERVER KEYSTORE FILENAME"
+
+  LOGBACK_DUPLICATE_FILTER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Use logback duplicate filter"
+    defaults:
+    - true 
+
+  LOGBACK_LEVEL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Use logback duplicate filter"
+    defaults:
+    - true 
+
+  REPLICAS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the number of Pod replicas"
+
+  # server keystores
+  SERVER_KEYSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER KEYSTORE PASSWORD"
+
+  SERVER_KEY_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER KEY PASSWORD"
+
+  SERVER_TRUSTSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER TRUSTSTORE PASSWORD"
+
+  CLIENT_KEYSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT KEYSTORE PASSWORD"
+
+  CLIENT_KEY_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT KEY PASSWORD"
+
+  CLIENT_TRUSTSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT TRUSTSTORE PASSWORD"
+
+  HOST_DNS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the Host DNS"
+
+  CONSUL_DEMO_CERT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the consul cert PEM filename"
+
+  TRUSTED_ROOT_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the root cert PEM filename"
+
+  TRUSTED_INT_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the intermediate cert PEM filename"
+
+  APIF_HELLO_SS_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the apif-hello self-signed Cert FILENAME"    
+
+  JWT_KEY_ALIAS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the JKS alias of the server.keystore's private key"
+
+  # Consul
+  CONSUL_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the CONSUL URL"
+    defaults:
+    - "https://consul.mcc.np.api.cibc.com:8443"
+
+  CONSUL_TOKEN:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CONSUL TOKEN"
+
+  # Service Config
+  HTTPS_PORT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the HTTPS PORT"
+    defaults:
+    - 10500
+
+  # Service Metadata
+  ROUTER_INSTANCE:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the ROUTER INSTANCE"
+
+  ROUTER_VERSION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the ROUTER VERSION"
+
+  OS_REGION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC REGION"
+
+  OS_IMAGE_REGION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC IMAGE"
+
+  OS_SHARED_PROJECT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC SHARED PROJECT"
+
+  OS_ENVIRONMENT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC ENVIRONMENT"
+
+  OS_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC URL"
+
+  OS_USERNAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter your OC username"
+
+  OS_PROJECT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC PROJECT"
+
+  MAPID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the PROJECT MAPID"
+
+  DIRECT_URL_1:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #1"
+
+  DIRECT_URL_2:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #2"
+
+  DIRECT_URL_3:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #3"
+
+  DIRECT_URL_4:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #4"
+
+  DIRECT_URL_5:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+
+  DIRECT_URL_6:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+
+  DIRECT_URL_7:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"  
+
+  DIRECT_URL_8:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+  
