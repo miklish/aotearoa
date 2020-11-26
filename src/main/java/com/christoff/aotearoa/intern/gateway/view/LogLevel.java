@@ -2,9 +2,10 @@ package com.christoff.aotearoa.intern.gateway.view;
 
 public enum LogLevel
 {
-    DEBUG   ("debug", "d", 0),
-    WARN    ("warn", "w", 10),
-    INFO    ("info", "i", 20),
+    TRACE   ("trace", "t", 0),
+    DEBUG   ("debug", "d", 10),
+    WARN    ("warn", "w", 20),
+    INFO    ("info", "i", 30),
     QUIET   ("quiet", "q", 100);
     
     private final String levelName;
