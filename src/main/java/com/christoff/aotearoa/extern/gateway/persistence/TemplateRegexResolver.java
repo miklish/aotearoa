@@ -9,9 +9,15 @@ import java.util.regex.Pattern;
 public class TemplateRegexResolver
 {
     private Pattern _p;
+    private Pattern _quote;
     
-    public TemplateRegexResolver() {
-        _p = Pattern.compile("\\{\\{(.*?)\\}\\}");
+    public TemplateRegexResolver()
+    {
+        _p = Pattern.compile("\\$\\{(.*?)\\}");
+        _quote = Pattern.compile("([\"'])(?:\\\\.|[^\\\\])*?\\1");
+
+        //_p = Pattern.compile("\\{\\{(.*?)\\}\\}");
+        //_quote = Pattern.compile("([\"'])(?:(?=(\\\\?))\\2.)*?\\1");
     }
     
     public TemplateRegexResolver(String pattern) {
