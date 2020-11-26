@@ -3,6 +3,8 @@ package com.christoff.aotearoa.extern.gateway.metadata;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileHelper;
 import com.christoff.aotearoa.intern.gateway.metadata.IMetadataGateway;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
+
 import java.util.Map;
 
 
@@ -16,14 +18,14 @@ public class MetadataFileGateway implements IMetadataGateway
     private String _metadataFilename;
     private PersistenceFileHelper _fileSysHelper;
 
-    public MetadataFileGateway(String metadataFilename) {
+    public MetadataFileGateway(String metadataFilename, String valueFilename, String templateFolder) {
         _metadataFilename = metadataFilename;
         _fileSysHelper = new PersistenceFileHelper();
     }
     
     // initialize all config values
     public Map<String, Object> getMetadataMap()
-        throws MetadataException
+        throws MetadataException, MetadataIOException
     {
         // read in the entire metadata file
         Map<String, Object> allConfigDataMap =
