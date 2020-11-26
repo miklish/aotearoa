@@ -81,9 +81,6 @@ public class ValueInjectCLIStart
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
 
-        System.out.println("Custom Regex = " + request.regex);
-
-
         // - Ensure at least one of prompts, file system, environment config selected
         if (!usingFileSystemValues && !usingConfigFile && !request.usingEnvVars && !request.usingPrompts)
         {
