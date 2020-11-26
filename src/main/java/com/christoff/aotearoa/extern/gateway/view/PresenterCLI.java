@@ -15,6 +15,7 @@ public class PresenterCLI implements IPresenter
     
     private LogLevel toLogLevel(String logLevelValue) {
         String logLevelId = clean(logLevelValue);
+        if(logLevelId.equals(LogLevel.TRACE.levelId())) return LogLevel.TRACE;
         if(logLevelId.equals(LogLevel.DEBUG.levelId())) return LogLevel.DEBUG;
         if(logLevelId.equals(LogLevel.WARN.levelId())) return LogLevel.WARN;
         if(logLevelId.equals(LogLevel.INFO.levelId())) return LogLevel.INFO;
