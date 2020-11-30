@@ -30,8 +30,9 @@ variables:
 ### `output`
 - optional
 - can be specified in template and metadata.yml
+- ${TOKEN_NAME | out:encrypt; def:"the default value"}
 - default is `string`
-- new option `block:yaml` is available, that will inject an entire block of yaml
+- new option `block#yaml` is available, that will inject an entire block of yaml
 
 ### `prompt-text`
 - optional
