@@ -1,49 +1,70 @@
-# AOtearoa
-## Overview
-Aotearoa is a command line tool that allows Application Operations teams to generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
+# AOtearoa 2
+# New Release!
+Aotearoa 2 is now in testing. AO2 is not fully backwards-compatible with AO1. However, in the updated documentation below, we point out exactly where AO2 differs from AO1 and--where possible--provide simple fixes that can be made to your existing scripts so you can leverage AO2, while continuing to use your existing templates, metadata, and values files.
 
-## Template, and Value files
-AOtearoa starts with template files. A template is a normal text configuration file that contains 'tags' in which values will be inserted.
+# Overview
+AOtearoa is a command line tool that allows Application Operations teams to generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
 
-> **_NOTE_**:
->
-> The default regex replacement pattern used by Aotearoa handles patterns of the form `{{my-tag}}`. The regex for this is `\{\{(.*?)\}\}`. However, the regex pattern can be easily configured to handle any pattern, including the popular form `${my-tag}` as well. For example, using the command line option `--regex \\$\{(.*?)\}`,  you could use tags in your templates in the form `${my-tag}`. 
-> 
-> **_NOTE_**:
-> 
-> The pattern to handle tags of the type `${my-tag}` should be `\\$\{(.*?)\}` on the command line, however, in IntelliJ's Run/Debug Configuration, it should be `\$\{(.*?)\}` (i.e.: omit the initial slash), since the `$` character does not need to be escaped for IntelliJ, but it does need to be escaped for bash (and related) shells.
+# Templates, and Value files (updated for AO2)
+AOtearoa starts with template files. A template is a normal text configuration file that contains 'tokens' in which values will be inserted.
 
-##### security.yml
+#### security.yml
 ```yaml
-# Enable JWT verification flag.
-enableVerifyJwt: {{jwt_security}}
-...
 # JWT signature public certificates. kid and certificate path mappings.
 jwt:
-  certificate:
-    '100': {{oauth_certificate}}
   clockSkewInSeconds: 60
+  certificate:
+    '100': ${oauth_certificate}  
+...
+# Enable JWT verification flag.
+enableVerifyJwt: ${jwt_security|true}
 ...
 ```
 
-##### datasource.yml
+#### datasource.yml
 ```yaml
 PostgresDataSource:
   DriverClassName: org.postgresql.ds.PGSimpleDataSource
-  jdbcUrl: jdbc:postgresql://{{database_urls}}/users?ssl=true&sslfactory=com.biz.SSLSocketFactory
+  jdbcUrl: jdbc:postgresql://${database_urls|out:comma-separated}/users?ssl=true&sslfactory=com.biz.SSLSocketFactory
 ...
 ```
 
-##### secret.yml
+#### secret.yml
 ```yaml
 ...
-tableauPassword: {{tableau_password}}
+tableauPassword: ${tableau_password|out:encrypt}
 ...
 ```
 
-The tags `{{jwt_security}}`, `{oauth_certificate}`, `{{postgres_servers}}`, and `{{tableau_password}}` take their values from a 'values' file:
+Let's take a look at the tokens in our example above.
 
-##### dev-values.yml
+**`${oauth_certificate}`**
+
+This is a straight-forward token. You can specify the replacement value for this in a _values.yml file, and (optionally) provide additional instructions to AO2 on how to handle this token in a _metadata.yml file (we will describe _values.yml and _metadata.yml files below).
+
+**`${jwt_security|true}`**
+
+In this case, we are providing both the token name, and providing inline instructions to AO2 on how to handle this token.
+
+The token name is `jwt_security`. The text following the `|` character is a default value. This means if AO2 does not find a value for the token `jwt_security` in the _values.yml file, it will inject the value `true`.
+
+**`${database_urls|out:comma-separated}`**
+
+As with the previous example, we are providing both the token name, and providing inline instructions to AO2 on how to handle the token.
+
+In this case, we are specifying how we want AO2 to transform the value before injecting it into the template. The `out:` part specifies that this is an output transformation instruction, and the `comma-separated` portion specifies that we want to convert a list of values in a string of comma separated values.
+
+We will go into full detail on all transformation options below.
+
+**`${tableau_password|out:encrypt}`**
+
+In this example, the token name is `tableau_password`, and we have specified that we want to encrypt our value before injecting it into our template.
+
+## Example _values.yml files
+
+Below we can see two example values files. One for use in development, and one for use in production.
+
+#### **dev-values.yml**
 ```yaml
 jwt_security:
   - false
@@ -56,7 +77,7 @@ tableau_password:
   - devpassword
 ```
 
-##### prod-values.yml
+#### **prod-values.yml**
 ```yaml
 jwt_security:
   - true
@@ -72,7 +93,65 @@ tableau_password:
  
 As you can see in the examples above, you can use different value files for different environments. 
 
-# Metadata files
+# Tokens (updated for AO2)
+
+>**_UPDATE NOTE:_**\
+>In AO1, the default regex pattern was `{{my-token}}`. If you have templates using this older default pattern, then you will need to add the `--regex \{\{(.*?)\}\}` option to those scripts.
+
+&nbsp;
+
+By default, AOtearoa 2 will look for tokens of the form `${my-token}`. However, AOtearoa 2 can find tokens of any form by allowing you to specify the regex pattern it searches for. For example, to search for tokens of the form `{{my-token}}`, you can use the `regex` option on the command line as follows: `--regex \{\{(.*?)\}\}`.
+
+## Inline Token Properties
+
+See some example tokens below:
+
+`${token-name}`
+
+`${token-name|"defaultVal"}`
+
+`${token-name|defaultVal}`
+
+`${token-name|out:encrypt}`
+
+`${token-name | "defaultVal"; out:encrypt}`
+
+`${token-name|out:encrypt;defaultVal}`
+
+### `default values`
+
+- optional
+- can be specified in template and metadata.yml
+- there is no default value
+
+### `output transformations`
+
+- optional
+- can be specified in template and metadata.yml
+- ${TOKEN_NAME | out:encrypt; def:"the default value"}
+- default is `string`
+- new option `block#yaml` is available, that will inject an entire block of yaml
+
+
+
+## Using multiple inline properties
+
+sdsad
+
+# Metadata files (updated for AO2)
+
+>**_UPDATE NOTE 1:_**\
+>In AO2, a _metadata.yml file is no longer required, though it can still be used to provide metadata on tokens. If values exist that have no corresponding metadata, then default metadata information will be created for that value. Additionally, inline metadata found in template files can also be used to customize the default-generated metadata.
+>
+> However, to fully customize the metadata for a token, you may still need to define it in a _metadata.yml (since not all properties can be specified inline).
+
+>**_UPDATE NOTE 2:_**\
+>If you choose to use a _metadata.yml file (in order to specify properties that you cannot specify inline), then note that you no longer need to provide a `files` property. In fact, AO2 ignores any `files` values it finds in legacy (AO1) _metadata.yml files.
+>
+>Instead, you must specify the extensions of template files you wish AO2 to automatically check for tokens using the `-x` option on the command line. E.g.: `-x yml -x xml`.
+
+&nbsp;
+
 In addition to templates and values, you must provide a metadata file that describes the values to be injected.
 
 ```yaml
@@ -211,9 +290,9 @@ This will prevent you from having to set environment variables for all your sett
 Not yet implemented.
 
 # Log Level Output
-You can select the verbosity of output that Aotearoa generates. There are 4 levels that exist: DEBUG, WARN, INFO, and QUIET. DEBUG messages are low level operational messages, whereas INFO messages are higher level status messages.
+You can select the verbosity of output that AOtearoa generates. There are 4 levels that exist: DEBUG, WARN, INFO, and QUIET. DEBUG messages are low level operational messages, whereas INFO messages are higher level status messages.
 
-On the most verbose extreme, a log level of DEBUG will output messages of all levels. On the other end, a log level of QUIET will supress all output except for the ERROR messages that are displayed if Aotearoa is forced to exit.
+On the most verbose extreme, a log level of DEBUG will output messages of all levels. On the other end, a log level of QUIET will supress all output except for the ERROR messages that are displayed if AOtearoa is forced to exit.
 
 The table below shows what types of message are outputted for each log level. 
   
@@ -278,7 +357,7 @@ The command line switch for log levels is `-l` (or equivalently `--loglevel`), a
 The default log level is DEBUG (this is used when no switch is used). QUIET can be specified by either `-l q`, `--loglevel q`, or by simply `-l` (with no value) or `--loglevel` (with no value). 
 
 # Command line arguments
-To run aotearoa, you would run
+To run AOtearoa, you would run
 
 `$ java -jar aotearoa.jar [arguments...]`
 
@@ -391,7 +470,7 @@ $ java -jar aotearoa.jar         \
 ```     
 
 # Keystores
-Aotearoa can also simplify the creation of JKS keystores.
+AOtearoa can also simplify the creation of JKS keystores.
 
 ###### Example Keystore YAML:
 ```yaml
@@ -399,7 +478,7 @@ certificates:
   tableau-webserver-cert:                                   # certificate reference name
     format: pem                                             # certificate format
     prompt-text: Tableau webserver public certificate       # prompt text
-    filename: {{tableau_cert_filename}}                     # filename of certificate
+    filename: ${tableau_cert_filename}                     # filename of certificate
 
   postgres-database-cert:                                   # this is an internal reference name for the keystore
     format: pem                                             # certificate format
@@ -408,7 +487,7 @@ certificates:
 
 keystores:
   client.truststore:                                        # this will be the output keystore filename
-    base-keystore-filename: {{standard_certs}}              # base keystore filename 
+    base-keystore-filename: ${standard_certs}              # base keystore filename 
     keystore-password: password                             # keystore password
     certificates:                                           # list of certificates to load into keystore
       tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
@@ -431,13 +510,13 @@ For each keystore, the first item you specify is the keystore file name. This wi
 This is the password to the keystore. If you are creating a new keystore, then this will be the password assigned to the keystore that is created. However, if you have specified that you want to load certs into an existing keystore (by using the `base-keystore-filename` option), then this password must be the password of the existing keystore. 
 
 ##### certificates section
-This subsection contains the (zero or more) certs you want loaded into the keystore. If you do not enter any certs in this section, Aotearoa will create an empty keystore for you.
+This subsection contains the (zero or more) certs you want loaded into the keystore. If you do not enter any certs in this section, AOtearoa will create an empty keystore for you.
 
 For each cert that you do include, each line must contain the reference name of a certificate that has been defined in the main certificates section of the yaml, and the alias you want assigned to the certificate within the keystore. The certificate reference name and its alias are separated by a ':' character.
 
-#### Tags are allowed
+#### tokens are allowed
 
-In the example shown above, you'll notice the existence of tags throughout. Since the keystore yaml file is processed after values are read (either from user prompts, from a value file, web form, config server etc...), these values can be included in the keystore yaml. These values will be injected into the keystore yaml prior to processing of the keystore yaml file. Tags can appear anywhere in the keystore yaml and are totally optional.
+In the example shown above, you'll notice the existence of tokens throughout. Since the keystore yaml file is processed after values are read (either from user prompts, from a value file, web form, config server etc...), these values can be included in the keystore yaml. These values will be injected into the keystore yaml prior to processing of the keystore yaml file. Tokens can appear anywhere in the keystore yaml and are totally optional.
 
 #### Example command line
  
