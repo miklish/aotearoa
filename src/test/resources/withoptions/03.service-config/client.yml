@@ -38,7 +38,7 @@ oauth:
     client_credentials:
       # token endpoint for client credentials grant
       uri: ${AUTH_SERVER_TOKEN_PATH|def:"/token/v3";}
-      uri: ${AUTH_SERVER_TOKEN_PATH|def:"/token/v4";}      
+      uri: ${AUTH_SERVER_TOKEN_PATH|def:"/token/v3";}      
       # client_id for client credentials grant flow. client_secret is in secret.yml
       client_id: ${AUTH_SERVER_CLIENT_ID}
 
