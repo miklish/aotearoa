@@ -14,7 +14,7 @@ import static org.apache.commons.io.FileUtils.getFile;
 
 public class TestValues
 {
-    @Test
+    //@Test
     public void testValues()
     {
         ValueInjectRequest rq = new ValueInjectRequest();

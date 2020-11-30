@@ -3,9 +3,11 @@ package com.christoff.aotearoa.test;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.TemplateMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.ValueMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.TemplateRegexResolver;
 import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataMerge;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -78,9 +80,10 @@ public class TestMetadataLoaders
         List exts = new LinkedList();
         exts.add("yml");
 
+        IPresenter presenter = new PresenterCLI(loglevel);
         TemplateMetadataFileGateway metfg = new TemplateMetadataFileGateway(
-            new PresenterCLI(loglevel),
-            null,
+            presenter,
+            new TemplateRegexResolver(presenter),
             templateFolder,
             exts);
 
