@@ -124,8 +124,19 @@ public class TemplateRegexResolver
         {
             // parse each pair
             String[] propertyPairArray = propertyPairString.split(PROPERTY_KEYVAL_SEPARATOR);
-            String key = propertyPairArray[0];
-            String val = propertyPairArray[1];
+
+            String key;
+            String val;
+
+            // default values do not have explicit keys
+            if(propertyPairArray.length == 1) {
+                key = "def";
+                val = propertyPairArray[0].trim();
+            }
+            else {
+                key = propertyPairArray[0].trim();
+                val = propertyPairArray[1].trim();
+            }
 
             val = val.startsWith(QUOTE_TOKEN) ? q.values.get(val) : val;
 
