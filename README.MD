@@ -5,7 +5,7 @@ Aotearoa 2 is now in testing. AO2 is not fully backwards-compatible with AO1. Ho
 # Overview
 AOtearoa is a command line tool that allows Application Operations teams to generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
 
-# Template, and Value files
+# Template and Value files
 _**Updated for AO2**_
 
 AOtearoa starts with template files. A template is a normal text configuration file that contains 'tokens' in which values will be inserted. Some examples are shown below:
@@ -116,7 +116,7 @@ Although, by default, AOtearoa 2 will look for tokens of the form `${token_name}
 
 _**New for AO2**_
 
-### `default values`
+#### Default Values
 
 If AO2 cannot find a value to replace a token with, it will check to see if a default value has been defined. E.g.:
 
@@ -128,7 +128,7 @@ or
 
 Note: You can also specify default values in a metadata file.
 
-### `output transformations`
+#### Output Transformations
 
 You can also specify a transformation to be performed on a value prior to that value being injected into a template.
 
@@ -216,6 +216,29 @@ variables:
     type: string
     prompt-text: Tableau password (this will be encrypted)
 ``` 
+#### Transforms
+The metadata file allows the input to be transformed. In the current version, 3 types of transforms are supported:
+
+- `copy`
+- `comma-separated`
+- `encrypt`
+- `decrypt`
+
+The `copy` transform simply pastes the value in as-is.
+
+The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. The encryption secret can be set on the command line using the `-y` or `-key` option. If an encryption secret is not specified on the command line, the default Light4j secret will be used. E.g.: The tableau password (set as password above) will appear as `CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs=` in secret.yml.
+
+The `decrypt` transform will decrypt the password using Light4j's default symmetric encryption. The decryption secret can be set on the command line using the `-y` or `-key` option. If a decryption secret is not specified on the command line, the default Light4j secret will be used to decrypt values.
+
+_Note: The encryption and decryption key are the same, since Light4j's default encryption/decryption is symmetric._
+
+The `comma-separated` transform concatenates elements in the list and separates them with commas. E.g.: the list
+```yaml
+  - value1
+  - value2
+  - value3
+```
+will be converted to `value1,value2,value3` prior to being inserted.
 
 #### Default Token Values
 Also note that you can set default values for tokens in the metadata yaml. These will show up in prompts and web forms, and will be used in cases where values are not entered in values file.
@@ -264,29 +287,8 @@ All values must be entered as elements of a Yaml list (even if there is only a s
 
 If a variable is specified in the metadata yaml but has no value in the values file, then this will cause an error -- unless a default value is specified in the metadata yaml. 
 
-##### Transforms
-The metadata file allows the input to be transformed. In the current version, 3 types of transforms are supported:
-
-- `copy`
-- `comma-separated`
-- `encrypt`
-- `decrypt`
-
-The `copy` transform simply pastes the value in as-is.
-
-The `encrypt` transform will encrypt the password using Light4j's default symmetric encryption. The encryption secret can be set on the command line using the `-y` or `-key` option. If an encryption secret is not specified on the command line, the default Light4j secret will be used. E.g.: The tableau password (set as password above) will appear as `CRYPT:iR7QkKyNDJ4wTRn9BEXROgm2iAkajmIv2ZR5VOsxMqs=` in secret.yml.
-
-The `decrypt` transform will decrypt the password using Light4j's default symmetric encryption. The decryption secret can be set on the command line using the `-y` or `-key` option. If a decryption secret is not specified on the command line, the default Light4j secret will be used to decrypt values.
-
-_Note: The encryption and decryption key are the same, since Light4j's default encryption/decryption is symmetric._
-
-The `comma-separated` transform concatenates elements in the list and separates them with commas. E.g.: the list
-```yaml
-  - value1
-  - value2
-  - value3
-```
-will be converted to `value1,value2,value3` prior to being inserted.
+#### Default Values from Metadata
+The value injected into a token can come from the default value specified in a metadata file, or as an inline token property.  
 
 #### Command line prompts
 If command line prompts are chosen as the method to input values, then on the command line, the user would see the following:  
