@@ -1,12 +1,14 @@
 # AOtearoa 2
 # New Release!
-Aotearoa 2 is now in testing. AO2 is not fully backwards-compatible with AO1. However, in the updated documentation below, we point out exactly where AO2 differs from AO1 and--where possible--provide simple fixes that can be made to your existing scripts so you can leverage AO2, while continuing to use your existing templates, metadata, and values files.
+Aotearoa 2 is now in testing. AO2 is not fully backwards-compatible with AO1. However, in the updated documentation below, we point out exactly where AO2 differs from AO1 and&mdash;where possible&mdash;provide simple fixes that can be made to your existing scripts so you can leverage AO2, while continuing to use your existing templates, metadata, and values files.
 
 # Overview
 AOtearoa is a command line tool that allows Application Operations teams to generate complex configurations for an application while having little to no knowledge of the application's configuration system beyond the few values they are entrusted to provide (e.g.: production credentials, certificates, private keys, etc...).
 
-# Templates, and Value files (updated for AO2)
-AOtearoa starts with template files. A template is a normal text configuration file that contains 'tokens' in which values will be inserted.
+# Template, and Value files
+_**Updated for AO2**_
+
+AOtearoa starts with template files. A template is a normal text configuration file that contains 'tokens' in which values will be inserted. Some examples are shown below:
 
 #### security.yml
 ```yaml
@@ -36,19 +38,19 @@ tableauPassword: ${tableau_password|out:encrypt}
 ...
 ```
 
-Let's take a look at the tokens in our example above.
+Let's take a look at the tokens in these examples.
 
-**`${oauth_certificate}`**
+`${oauth_certificate}`
 
-This is a straight-forward token. You can specify the replacement value for this in a _values.yml file, and (optionally) provide additional instructions to AO2 on how to handle this token in a _metadata.yml file (we will describe _values.yml and _metadata.yml files below).
+This is a straight-forward token. You can specify the replacement value for this in a values file, and (optionally) provide additional instructions to AO2 on how to handle this token in a metadata file (we will describe what values and metadata files are below).
 
-**`${jwt_security|true}`**
+`${jwt_security|true}`
 
 In this case, we are providing both the token name, and providing inline instructions to AO2 on how to handle this token.
 
 The token name is `jwt_security`. The text following the `|` character is a default value. This means if AO2 does not find a value for the token `jwt_security` in the _values.yml file, it will inject the value `true`.
 
-**`${database_urls|out:comma-separated}`**
+`${database_urls|out:comma-separated}`
 
 As with the previous example, we are providing both the token name, and providing inline instructions to AO2 on how to handle the token.
 
@@ -56,7 +58,7 @@ In this case, we are specifying how we want AO2 to transform the value before in
 
 We will go into full detail on all transformation options below.
 
-**`${tableau_password|out:encrypt}`**
+`${tableau_password|out:encrypt}`
 
 In this example, the token name is `tableau_password`, and we have specified that we want to encrypt our value before injecting it into our template.
 
@@ -93,66 +95,88 @@ tableau_password:
  
 As you can see in the examples above, you can use different value files for different environments. 
 
-# Tokens (updated for AO2)
+# Tokens
+
+_**Updated for AO2**_
 
 >**_UPDATE NOTE:_**\
 >In AO1, the default regex pattern was `{{my-token}}`. If you have templates using this older default pattern, then you will need to add the `--regex \{\{(.*?)\}\}` option to those scripts.
 
-&nbsp;
+Tokens are named placeholders that are put in template files for the purpose of being replaced with other values.
 
-By default, AOtearoa 2 will look for tokens of the form `${my-token}`. However, AOtearoa 2 can find tokens of any form by allowing you to specify the regex pattern it searches for. For example, to search for tokens of the form `{{my-token}}`, you can use the `regex` option on the command line as follows: `--regex \{\{(.*?)\}\}`.
+In AO2, the simplest tokens have the following form
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name}`
+
+where `token_name` is the name of the token.
+
+Although, by default, AOtearoa 2 will look for tokens of the form `${token_name}`, AO2 can find tokens of any form by allowing you to specify the regex pattern it searches for. For example, to search for tokens of the form `{{my-token}}`, you can use the `regex` option on the command line as follows: `--regex \{\{(.*?)\}\}`.
 
 ## Inline Token Properties
 
-See some example tokens below:
-
-`${token-name}`
-
-`${token-name|"defaultVal"}`
-
-`${token-name|defaultVal}`
-
-`${token-name|out:encrypt}`
-
-`${token-name | "defaultVal"; out:encrypt}`
-
-`${token-name|out:encrypt;defaultVal}`
+_**New for AO2**_
 
 ### `default values`
 
-- optional
-- can be specified in template and metadata.yml
-- there is no default value
+If AO2 cannot find a value to replace a token with, it will check to see if a default value has been defined. E.g.:
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|defaultValue}`
+
+or
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|"defaultValue"}`
+
+Note: You can also specify default values in a metadata file.
 
 ### `output transformations`
 
-- optional
-- can be specified in template and metadata.yml
-- ${TOKEN_NAME | out:encrypt; def:"the default value"}
-- default is `string`
-- new option `block#yaml` is available, that will inject an entire block of yaml
+You can also specify a transformation to be performed on a value prior to that value being injected into a template.
 
+There are four transformations available:
 
+- `copy`
+- `comma-separated`
+- `encrypt`
+- `decrypt`
+
+(Please see _Transformations_ in the **Metadata** section below, for more details on what each of these transformations does).
+
+You can specify a transformation as follows:
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|out:<transformation-name>}`
+
+E.g.: To encrypt a value before injecting it, would be:
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|out:encrypt}`
+
+If no transform is specified, then the `copy` transform will be used (which simply injects a value verbatim).
+
+Again, transforms can also be specified in a metadata file.
 
 ## Using multiple inline properties
 
-sdsad
+Multiple properties can be specified in a token. One simply needs to separate them with a semicolon. E.g.:
 
-# Metadata files (updated for AO2)
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|out:encrypt;defaultVal}`
+
+&nbsp;&nbsp;&nbsp;&nbsp;`${token_name|"defaultVal"; out:decrypt}`
+
+
+# Metadata files
+
+_**Updated for AO2**_
 
 >**_UPDATE NOTE 1:_**\
->In AO2, a _metadata.yml file is no longer required, though it can still be used to provide metadata on tokens. If values exist that have no corresponding metadata, then default metadata information will be created for that value. Additionally, inline metadata found in template files can also be used to customize the default-generated metadata.
+>In AO2, a metadata file is no longer required, though it can still be used to provide metadata on tokens. In AO2, if a value exists that has no corresponding metadata, then default metadata information will be created for that value. Inline metadata found in template files can also be used to customize the default-generated metadata.
 >
-> However, to fully customize the metadata for a token, you may still need to define it in a _metadata.yml (since not all properties can be specified inline).
+> However, to fully customize the metadata for a token, you may still need to define it in a metadata file (since not all properties available in a metadata file can be specified inline).
 
 >**_UPDATE NOTE 2:_**\
->If you choose to use a _metadata.yml file (in order to specify properties that you cannot specify inline), then note that you no longer need to provide a `files` property. In fact, AO2 ignores any `files` values it finds in legacy (AO1) _metadata.yml files.
+>If you choose to use a metadata file (in order to specify properties that you cannot specify inline), then note that you no longer need to provide a `files` property. In fact, AO2 ignores any `files` values it finds in legacy (AO1) metadata files.
 >
 >Instead, you must specify the extensions of template files you wish AO2 to automatically check for tokens using the `-x` option on the command line. E.g.: `-x yml -x xml`.
 
-&nbsp;
-
-In addition to templates and values, you must provide a metadata file that describes the values to be injected.
+In addition to templates and values, you can provide a metadata file that describes the values to be injected.
 
 ```yaml
 variables:
@@ -165,8 +189,6 @@ variables:
     prompt-text: Enable 'true', or disable 'false' JWT verification security
     defaults:
     - true
-    files:
-    - security
     
   database_urls:
     min: 1
@@ -175,8 +197,6 @@ variables:
     - comma-separated
     type: string
     prompt-text: Provide a list of one or more urls for the database
-    files:
-    - datasource    
 
   oauth_certificate:
     min: 1
@@ -187,8 +207,6 @@ variables:
     prompt-text: Enter the name of the OAuth (Auth Server) certificate
     defaults:
     - cert.pem
-    files:
-    - security
 
   tableau_password:
     min: 1
@@ -197,14 +215,31 @@ variables:
     - encrypt
     type: string
     prompt-text: Tableau password (this will be encrypted)
-    files:
-    - secret
-```
-  
-Note that you specify the template file(s) that each value should be injected into, in the file section of the value's metadata entry. If the file name ends in '.yml', then you may omit the extension (e.g.: a file entry of 'secret' will cause aotearo to scan the file 'secret.yml' in the template folder). However, if you need to inject values into a file that ends in an extension that is different than '.yml', you can put in the full filename (e.g.: you could enter 'logback.xml' if you need to inject values into a template for slf4j). 
+``` 
 
-##### Defaults
-Also note that you can set default values in the metadata yaml. These will show up in prompts and web forms, and will be used in cases where values are not entered in values file.
+#### Default Token Values
+Also note that you can set default values for tokens in the metadata yaml. These will show up in prompts and web forms, and will be used in cases where values are not entered in values file.
+
+#### Default Metadata
+If there is no metadata entry for a particular value or token, the AO2 will create one. E.g.: The default metadata for a token called `MY_TOKEN` would be:
+
+````yaml
+  MY_TOKEN:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: Please enter a value for MY_TOKEN
+````
+
+# Order of Usage for Metadata
+
+AO2 will
+
+ 1. Use metadata for a token from a metadata file, if it exists.
+ 2. Otherwise, use metadata defined inline for a token, if it exists.
+ 3. Otherwise, generate default metadata
 
 # Values
 There are numerous ways in which values can be specified to the template resolver.
@@ -278,7 +313,7 @@ As you can see, the prompts that are shown are specified in the metadata file, a
 #### Environment variables
 You may also use environment variables as a way to specify variable values. E.g.: prior to running a test, you may wish to temporarily turn off security in your configurations, even though your values file has jwt_security set to 'true':
 
-`$ export jwt_security=false`
+&nbsp;&nbsp;&nbsp;&nbsp;`$ export jwt_security=false`
 
 #### File values with environment variable overrides
 
@@ -359,7 +394,7 @@ The default log level is DEBUG (this is used when no switch is used). QUIET can 
 # Command line arguments
 To run AOtearoa, you would run
 
-`$ java -jar aotearoa.jar [arguments...]`
+&nbsp;&nbsp;&nbsp;&nbsp;`$ java -jar aotearoa.jar [arguments...]`
 
 with the appropriate arguments:
 
@@ -374,7 +409,7 @@ with the appropriate arguments:
  </tr>
  <tr>
     <td>-m, --metadata</td>
-    <td>Variable metadata file (required)</td>
+    <td>Variable metadata file (optional)</td>
  </tr> 
  <tr>
     <td>-o, --outputdir</td>
@@ -405,6 +440,10 @@ with the appropriate arguments:
     <td>Template file folder (required)</td>
  </tr>
  <tr>
+    <td>-x, --ext</td>
+    <td>Template file extensions (required)</td>
+ </tr> 
+ <tr>
     <td>-k, --kmetadata <String></td>
     <td>Keystore metadata template (optional)</td>
  </tr>
@@ -420,7 +459,7 @@ with the appropriate arguments:
  
 Some examples are below:
  
-##### Use value file with log level set to QUIET
+#### Use value file with log level set to QUIET
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
@@ -430,7 +469,7 @@ $ java -jar aotearoa.jar         \
     -l
 ```
 
-##### Use value file and set the symmetric encryption/decryption secret
+#### Use value file and set the symmetric encryption/decryption secret
 ```
 $ java -jar aotearoa.jar            \
     -m    ./templates/_metadata.yml \ # metadata file
@@ -440,7 +479,7 @@ $ java -jar aotearoa.jar            \
     --key the_secret                  # the symmetric encryption/decryption secret
 ```    
     
-##### Use prompts
+#### Use prompts
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
@@ -449,7 +488,7 @@ $ java -jar aotearoa.jar         \
     -p                             # values from prompts
 ```     
 
-##### Use environment variables with log level set to WARN
+#### Use environment variables with log level set to WARN
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
@@ -459,7 +498,7 @@ $ java -jar aotearoa.jar         \
     -loglevel w
 ```     
 
-##### Value file with environment variable overrides
+#### Value file with environment variable overrides
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
