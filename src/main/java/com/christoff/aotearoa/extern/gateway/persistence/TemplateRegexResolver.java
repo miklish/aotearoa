@@ -129,6 +129,9 @@ public class TemplateRegexResolver
             String val;
 
             // default values do not have explicit keys
+            if(propertyPairArray == null || propertyPairArray.length == 0) {
+                continue;
+            }
             if(propertyPairArray.length == 1) {
                 key = "def";
                 val = propertyPairArray[0].trim();
