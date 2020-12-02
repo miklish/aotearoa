@@ -9,7 +9,6 @@ public class PresenterCLI implements IPresenter
     private final LogLevel _logLevel;
     
     public PresenterCLI(String logLevel) { _logLevel = toLogLevel(logLevel); }
-    public PresenterCLI() { this(null); }
     
     private String clean(String s) { return s == null ? LogLevel.DEBUG.levelId() : s.trim().toLowerCase().substring(0, 1); }
     

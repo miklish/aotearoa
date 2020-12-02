@@ -11,8 +11,6 @@ import java.util.Map;
 
 public class ValueMetadataFileGateway implements IValueMetadataGateway
 {
-    private static final String VARIABLES = "variables";
-
     private IPresenter _presenter;
     private String _valuesFilename;
     private PersistenceFileHelper _fileSysHelper;

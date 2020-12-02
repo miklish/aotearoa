@@ -20,10 +20,6 @@ public class ValuePromptGateway implements IValueGateway
     {
         // Display explanation on how to quit
         System.out.println("Type " + QUIT + " to quit. Enter a blank line to use default (if default exists)");
-        
-        // display defaults
-        // add default option to metadata
-        // add option to select project
     }
 
     @Override

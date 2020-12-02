@@ -1,6 +1,5 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.TemplateMetadataFileGateway;
@@ -20,7 +19,6 @@ import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 
 import java.util.*;
-import java.util.regex.PatternSyntaxException;
 
 public class ValueInjectInteractor
 {
