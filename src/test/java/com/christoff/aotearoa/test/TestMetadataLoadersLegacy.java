@@ -18,48 +18,54 @@ import java.util.List;
 import java.util.Map;
 
 
-public class TestMetadataLoaders
+public class TestMetadataLoadersLegacy
 {
+    static final String CONFIG_FOLDER = "legacy";
+    static final String LOG_LEVEL = LogLevel.TRACE.levelId();
+
+    /***
+     * Uses legacy config files, with _metadata.yml
+     */
     @Test
-    public void testLoadTemplateMetadataStandard()
+    public void testCombineAllMetadata()
     {
-        Map<String,Map<String,List<Metadata>>> tm = loadTemplateMetadata("standard", LogLevel.TRACE.levelId());
+        IPresenter presenter = new PresenterCLI(LOG_LEVEL);
+
+        Map<String, Metadata> allVarMetadata =
+            (new MetadataMerge(presenter)).merge(
+                loadTemplateMetadata(CONFIG_FOLDER, LOG_LEVEL),
+                loadMetadata(CONFIG_FOLDER, LOG_LEVEL),
+                loadValueMetadata(CONFIG_FOLDER, LOG_LEVEL));
+
+        Assert.assertNotNull(allVarMetadata);
+    }
+
+    @Test
+    public void testLoadTemplateMetadata()
+    {
+        Map<String,Map<String,List<Metadata>>> tm = loadTemplateMetadata(CONFIG_FOLDER, LOG_LEVEL);
         Assert.assertNotNull(tm);
     }
 
     @Test
-    public void testLoadMergedTemplateMetadataStandard()
+    public void testLoadMergedTemplateMetadata()
     {
-        Map<String,Metadata> tmm = loadMergedTemplateMetadata("standard", LogLevel.TRACE.levelId());
+        Map<String,Metadata> tmm = loadMergedTemplateMetadata(CONFIG_FOLDER, LOG_LEVEL);
         Assert.assertNotNull(tmm);
     }
 
     @Test
-    public void testLoadTemplateMetadataWithProperties()
+    public void testLoadMetadata()
     {
-        Map<String,Map<String,List<Metadata>>> tm = loadTemplateMetadata("withoptions", LogLevel.TRACE.levelId());
-        Assert.assertNotNull(tm);
-    }
-
-    @Test
-    public void testLoadMergedTemplateMetadataWithProperties()
-    {
-        Map<String,Metadata> tmm = loadMergedTemplateMetadata("withoptions", LogLevel.TRACE.levelId());
-        Assert.assertNotNull(tmm);
-    }
-
-    @Test
-    public void testLoadMetadataStandard()
-    {
-        Map<String,Metadata> m = loadMetadata("standard", LogLevel.TRACE.levelId());
+        Map<String,Metadata> m = loadMetadata(CONFIG_FOLDER, LOG_LEVEL);
         Assert.assertNotNull(m);
     }
 
     @Test
-    public void testLoadMetadataWithOptions()
+    public void testLoadValueMetadata()
     {
-        Map<String,Metadata> m = loadMetadata("withoptions", LogLevel.TRACE.levelId());
-        Assert.assertNotNull(m);
+        Map<String,Metadata> vm = loadValueMetadata(CONFIG_FOLDER, LOG_LEVEL);
+        Assert.assertNotNull(vm);
     }
 
 
