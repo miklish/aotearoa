@@ -123,8 +123,6 @@ public class ValueInjectInteractor
     public ValueInjectResponse exec() throws MetadataException
     {
         // Gather all variable metadata
-        // TODO: AO2: Need to create default metadata (if not defined in _metadata.yml)
-        // TODO: AO2: Need to handle case where _metadata.yml is not used at all
         Map<String, Metadata> allVarMetadata =
             (new MetadataMerge(_presenter)).merge(
                 _templateMetadataGateway.getMetadataFromTemplates(),
