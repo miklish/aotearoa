@@ -6,6 +6,7 @@ import joptsimple.OptionSet;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.System.exit;
 
@@ -14,6 +15,7 @@ public class ValueInjectCLIStart
     private static final String METADATA_LOC = "m";
     private static final String KEYSTORE_METADATA_LOC = "k";
     private static final String TEMPLATE_DIR = "t";
+    private static final String TEMPLATE_FILE_EXTS = "x";
     private static final String CONFIG_VALS_LOC = "v";
     private static final String PROMPTS = "p";
     private static final String ENV_VARS = "e";
@@ -46,9 +48,10 @@ public class ValueInjectCLIStart
         // extract command line values
         /**
          * Options
-         *   m / metadata   : variable metadata file (required)
+         *   m / metadata   : variable metadata file (optional)
          *   k / kmetadata  : keystore metadata file (optional)
          *   t / templates  : template directory (required)
+         *   x / extension  : template file extension (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
          *   e / env        : use environment variables for values or overrides (optional)
@@ -69,6 +72,7 @@ public class ValueInjectCLIStart
         request.regex = (String) optionInput.valueOf(ValueInjectCLIStart.REGEX);
         request.showHelp = optionInput.has(ValueInjectCLIStart.HELP);
         request.templateDir = (String) optionInput.valueOf(ValueInjectCLIStart.TEMPLATE_DIR);
+        request.templateFileExtensions = (List<String>) optionInput.valuesOf(ValueInjectCLIStart.TEMPLATE_FILE_EXTS);
         request.usingPrompts = optionInput.has(PROMPTS);
         request.symmetricKey = (String) optionInput.valueOf(ValueInjectCLIStart.SYMMETRIC_KEY);
         request.logLevelValue = (String) optionInput.valueOf(ValueInjectCLIStart.LOG_LEVEL);
@@ -76,9 +80,6 @@ public class ValueInjectCLIStart
         
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
-
-        System.out.println("Custom Regex = " + request.regex);
-
 
         // - Ensure at least one of prompts, file system, environment config selected
         if (!usingFileSystemValues && !usingConfigFile && !request.usingEnvVars && !request.usingPrompts)
@@ -109,9 +110,10 @@ public class ValueInjectCLIStart
     {
         /**
          * Options
-         *   m / metadata   : variable metadata file (required)
+         *   m / metadata   : variable metadata file (optional)
          *   k / kmetadata  : keystore metadata file (optional)
          *   t / templates  : template directory (required)
+         *   x / extension  : template file extension (required)
          *   v / values     : config values file (optional)
          *   p / prompt     : use prompts for values (optional)
          *   e / env        : use environment variables for values or overrides (optional)
@@ -128,7 +130,7 @@ public class ValueInjectCLIStart
         final String[] metadataOptions = {METADATA_LOC,"metadata"};
         optionConfig.acceptsAll(
             Arrays.asList(metadataOptions),
-            "Variable metadata file (required)").withRequiredArg().required();
+            "Variable metadata file (optional)").withRequiredArg();
         
         /** keystore metadata file */
         final String[] keystoreMetadataOptions = {KEYSTORE_METADATA_LOC,"kmetadata"};
@@ -141,6 +143,12 @@ public class ValueInjectCLIStart
         optionConfig.acceptsAll(
             Arrays.asList(inputdirOptions),
             "Template file folder (required)").withRequiredArg().required();
+
+        /** local: template file extensions */
+        final String[] templateFileExtensionOptions = {TEMPLATE_FILE_EXTS,"extension"};
+        optionConfig.acceptsAll(
+            Arrays.asList(templateFileExtensionOptions),
+            "Template file extensions (e.g.: -x xml -x yml) (required)").withRequiredArg().required();
         
         /** values - file */
         final String[] valsOptions = {CONFIG_VALS_LOC,"values"};

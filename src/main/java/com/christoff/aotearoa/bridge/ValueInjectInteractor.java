@@ -1,8 +1,9 @@
 package com.christoff.aotearoa.bridge;
 
-import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.extern.gateway.metadata.KeystoreMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.metadata.MetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.metadata.TemplateMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.metadata.ValueMetadataFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.KeystorePersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileGateway;
 import com.christoff.aotearoa.extern.gateway.transform.TransformFileGateway;
@@ -18,11 +19,12 @@ import com.christoff.aotearoa.intern.gateway.values.IValueGateway;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 
 import java.util.*;
-import java.util.regex.PatternSyntaxException;
 
 public class ValueInjectInteractor
 {
     private IMetadataGateway _metadataGateway;
+    private ITemplateMetadataGateway _templateMetadataGateway;
+    private IValueMetadataGateway _valueMetadataGateway;
     private IKeystoreMetadataGateway _keystoreMetadataGateway;
     private IPersistenceGateway _persistenceGateway;
     private IKeystorePersistenceGateway _keystorePersistenceGateway;
@@ -50,7 +52,6 @@ public class ValueInjectInteractor
                     rq.logLevelValue;
 
 
-            
         // Construct Gateways
     
         // - Presenter Gateway
@@ -66,16 +67,11 @@ public class ValueInjectInteractor
     
         // - Config File Persistence Gateway
         _persistenceGateway = new PersistenceFileGateway(
-            rq.templateDir,
-            rq.outputDir,
-            rq.keystoreMetadataLoc,
-            _presenter);
+            rq.templateDir, rq.templateFileExtensions, rq.outputDir, rq.keystoreMetadataLoc, _presenter);
     
         // - Keystore Persistence Gateway
         _keystorePersistenceGateway = new KeystorePersistenceFileGateway(
-            rq.keystoreMetadataLoc,
-            rq.outputDir,
-            _transformGateway);
+            rq.keystoreMetadataLoc, rq.outputDir, _transformGateway);
     
 
         // - Value Gateway
@@ -85,8 +81,7 @@ public class ValueInjectInteractor
 
         if (usingFileSystemValues && rq.usingEnvVars && !rq.usingPrompts)
             _valueGateway = new ValueFileEnvironmentGateway(
-                new ValueFileGateway(rq.configValsLoc),
-                new ValueEnvironmentGateway());
+                new ValueFileGateway(rq.configValsLoc), new ValueEnvironmentGateway());
     
         else if (usingFileSystemValues && !rq.usingEnvVars && !rq.usingPrompts)
             _valueGateway = new ValueFileGateway(rq.configValsLoc);
@@ -96,8 +91,7 @@ public class ValueInjectInteractor
 
         else if (usingFileSystemValues && !rq.usingEnvVars && rq.usingPrompts)
             _valueGateway = new ValueFilePromptGateway(
-                new ValueFileGateway(rq.configValsLoc),
-                new ValuePromptGateway());
+                new ValueFileGateway(rq.configValsLoc), new ValuePromptGateway());
     
         else
             _valueGateway = new ValuePromptGateway();
@@ -105,32 +99,36 @@ public class ValueInjectInteractor
         
         // Regex pattern
         if (usingCustomRegex)
-            try {
-                _regexResolver = new TemplateRegexResolver(rq.regex);
-            } catch(PatternSyntaxException e) {
-                throw new ConfigException("Custom regex pattern '" + rq.regex + "' is invalid");
-            }
+            _regexResolver = new TemplateRegexResolver(_presenter, rq.regex);
         else
-            _regexResolver = new TemplateRegexResolver();
+            _regexResolver = new TemplateRegexResolver(_presenter);
 
     
-        // - Metadata Gateway
-        _metadataGateway = new MetadataFileGateway(
-            rq.metadataLoc);
+        // - Metadata Gateways
+        _metadataGateway = new MetadataFileGateway(rq.metadataLoc);
+
+        _templateMetadataGateway = new TemplateMetadataFileGateway(
+            _presenter, _regexResolver, rq.templateDir, rq.templateFileExtensions);
+
+        _valueMetadataGateway = new ValueMetadataFileGateway(
+            _presenter, rq.configValsLoc);
+
     
         // - Keystore Metadata Gateway
         _keystoreMetadataGateway = new KeystoreMetadataFileGateway(
-            rq.keystoreMetadataLoc,
-            rq.outputDir);
+            rq.keystoreMetadataLoc, rq.outputDir);
     }
-
 
     
     public ValueInjectResponse exec() throws MetadataException
     {
         // Gather all variable metadata
-        Map<String, Metadata> allVarMetadata = MetadataBuilder.build(_metadataGateway.getMetadataMap());
-        
+        Map<String, Metadata> allVarMetadata =
+            (new MetadataMerge(_presenter)).merge(
+                _templateMetadataGateway.getMetadataFromTemplates(),
+                _metadataGateway.getMetadata(),
+                _valueMetadataGateway.getMetadata());
+
         // Validate metadata
         for(Metadata vm : allVarMetadata.values()) MetadataValidator.validateMetadata(vm);
         
@@ -139,7 +137,6 @@ public class ValueInjectInteractor
     
         // Inject values and transforms into Metadata
         allVarMetadata = new MetadataInjector(_valueGateway, _transformGateway, _presenter).inject(allVarMetadata);
-
 
         
         // Resolve and persist the templates
@@ -152,7 +149,6 @@ public class ValueInjectInteractor
             if(!vm.getUsed()) _presenter.tagDefinedNotUsed(vm.getName());
 
             
-            
         // Load keystore metadata (if it exists)
         KeystoreMetadataBuilder ksm = new KeystoreMetadataBuilder(
             _keystoreMetadataGateway.getCertificateMap(),
@@ -161,7 +157,6 @@ public class ValueInjectInteractor
         
         if(ksm.getKeystores().size() > 0)
             _keystorePersistenceGateway.persist(ksm.getKeystores());
-
 
         
         return new ValueInjectResponse("Success", "SUCCESS");

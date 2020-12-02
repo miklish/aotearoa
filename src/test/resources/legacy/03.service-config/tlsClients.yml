@@ -1,0 +1,4 @@
+enabled: ${ENABLE_TLS_CLIENT_VERIFIER}
+
+allow:
+  - ${MTLS_CLIENT_CN}

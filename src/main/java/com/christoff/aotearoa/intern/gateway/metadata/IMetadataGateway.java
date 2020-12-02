@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface IMetadataGateway
 {
-    Map<String, Object> getMetadataMap();
+    Map<String, Metadata> getMetadata();
 }
