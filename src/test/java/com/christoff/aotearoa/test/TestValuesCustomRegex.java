@@ -5,29 +5,59 @@ import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
+import com.christoff.aotearoa.extern.gateway.metadata.TemplateMetadataFileGateway;
+import com.christoff.aotearoa.extern.gateway.persistence.TemplateRegexResolver;
+import com.christoff.aotearoa.extern.gateway.view.PresenterCLI;
+import com.christoff.aotearoa.intern.gateway.view.IPresenter;
+import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 import org.junit.Assert;
 import org.junit.AssumptionViolatedException;
-
-import static org.apache.commons.io.FilenameUtils.normalize;
 import org.junit.Test;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class TestValuesCustomRegex
 {
-    //@Test
+    static final String CONFIG_FOLDER = "legacy";
+    static final String LOG_LEVEL = LogLevel.TRACE.levelId();
+
+    @Test
     public void testValuesCustomRegex()
     {
-        ValueInjectRequest rq = new ValueInjectRequest();
-        String WINDOWS_ROOT = "C:\\Users\\mikle\\";
-        String MAC_ROOT = "/Users/christof/";
-        String root = MAC_ROOT;
+        Path templatFolderPath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-cust-rgx");
+        String templateFolder = templatFolderPath.toFile().getAbsolutePath();
 
-        rq.metadataLoc = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config\\_metadata.yml");
-        rq.outputDir = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config-out");
-        rq.templateDir = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config");
-        rq.configValsLoc = normalize(root + "localrepo\\aotearoa\\src\\main\\resources\\config\\_values.yml");
+        Path outputFolderPath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-out");
+        String outputFolder = outputFolderPath.toFile().getAbsolutePath();
+
+        Path metadataFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_metadata.yml");
+        String metadataFilename = metadataFilenamePath.toFile().getAbsolutePath();
+
+        Path valuesFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_values.yml");
+        String valuesFilename = valuesFilenamePath.toFile().getAbsolutePath();
+
+        List exts = new LinkedList();
+        exts.add("yml");
+        exts.add("xml");
+
+        IPresenter presenter = new PresenterCLI(LOG_LEVEL);
+        TemplateMetadataFileGateway metfg = new TemplateMetadataFileGateway(
+            presenter,
+            new TemplateRegexResolver(presenter),
+            templateFolder,
+            exts);
+
+        ValueInjectRequest rq = new ValueInjectRequest();
+        rq.metadataLoc = metadataFilename;
+        rq.outputDir = outputFolder;
+        rq.templateDir = templateFolder;
+        rq.configValsLoc = valuesFilename;
+        rq.templateFileExtensions = exts;
         rq.regex = "\\{\\{(.*?)\\}\\}";
-    
+
         ValueInjectResponse resp = null;
         try {
             resp = new ValueInjectInteractor(rq).exec();
