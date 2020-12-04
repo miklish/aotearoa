@@ -9,7 +9,6 @@ import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 import org.junit.Assert;
 import org.junit.AssumptionViolatedException;
 import org.junit.Test;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
