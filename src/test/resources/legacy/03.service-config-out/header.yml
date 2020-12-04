@@ -1,0 +1,7 @@
+# Enable header handler or not, default to false
+# test2
+enabled: false
+# Request header manipulation
+request:
+  update:
+    env_tag: ""

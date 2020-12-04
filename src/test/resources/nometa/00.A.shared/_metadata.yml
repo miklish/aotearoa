@@ -225,7 +225,7 @@ variables:
     type: string
     prompt-text: "Please enter the CONSUL URL"
     defaults:
-    - "https://consul.mcc.np.api.cibc.com:8443"
+    - "https://consul.com"
 
   CONSUL_TOKEN:
     min: 1

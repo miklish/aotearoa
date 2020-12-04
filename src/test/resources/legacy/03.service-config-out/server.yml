@@ -8,7 +8,7 @@ httpPort:  8180
 # Enable HTTP should be false on official environment.
 enableHttp: false
 
-httpsPort: ${HTTPS_PORT}
+httpsPort: 10500
 enableHttps: true
 
 # Http/2 is enabled. When Http2 is enable, enableHttps is true and enableHttp is false by default.
@@ -19,13 +19,13 @@ enableHttp2: true
 keystoreName: server.keystore
 
 # Flag that indicate if two way TLS is enabled. Not recommended in docker container.
-enableTwoWayTls: ${ENABLE_MTLS}
+enableTwoWayTls: false
 
 # Truststore file name in config folder. TruststorePass is in secret.yml to access it.
 truststoreName: server.truststore
 
 # Unique service identifier. Used in service registration and discovery etc.
-serviceId: com.company.${ROUTER_INSTANCE}
+serviceId: com.company.server
 
 # Flag to enable service registration. Only be true if running as standalone Java jar.
 enableRegistry: false

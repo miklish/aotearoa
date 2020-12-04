@@ -25,7 +25,7 @@
         <appender-ref ref="log"/>
     </logger>
 
-    <logger name="com.cibc" level="${LOGBACK_LEVEL}" additivity="false">
+    <logger name="com.company" level="${LOGBACK_LEVEL}" additivity="false">
         <appender-ref ref="log"/>
     </logger>
 

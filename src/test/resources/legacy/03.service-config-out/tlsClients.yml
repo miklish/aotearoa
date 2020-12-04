@@ -1,0 +1,4 @@
+enabled: false
+
+allow:
+  - myconsumer.company.com
