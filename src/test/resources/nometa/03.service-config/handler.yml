@@ -32,7 +32,6 @@ handlers:
   # Light-framework cross-cutting concerns implemented in the microservice
   - com.networknt.exception.ExceptionHandler@exception
   - com.networknt.metrics.MetricsHandler@metrics
-  - com.cibc.apif.handler.TlsClientVerifyHandler@tls  
   - com.networknt.traceability.TraceabilityHandler@traceability
   - com.networknt.correlation.CorrelationHandler@correlation  
   - com.networknt.audit.AuditHandler@audit  
@@ -56,7 +55,6 @@ chains:
   apifrouterchain:
     - exception
     - metrics
-    - tls        
     - traceability
     - correlation
     - audit

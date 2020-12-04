@@ -85,7 +85,7 @@ ENABLE_TLS_CLIENT_VERIFIER:
   - false
 
 MTLS_CLIENT_CN:
-  - "myconsumer.cibc.com"
+  - "myconsumer.company.com"
 
 CONSUL_URL:
   - "consul.com"

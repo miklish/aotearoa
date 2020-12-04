@@ -21,15 +21,15 @@
         </encoder>
     </appender>
 
-    <logger name="com.networknt" level="${LOGBACK_LEVEL}" additivity="false">
+    <logger name="com.networknt" level="debug" additivity="false">
         <appender-ref ref="log"/>
     </logger>
 
-    <logger name="com.company" level="${LOGBACK_LEVEL}" additivity="false">
+    <logger name="com.company" level="debug" additivity="false">
         <appender-ref ref="log"/>
     </logger>
 
-    <logger name="Audit" level="${LOGBACK_LEVEL}" additivity="false">
+    <logger name="Audit" level="debug" additivity="false">
         <appender-ref ref="audit"/>
     </logger>
 
@@ -37,6 +37,6 @@
         <appender-ref ref="log"/>
     </root>    
 
-    ${LOGBACK_DUPLICATE_FILTER}
+    <turboFilter class="ch.qos.logback.classic.turbo.DuplicateMessageFilter"/>
 
 </configuration>
