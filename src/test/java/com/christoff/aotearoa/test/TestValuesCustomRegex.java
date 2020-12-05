@@ -22,7 +22,6 @@ import java.util.List;
 public class TestValuesCustomRegex
 {
     static final String CONFIG_FOLDER = "legacy";
-    static final String LOG_LEVEL = LogLevel.TRACE.levelId();
 
     @Test
     public void testValuesCustomRegex()
@@ -42,13 +41,6 @@ public class TestValuesCustomRegex
         List exts = new LinkedList();
         exts.add("yml");
         exts.add("xml");
-
-        IPresenter presenter = new PresenterCLI(LOG_LEVEL);
-        TemplateMetadataFileGateway metfg = new TemplateMetadataFileGateway(
-            presenter,
-            new TemplateRegexResolver(presenter),
-            templateFolder,
-            exts);
 
         ValueInjectRequest rq = new ValueInjectRequest();
         rq.metadataLoc = metadataFilename;
