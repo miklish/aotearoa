@@ -5,10 +5,12 @@ import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
-import com.christoff.aotearoa.intern.gateway.view.LogLevel;
 import org.junit.Assert;
 import org.junit.AssumptionViolatedException;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -18,7 +20,15 @@ import java.util.List;
 public class TestCertsCreateNew
 {
     static final String CONFIG_FOLDER = "legacy";
-    static final String LOG_LEVEL = LogLevel.TRACE.levelId();
+
+    @BeforeClass
+    public static void beforeAllTestMethods() {
+        File secretsOut = Paths.get("src","test","resources", CONFIG_FOLDER, "02.secrets-certs-out").toFile();
+        if(!secretsOut.exists()) secretsOut.mkdir();
+
+        File serviceOut = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-out").toFile();
+        if(!serviceOut.exists()) serviceOut.mkdir();
+    }
 
     @Test
     public void testCertsCreateNew()
