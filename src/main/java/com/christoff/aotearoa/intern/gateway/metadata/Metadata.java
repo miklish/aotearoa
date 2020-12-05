@@ -156,6 +156,8 @@ public class Metadata
     }
     
     public String getTransformedVariableString() {
+        if(_transform == null)
+            throw new MetadataException("No value available to inject into token " + getName());
         return _transform.transform(_values);
     }
     
