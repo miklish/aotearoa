@@ -18,4 +18,5 @@ public class ValueInjectRequest
     public String symmetricKey;
     public String logLevelValue;
     public boolean logLevelExists;
+    public boolean isBuildSafe;
 }

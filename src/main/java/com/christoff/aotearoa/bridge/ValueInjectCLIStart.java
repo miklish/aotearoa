@@ -3,12 +3,10 @@ package com.christoff.aotearoa.bridge;
 import com.christoff.aotearoa.ConfigException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.System.exit;
 
 public class ValueInjectCLIStart
 {
@@ -24,6 +22,7 @@ public class ValueInjectCLIStart
     private static final String REGEX = "r";
     private static final String HELP = "h";
     private static final String SYMMETRIC_KEY = "y";
+    private static final String BUILD_SAFE = "b";
     private static final String LOG_LEVEL = "l";
     
     public static void main(String[] args)
@@ -36,14 +35,9 @@ public class ValueInjectCLIStart
         } catch(Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             printHelp(optionConfig);
-            exit(1);
+            System.exit(1);
         }
-        if (optionInput.has(HELP)) {
-            if (printHelp(optionConfig))
-                exit(1);
-            else
-                exit(0);
-        }
+
 
         // extract command line values
         /**
@@ -60,6 +54,7 @@ public class ValueInjectCLIStart
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
          *   l / loglevel   : set logging level
+         *   b / buildsafe  : disable forced exit of AO2 to allow use in build automation tools (optional)
          *   h / help       : help info
          */
         ValueInjectRequest request = new ValueInjectRequest();
@@ -75,20 +70,36 @@ public class ValueInjectCLIStart
         request.templateFileExtensions = (List<String>) optionInput.valuesOf(ValueInjectCLIStart.TEMPLATE_FILE_EXTS);
         request.usingPrompts = optionInput.has(PROMPTS);
         request.symmetricKey = (String) optionInput.valueOf(ValueInjectCLIStart.SYMMETRIC_KEY);
+        request.isBuildSafe = optionInput.has(ValueInjectCLIStart.BUILD_SAFE);
         request.logLevelValue = (String) optionInput.valueOf(ValueInjectCLIStart.LOG_LEVEL);
         request.logLevelExists = optionInput.has(LOG_LEVEL);
         
         boolean usingFileSystemValues = request.configValsLoc != null;
         boolean usingConfigFile = !request.usingPrompts;
 
+
+        // Print help message if user requests it
+        if (optionInput.has(HELP))
+        {
+            if (printHelp(optionConfig)) {      // Note: JOpt's Help Printing option can throw an exception
+                exit(0, request);
+                return;
+            }
+            else {
+                exit(1, request);
+                return;
+            }
+        }
+
+
         // - Ensure at least one of prompts, file system, environment config selected
         if (!usingFileSystemValues && !usingConfigFile && !request.usingEnvVars && !request.usingPrompts)
         {
             System.out.println("You must provide values from either a values file, command line prompts, or environment");
             printHelp(optionConfig);
-            exit(1);
+            exit(1, request);
+            return;
         }
-        
         
         
         ValueInjectResponse resp = null;
@@ -96,14 +107,18 @@ public class ValueInjectCLIStart
             resp = new ValueInjectInteractor(request).exec();
         } catch(ConfigException c) {
             System.out.println("ERROR: " + c.getMessage());
-            exit(1);
+            exit(1, request);
         }
         
         // Process response
         if (resp.resultCode.equals(ValueInjectResponse.SUCCESS))
-            exit(0);
+            exit(0, request);
         else
-            exit(1);
+            exit(1, request);
+    }
+
+    private static void exit(int status, ValueInjectRequest rq) {
+        if(!rq.isBuildSafe) System.exit(status);
     }
     
     private static OptionParser configureCommandLineOptions()
@@ -122,6 +137,7 @@ public class ValueInjectCLIStart
          *   r / regex      : regex pattern (optional - default is '\{\{(.*?)\}\}' )
          *   y / key        : symmetric key used to encrypt secrets
          *   l / loglevel   : set logging level
+         *   b / buildsafe  : disable forced exit of AO2 to allow use in build automation tools (optional)
          *   h / help       : help info
          */
         OptionParser optionConfig = new OptionParser();
@@ -166,7 +182,6 @@ public class ValueInjectCLIStart
         final String[] envOptions = {ENV_VARS,"env"};
         optionConfig.acceptsAll(
             Arrays.asList(envOptions),
-            //"Use environment variables for values or overrides (optional)");  // not yet implemented
             "Get values from environment variables (optional)");
         
         /** server: server url */
@@ -192,6 +207,12 @@ public class ValueInjectCLIStart
         optionConfig.acceptsAll(
             Arrays.asList(symmetricKeyOptions),
             "Symmetric key used to encrypt secrets (optional)").withRequiredArg();
+
+        /** local: buildsafe */
+        final String[] buildSafeOptions = {BUILD_SAFE,"buildsafe"};
+        optionConfig.acceptsAll(
+            Arrays.asList(buildSafeOptions),
+            "Disable forced exit of AO2 to allow use in build automation tools (optional)");
     
         /** log: log level */
         final String[] logLevelOptions = {LOG_LEVEL,"loglevel"};
