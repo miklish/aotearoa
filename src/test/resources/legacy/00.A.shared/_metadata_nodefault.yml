@@ -1,0 +1,490 @@
+variables:
+
+  JWT_EXPIRY_MINUTES:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the JWT expiry time (in minutes)"
+    defaults:
+    - true
+    files:
+    - jwt
+
+  JWT_ISSUER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the JWT issuer name"
+    defaults:
+    - true
+    files:
+    - jwt
+
+  JWT_KID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Set the initial KID for JWT generation"
+    defaults:
+    - true
+    files:
+    - jwt
+
+  ENABLE_MTLS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Enable mutual TLS? ( true / false)"
+    defaults:
+    - true
+    files:
+    - server
+
+  ENABLE_TLS_CLIENT_VERIFIER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Enable mutual TLS client verification? ( true / false)"
+    defaults:
+    - true
+    files:
+    - tlsClients  
+
+  # 4.c
+  MTLS_CLIENT_CN:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "CLASS client cert CN (zOS/Connect)"
+    files:
+    - tlsClients
+
+  AUTH_SERVER_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the url of the Auth Server?"
+    files:
+    - client
+
+  AUTH_SERVER_TOKEN_PATH:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the path of the AS token endpoint?"
+    files:
+    - client
+
+  AUTH_SERVER_CLIENT_ID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "What is the client id for the AS?"
+    files:
+    - client
+
+  BASE_SERVER_KS_FILE:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the BASE SERVER KEYSTORE FILENAME"
+    files:
+    - _keystore
+
+  LOGBACK_DUPLICATE_FILTER:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Use logback duplicate filter"
+    defaults:
+    - true
+    files:
+    - logback.xml    
+
+  LOGBACK_LEVEL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Use logback duplicate filter"
+    defaults:
+    - true
+    files:
+    - logback.xml    
+
+  REPLICAS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the number of Pod replicas"
+    files:
+    - caas-config.yaml
+    - caas-deploy.sh
+
+  # server keystores
+  SERVER_KEYSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER KEYSTORE PASSWORD"
+    files:
+    - secret
+
+  SERVER_KEY_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER KEY PASSWORD"
+    files:
+    - secret
+
+  SERVER_TRUSTSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the SERVER TRUSTSTORE PASSWORD"
+    files:
+    - secret
+
+  CLIENT_KEYSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT KEYSTORE PASSWORD"
+    files:
+    - secret
+
+  CLIENT_KEY_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT KEY PASSWORD"
+    files:
+    - secret
+
+  CLIENT_TRUSTSTORE_PASSWORD:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CLIENT TRUSTSTORE PASSWORD"
+    files:
+    - secret
+
+  HOST_DNS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the Host DNS"
+    files:
+    - caas-config.yaml
+
+  CONSUL_DEMO_CERT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the consul cert PEM filename"
+    files:
+    - _keystore  
+
+  TRUSTED_ROOT_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the root cert PEM filename"
+    files:
+    - _keystore
+
+  TRUSTED_INT_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the intermediate cert PEM filename"
+    files:
+    - _keystore
+
+  APIF_HELLO_SS_CERT_FILENAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the apif-hello self-signed Cert FILENAME"
+    files:
+    - _keystore        
+
+  JWT_KEY_ALIAS:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the JKS alias of the server.keystore's private key"
+    files:
+    - jwt
+
+  # Consul
+  CONSUL_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the CONSUL URL"
+    files:
+    - consul
+
+  CONSUL_TOKEN:
+    min: 1
+    max: 1
+    output:
+    - encrypt
+    type: string
+    prompt-text: "Please enter the CONSUL TOKEN"
+    files:
+    - secret
+
+  # Service Config
+  HTTPS_PORT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the HTTPS PORT"
+    defaults:
+    - 10500
+    files:
+    - server
+
+  # Service Metadata
+  ROUTER_INSTANCE:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the ROUTER INSTANCE"
+    files:
+    - server
+    - caas-config.yaml
+    - caas-create-secret.sh
+    - caas-deploy.sh
+
+  ROUTER_VERSION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the ROUTER VERSION"
+    files:
+    - server
+    - caas-config.yaml
+    - caas-create-secret.sh
+
+  OS_REGION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC REGION"
+    files:
+    - caas-config.yaml
+
+  OS_IMAGE_REGION:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC IMAGE"
+    files:
+    - caas-config.yaml
+
+  OS_SHARED_PROJECT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC SHARED PROJECT"
+    files:
+    - caas-config.yaml
+
+  OS_ENVIRONMENT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC ENVIRONMENT"
+    files:
+    - caas-config.yaml
+
+  OS_URL:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC URL"
+    files:
+    - caas-login.sh
+
+  OS_USERNAME:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter your OC username"
+    files:
+    - caas-login.sh
+
+  OS_PROJECT:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the OC PROJECT"
+    files:
+    - caas-login.sh
+    - caas-config.yaml
+    - caas-create-secret.sh
+
+  MAPID:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter the PROJECT MAPID"
+    files:
+    - caas-config.yaml
+
+  DIRECT_URL_1:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #1"
+    files:
+    - service
+
+  DIRECT_URL_2:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #2"
+    files:
+    - service
+
+  DIRECT_URL_3:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #3"
+    files:
+    - service
+
+  DIRECT_URL_4:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #4"
+    files:
+    - service
+
+  DIRECT_URL_5:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+    files:
+    - service    
+
+  DIRECT_URL_6:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+    files:
+    - service
+
+  DIRECT_URL_7:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+    files:
+    - service      
+
+  DIRECT_URL_8:
+    min: 1
+    max: 1
+    output:
+    - copy
+    type: string
+    prompt-text: "Please enter LCMS direct IP #5"
+    files:
+    - service
