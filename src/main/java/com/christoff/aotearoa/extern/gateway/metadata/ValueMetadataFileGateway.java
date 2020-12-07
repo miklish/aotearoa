@@ -29,7 +29,7 @@ public class ValueMetadataFileGateway implements IValueMetadataGateway
         File valueFile = new File(_valuesFilename);
 
         // open the template file as a String
-        Map<String, Object> vars = _fileSysHelper.getFileInfo(valueFile, true, false).map;
+        Map<String, Object> vars = _fileSysHelper.getFileInfo(valueFile, true, false, false).map;
 
         // check that it contains data
         if(vars == null || vars.size() == 0)

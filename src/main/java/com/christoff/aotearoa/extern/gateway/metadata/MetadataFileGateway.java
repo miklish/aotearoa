@@ -43,7 +43,7 @@ public class MetadataFileGateway implements IMetadataGateway
     {
         // read in the entire metadata file
         Map<String, Object> allConfigDataMap =
-            _fileSysHelper.getFileInfo(_metadataFilename, true, false).map;
+            _fileSysHelper.getFileInfo(_metadataFilename, true, false, false).map;
 
         // check that it contains data
         if(allConfigDataMap == null || allConfigDataMap.size() == 0)

@@ -58,17 +58,17 @@ public class PersistenceFileGateway implements IPersistenceGateway
         List<File> files = (List<File>) FileUtils.listFiles(templateFolderFile, _extensions, IS_RECURSIVE);
         for (File file : files)
         {
-            // open the template file as a String
+            // open the template file as a Reader
             PersistenceFileHelper.FileInfo fInfo = null;
             try {
-                fInfo = _filesysHelp.getFileInfo(file, false, true);
+                fInfo = _filesysHelp.getFileInfo(file, false, false, true);
             } catch(MetadataIOException e) {
                 _presenter.templateFileNotFoundOrMalformed(fInfo.name);
                 continue;
             }
 
             // use regex replace to inject the actual values
-            String resolved = resolver.resolve(fInfo.name, fInfo.string, allVarMetadata);
+            String resolved = resolver.resolve(fInfo.name, fInfo.reader, allVarMetadata);
 
             // save the String to the target directory and overwrite the existing value if exists
             String outFilename = PersistenceFileHelper.cleanFilename(_outputDir + "/" + fInfo.name);

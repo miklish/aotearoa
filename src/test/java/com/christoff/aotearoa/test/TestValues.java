@@ -197,7 +197,7 @@ public class TestValues
         Path outputFilePath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-out", "router.yml");
         String outputFile = outputFilePath.toFile().getAbsolutePath();
         PersistenceFileHelper pfh = new PersistenceFileHelper();
-        String templateContents = pfh.getFileInfo(outputFile, false, true).string;
+        String templateContents = pfh.getFileInfo(outputFile, false, true, false).string;
 
         // Process response
         Assert.assertTrue(

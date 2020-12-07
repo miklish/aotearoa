@@ -59,17 +59,10 @@ public class TemplateMetadataFileGateway implements ITemplateMetadataGateway
         // loop through each template file
         for (File file : files)
         {
-            // read the template files as Strings
             String templateName = file.getName();
-            String templateContents;
-
             _presenter.loadingTemplate(templateName);
-
-            // read in the template file
-            templateContents = _fileSysHelper.getFileInfo(file, false, true).string;
-
-            // get the map of metadata objects from the template
-            Map<String, List<Metadata>> newMetadataObjects = _regexResolver.extractTemplateMetadata(templateContents);
+            PersistenceFileHelper.FileInfo fInfo = _fileSysHelper.getFileInfo(file, false, false, true);
+            Map<String, List<Metadata>> newMetadataObjects = _regexResolver.extractTemplateMetadata(fInfo.reader);
             templateMetadataMap.put(templateName, newMetadataObjects);
         }
 
