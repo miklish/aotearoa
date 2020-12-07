@@ -5,6 +5,7 @@ import com.christoff.aotearoa.ConfigException;
 import com.christoff.aotearoa.bridge.ValueInjectInteractor;
 import com.christoff.aotearoa.bridge.ValueInjectRequest;
 import com.christoff.aotearoa.bridge.ValueInjectResponse;
+import com.christoff.aotearoa.extern.gateway.persistence.PersistenceFileHelper;
 import org.junit.Assert;
 import org.junit.AssumptionViolatedException;
 import org.junit.BeforeClass;
@@ -153,5 +154,57 @@ public class TestValues
         // Process response
         Assert.assertTrue(isException);
     }
+
+    /***
+     * Test whether the ${ROUTER_INSTANCE} token in a router.yml comment has been replaced with the value
+     * 3f96a6b2-3838-11eb-adc1-0242ac120002
+     */
+    @Test
+    public void testTokensInComments()
+    {
+        // ${ROUTER_INSTANCE} in router.yml comment -- look for ${ROUTER_INSTANCE} replaced with 3f96a6b2-3838-11eb-adc1-0242ac120002
+
+        Path templatFolderPath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config");
+        String templateFolder = templatFolderPath.toFile().getAbsolutePath();
+
+        Path outputFolderPath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-out");
+        String outputFolder = outputFolderPath.toFile().getAbsolutePath();
+
+        Path metadataFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_metadata.yml");
+        String metadataFilename = metadataFilenamePath.toFile().getAbsolutePath();
+
+        Path valuesFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_values_unique_val.yml");
+        String valuesFilename = valuesFilenamePath.toFile().getAbsolutePath();
+
+        List exts = new LinkedList();
+        exts.add("yml");
+        exts.add("xml");
+
+        ValueInjectRequest rq = new ValueInjectRequest();
+        rq.metadataLoc = metadataFilename;
+        rq.outputDir = outputFolder;
+        rq.templateDir = templateFolder;
+        rq.configValsLoc = valuesFilename;
+        rq.templateFileExtensions = exts;
+
+        ValueInjectResponse resp = null;
+        try {
+            resp = new ValueInjectInteractor(rq).exec();
+        } catch(ConfigException c) {
+            throw new AssumptionViolatedException("ERROR: " + c.getMessage());
+        }
+
+        Path outputFilePath = Paths.get("src","test","resources", CONFIG_FOLDER, "03.service-config-out", "router.yml");
+        String outputFile = outputFilePath.toFile().getAbsolutePath();
+        PersistenceFileHelper pfh = new PersistenceFileHelper();
+        String templateContents = pfh.getFileInfo(outputFile, false, true).string;
+
+        // Process response
+        Assert.assertTrue(
+            resp.resultCode.equals(ValueInjectResponse.SUCCESS) &&
+             !templateContents.contains("3f96a6b2-3838-11eb-adc1-0242ac120002")
+        );
+    }
+
 }
 

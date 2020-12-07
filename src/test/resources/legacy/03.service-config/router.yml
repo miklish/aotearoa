@@ -3,6 +3,8 @@
 # As this router is built to support discovery and security for light-4j services,
 # the outbound connection is always HTTP 2.0 with TLS enabled.
 
+# ${ROUTER_INSTANCE}
+
 # If HTTP 2.0 protocol will be accepted from incoming request.
 http2Enabled: true
 
