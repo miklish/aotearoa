@@ -93,7 +93,7 @@ public class TestMetadataLoadersLegacy
             templateFolder,
             exts);
 
-        return metfg.getMetadataFromTemplates();
+        return metfg.getMetadata();
     }
 
     public Map<String,Metadata> loadMergedTemplateMetadata(String configFolder, String loglevel)

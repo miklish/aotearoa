@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface ITemplateMetadataGateway
 {
-    Map<String, Map<String, List<Metadata>>> getMetadataFromTemplates();
+    Map<String, Map<String, List<Metadata>>> getMetadata();
 }
