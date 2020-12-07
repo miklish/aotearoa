@@ -1,6 +1,8 @@
 package com.christoff.aotearoa.extern.gateway.persistence;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 import com.christoff.aotearoa.extern.gateway.FileYamlHelper;
@@ -28,6 +30,7 @@ public class PersistenceFileHelper
         public boolean isFile = true;
         public Map<String, Object> map = null;
         public String string = null;
+        public FileReader reader = null;
     }
 
 
@@ -79,7 +82,7 @@ public class PersistenceFileHelper
     }
 
     
-    public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString)
+    public FileInfo getFileInfo(String configId, boolean buildYaml, boolean readToString, boolean buildFileReader)
         throws MetadataIOException
     {
         FileInfo info = new FileInfo();
@@ -91,11 +94,11 @@ public class PersistenceFileHelper
         info.name = info.file.getName();
         info.path = info.file.getPath();
 
-        return buildFileInfo(info, buildYaml, readToString);
+        return buildFileInfo(info, buildYaml, readToString, buildFileReader);
     }
 
 
-    public FileInfo getFileInfo(File file, boolean buildYaml, boolean readToString)
+    public FileInfo getFileInfo(File file, boolean buildYaml, boolean readToString, boolean buildFileReader)
         throws MetadataIOException
     {
         FileInfo info = new FileInfo();
@@ -109,11 +112,11 @@ public class PersistenceFileHelper
         info.name = info.file.getName();
         info.path = info.file.getPath();
 
-        return buildFileInfo(info, buildYaml, readToString);
+        return buildFileInfo(info, buildYaml, readToString, buildFileReader);
     }
 
 
-    public FileInfo buildFileInfo(FileInfo info, boolean buildYaml, boolean readToString)
+    public FileInfo buildFileInfo(FileInfo info, boolean buildYaml, boolean readToString, boolean buildFileReader)
     {
         // read in file and render as yaml maps
         if((buildYaml || readToString) && (!info.exists || !info.isFile))
@@ -131,6 +134,14 @@ public class PersistenceFileHelper
             try {
                 info.string = FileUtils.readFileToString(info.file, (String) null);
             } catch (IOException e) {
+                throw new MetadataIOException(e.getMessage());
+            }
+        }
+
+        if(info.exists && info.isFile && buildFileReader) {
+            try {
+                info.reader = new FileReader(info.file);
+            } catch(FileNotFoundException e) {
                 throw new MetadataIOException(e.getMessage());
             }
         }
