@@ -125,7 +125,7 @@ public class ValueInjectInteractor
         // Gather all variable metadata
         Map<String, Metadata> allVarMetadata =
             (new MetadataMerge(_presenter)).merge(
-                _templateMetadataGateway.getMetadataFromTemplates(),
+                _templateMetadataGateway.getMetadata(),
                 _metadataGateway.getMetadata(),
                 _valueMetadataGateway.getMetadata());
 

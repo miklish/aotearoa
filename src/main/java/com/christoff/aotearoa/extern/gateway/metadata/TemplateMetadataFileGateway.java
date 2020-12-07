@@ -45,7 +45,7 @@ public class TemplateMetadataFileGateway implements ITemplateMetadataGateway
      * @throws TemplateIOException
      * @throws MetadataIOException
      */
-    public Map<String, Map<String, List<Metadata>>> getMetadataFromTemplates()
+    public Map<String, Map<String, List<Metadata>>> getMetadata()
         throws TemplateIOException, MetadataIOException
     {
         _presenter.collectingMetadataFromTemplates(_templateFolder);
