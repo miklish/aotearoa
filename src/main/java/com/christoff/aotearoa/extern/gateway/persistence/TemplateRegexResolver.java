@@ -2,8 +2,10 @@ package com.christoff.aotearoa.extern.gateway.persistence;
 
 import com.christoff.aotearoa.intern.gateway.metadata.Metadata;
 import com.christoff.aotearoa.intern.gateway.metadata.MetadataException;
+import com.christoff.aotearoa.intern.gateway.metadata.MetadataIOException;
 import com.christoff.aotearoa.intern.gateway.view.IPresenter;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,49 +53,72 @@ public class TemplateRegexResolver
         _presenter = presenter;
     }
 
-    public String resolve(String templateName, String template, Map<String, Metadata> map)
+    public String resolve(String templateName, Reader reader, Map<String, Metadata> map)
+        throws MetadataIOException
     {
-        Matcher m = _p.matcher(template);
         StringBuffer sb = new StringBuffer();
-
-        while (m.find())
+        try (BufferedReader bufferedReader = new BufferedReader(reader))
         {
-            String tokenName = parse(m.group(1)).getName();
+            String line;
+            while((line = bufferedReader.readLine()) != null)
+            {
+                if(line.trim().startsWith("#")) {
+                    sb.append(line).append("\n");
+                    continue;
+                }
 
-            Metadata variableMetadata = map.get(tokenName);
-            if(variableMetadata == null) {
-                throw new MetadataException(
-                    "Tag " + m.group(1) + " appears in template " + templateName + " but does not have any metadata");
+                Matcher m = _p.matcher(line);
+                while(m.find())
+                {
+                    String tokenName = parse(m.group(1)).getName();
+
+                    Metadata variableMetadata = map.get(tokenName);
+                    if(variableMetadata == null) {
+                        throw new MetadataException(
+                            "Tag " + m.group(1) + " appears in template " + templateName + " but does not have any metadata");
+                    }
+
+                    m.appendReplacement(sb, variableMetadata.getTransformedVariableString());
+                    variableMetadata.setUsed();
+                }
+                m.appendTail(sb).append("\n");
             }
-
-            m.appendReplacement(sb, variableMetadata.getTransformedVariableString());
-            variableMetadata.setUsed();
+        } catch(IOException e) {
+            throw new MetadataIOException(e.getMessage());
         }
 
-        return m.appendTail(sb).toString();
+        return sb.toString();
     }
 
-    public Map<String, List<Metadata>> extractTemplateMetadata(String sourceContents)
-        throws MetadataException
+    public Map<String, List<Metadata>> extractTemplateMetadata(Reader reader)
+        throws MetadataException, MetadataIOException
     {
         Map<String, List<Metadata>> map = new HashMap<>();
-
-        Matcher m = _p.matcher(sourceContents);
-        while (m.find())
+        try (BufferedReader bufferedReader = new BufferedReader(reader))
         {
-            String token = m.group(1);
-            _presenter.tokenFound(token);
+            String line;
+            while((line = bufferedReader.readLine()) != null) {
+                if(line.trim().startsWith("#")) continue;
 
-            Metadata metadata = parse(token);
-            String tokenName = metadata.getName();
+                Matcher m = _p.matcher(line);
+                while(m.find()) {
+                    String token = m.group(1);
+                    _presenter.tokenFound(token);
 
-            if(map.containsKey(tokenName))
-                map.get(tokenName).add(metadata);
-            else {
-                List<Metadata> list = new LinkedList<>();
-                list.add(metadata);
-                map.put(tokenName, list);
+                    Metadata metadata = parse(token);
+                    String tokenName = metadata.getName();
+
+                    if(map.containsKey(tokenName))
+                        map.get(tokenName).add(metadata);
+                    else {
+                        List<Metadata> list = new LinkedList<>();
+                        list.add(metadata);
+                        map.put(tokenName, list);
+                    }
+                }
             }
+        } catch(IOException e) {
+            throw new MetadataIOException(e.getMessage());
         }
 
         return map;
