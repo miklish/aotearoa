@@ -1,0 +1,154 @@
+# Get this token from TO
+CONSUL_TOKEN:
+  - ""
+
+# removes duplicate log messages
+LOGBACK_DUPLICATE_FILTER:
+  - "<turboFilter class=\"ch.qos.logback.classic.turbo.DuplicateMessageFilter\"/>"
+# set to blank, for PROD
+#  - ""  
+
+LOGBACK_LEVEL:
+  - "debug"  
+
+# Keystore passwords --------------------
+
+# The four (4) following passwords below must be the same password
+
+# This is the JKS password
+CLIENT_KEYSTORE_PASSWORD:
+  - "changeit"
+CLIENT_KEY_PASSWORD:
+  - "changeit"
+SERVER_KEYSTORE_PASSWORD:
+  - "password"
+SERVER_KEY_PASSWORD:
+  - "password"
+
+# AO can choose these two (2) following passwords
+CLIENT_TRUSTSTORE_PASSWORD:
+  - "password"
+SERVER_TRUSTSTORE_PASSWORD:
+  - "password"
+
+# ---------------------------------------
+
+# CERTIFICATE File Names
+# - These must all be PEM format files
+# - They must all be in the 02.secrets-certs folder
+
+# CA root and intermediates
+TRUSTED_ROOT_CERT_FILENAME:
+  - "DigiCert_Global_Root_CA-root.pem"
+TRUSTED_INT_CERT_FILENAME:
+  - "DigiCert_SHA2_Secure_Server_CA-int.pem"
+
+CONSUL_DEMO_CERT:
+  - "consul-demo.pem"
+
+# Test client self-signed cert
+APIF_HELLO_SS_CERT_FILENAME:
+  - "apif-hello-selfsigned.pem"
+
+# ---------------------------------------
+
+# This is your CP's public/private key pair JKS File
+BASE_SERVER_KS_FILE:
+  - "my-cps-server.jks"
+
+# This is the private key alias and issuer
+# These tokens are NOT needed unless using JWT grant -- leave as-is
+JWT_KEY_ALIAS:
+  - ""
+JWT_ISSUER:
+  - ""
+
+# Get these details after from the completed IAS registration
+JWT_KID:
+  - ""
+JWT_EXPIRY_MINUTES:
+  - 5
+
+AUTH_SERVER_URL:
+  - "https://authserver.com"
+AUTH_SERVER_CLIENT_ID:
+  - "1234"
+AUTH_SERVER_TOKEN_PATH:
+  - "/token/v3"
+
+# for security - all CP's that get tokens must use mTLS
+ENABLE_MTLS:
+  - false
+
+# All CP's that get tokens must use mTLS CN and SAN verification
+ENABLE_TLS_CLIENT_VERIFIER:
+  - false
+
+MTLS_CLIENT_CN:
+  - "myconsumer.company.com"
+
+CONSUL_URL:
+  - "consul.com"
+
+HTTPS_PORT:
+  - 10500
+
+REPLICAS:
+  - "1"
+
+# The version of the router.
+ROUTER_VERSION:
+  - "1.5.0"
+
+# Router instance name
+ROUTER_INSTANCE:
+  - "3f96a6b2-3838-11eb-adc1-0242ac120002"
+
+# Your openshift user name
+OS_USERNAME:
+  - "christof"
+
+OS_REGION:
+  - "nonprod"
+OS_IMAGE_REGION:
+  - "imgrepo"
+OS_SHARED_PROJECT:
+  - "prjojectname"
+OS_ENVIRONMENT:
+  - "dev"
+
+# CaaS Url - Get this from TO. SCC and MCC will have different URLs
+OS_URL:
+  - "kubernetes.com"
+
+# This is the name of the CaaS project the deployment will go into
+OS_PROJECT:
+  - "nonprod-prjojectname-dev"
+
+# Project Map ID
+MAPID:
+  - "1234"
+
+# This is the DNS name of the CP as defined in the OCP route
+HOST_DNS:
+  - "myproject.com"
+
+# Direct URL's that CP proxies to
+# Format is:
+#  <api-service-name>: api-url
+DIRECT_URL_1:
+  - "someservice: \"https://127.0.0.1:443\""
+DIRECT_URL_2:
+  - ""
+DIRECT_URL_3:
+  - ""
+DIRECT_URL_4:
+  - ""
+DIRECT_URL_5:
+  - ""
+DIRECT_URL_6:
+  - ""  
+DIRECT_URL_7:
+  - ""  
+DIRECT_URL_8:
+  - ""    
