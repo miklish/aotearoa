@@ -18,7 +18,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
     private String _templateDir;
     private String[] _extensions;
     private String _outputDir;
-    private String _keystoreMetadataFilename;
+    private String _keystoreMetaFilename;
     private PersistenceFileHelper _filesysHelp;
     private IPresenter _presenter;
 
@@ -31,7 +31,7 @@ public class PersistenceFileGateway implements IPersistenceGateway
         _extensions = new String[extensions.size()];
         _extensions = extensions.toArray(_extensions);
         _outputDir = outputDir;
-        _keystoreMetadataFilename = PersistenceFileHelper.cleanFilename(keystoreMetadataFilename);
+        _keystoreMetaFilename = PersistenceFileHelper.cleanFilename(keystoreMetadataFilename);
         _filesysHelp = new PersistenceFileHelper();
         _presenter = presenter;
     }
@@ -43,19 +43,46 @@ public class PersistenceFileGateway implements IPersistenceGateway
         // delete target directory's contents, and copy source folder's contents into it
         prepareFolders();
 
-        // add the Keystore Metadata file (if it exists)
-        if(_keystoreMetadataFilename != null && !_keystoreMetadataFilename.equals(""))
-        {
-            File keystoreMetadataFile = new File(_keystoreMetadataFilename);
-            if (!keystoreMetadataFile.isFile() || !keystoreMetadataFile.exists())
-                throw new MetadataException(
-                    "Keystore metadata file " + keystoreMetadataFile.getName() + " either does not exist or is not a file");
-        }
 
-        // TODO: Complete the case where we create a new keystore
-        //
+        // get template folder files
         File templateFolderFile = new File(_templateDir);
         List<File> files = (List<File>) FileUtils.listFiles(templateFolderFile, _extensions, IS_RECURSIVE);
+
+
+        // add the Keystore Metadata file (if it exists) to the list of files to inject into
+        if(_keystoreMetaFilename != null && !_keystoreMetaFilename.equals(""))
+        {
+            File keystoreMetaFile = new File(_keystoreMetaFilename);
+            if (!keystoreMetaFile.isFile() || !keystoreMetaFile.exists())
+                throw new MetadataException(
+                    "Keystore metadata file " + keystoreMetaFile.getName() + " either does not exist or is not a file");
+
+            // check that keystore file name does not conflict with another file in output folder
+            String keystoreMetaName = keystoreMetaFile.getName();
+
+            for(File file : files)
+            {
+                String canonicalPath;
+                try {
+                    canonicalPath = file.getCanonicalPath();
+                } catch(IOException e) {
+                    throw new MetadataIOException("File IO error trying to construct canonical path of " + file.getAbsolutePath());
+                }
+
+                // check if filename matches keystore metadata file name, but is not the same file
+                if(file.getName().equalsIgnoreCase(keystoreMetaName) && !canonicalPath.equalsIgnoreCase(_keystoreMetaFilename))
+                {
+                    throw new MetadataException("Keystore Metadata filename " + _keystoreMetaFilename +
+                        " conflicts with the name of another file in the template folder");
+                }
+            }
+
+            // add keystore file to the persisted file list
+            files.add(keystoreMetaFile);
+        }
+
+
+
         for (File file : files)
         {
             // open the template file as a Reader
