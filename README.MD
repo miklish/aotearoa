@@ -495,6 +495,10 @@ with the appropriate arguments:
     <td>Symmetric encryption/decryption secret (optional)</td>
  </tr>
  <tr>
+    <td>-b, --buildsafe <String></td>
+    <td>Allows AO2 to run as part of a Maven build process (optional)</td>
+ </tr> 
+ <tr>
     <td>-l, --loglevel <String></td>
     <td>Sets the log level (optional)</td>
  </tr>   
@@ -506,17 +510,19 @@ Some examples are below:
 ```
 $ java -jar aotearoa.jar         \
     -m ./templates/_metadata.yml \ # metadata file
-    -t ./templates               \ # template files directory       
+    -t ./templates               \ # template files directory
+    -x xml -x yml                \ # injects into xml and yml files
     -o ./config-out              \ # output folder
     -v ./templates/_values.yml   \ # values file
     -l
 ```
 
-#### Use value file and set the symmetric encryption/decryption secret
+#### Use value file and set the symmetric encryption/decryption secret (no metadata.yml)
 ```
 $ java -jar aotearoa.jar            \
-    -m    ./templates/_metadata.yml \ # metadata file
-    -t    ./templates               \ # template files directory       
+    -t    ./templates               \ # template files directory
+    -x    xml                       \ # injects into xml files
+    -x    yml                       \ # injects into yml files
     -o    ./config-out              \ # output folder
     -v    ./templates/_values.yml   \ # values file
     --key the_secret                  # the symmetric encryption/decryption secret
@@ -526,6 +532,7 @@ $ java -jar aotearoa.jar            \
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
+    -x xml -x yml                \ # injects into xml and yml files
     -m ./templates/_metadata.yml \ # metadata file
     -o ./config-out              \ # output folder
     -p                             # values from prompts
@@ -535,21 +542,44 @@ $ java -jar aotearoa.jar         \
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
+    -x sh -x yml                 \ # injects into bash and yml files
     -m ./templates/_metadata.yml \ # metadata file
     -o ./config-out              \ # output folder
     -e                           \ # values from environment variables
     -loglevel w
 ```     
 
-#### Value file with environment variable overrides
+#### Use environment variables with log level set to TRACE
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
+    -x sh -x yml                 \ # injects into bash and yml files
     -m ./templates/_metadata.yml \ # metadata file
+    -o ./config-out              \ # output folder
+    -e                           \ # values from environment variables
+    -loglevel t
+``` 
+
+#### Value file with environment variable overrides (no metadata.yml)
+```
+$ java -jar aotearoa.jar         \
+    -t ./templates               \ # template files directory
+    -x xml -x yml                \ # injects into xml and yml files
     -o ./config-out              \ # output folder    
-    -v ./templates/_values.yml   \ # value file...
+    -v ./templates/_values.yml   \ # value file
     -e                             # with environment variable overrides
-```     
+```
+
+#### Maven safe mode enabled, and symmetric encryption/decryption secret (no metadata.yml)
+```
+$ java -jar aotearoa.jar         \
+    -t ./templates               \ # template files directory
+    -x xml -x yml                \ # injects into xml and yml files
+    -v ./templates/_values.yml   \ # value file
+    -o ./config-out              \ # output folder        
+    --key the_secret             \ # the symmetric encryption/decryption secret
+    -b                             # Maven safe-mode enabled
+```  
 
 # Keystores
 AOtearoa can also simplify the creation of JKS keystores.
@@ -557,23 +587,27 @@ AOtearoa can also simplify the creation of JKS keystores.
 #### Example Keystore YAML:
 ```yaml
 certificates:
-  tableau-webserver-cert:                                   # certificate reference name
+  tableau-webserver-cert:                                   # certificate-reference name
     format: pem                                             # certificate format
     prompt-text: Tableau webserver public certificate       # prompt text
-    filename: ${tableau_cert_filename}                     # filename of certificate
+    filename: tableaucert.pem                               # filename of certificate
 
-  postgres-database-cert:                                   # this is an internal reference name for the keystore
+  postgres-database-cert:                                   # certificate-reference name
     format: pem                                             # certificate format
     prompt-text: Postgres self-signed certificate           # prompt text
-    filename: server.pem                                    # filename of certificate
+    filename: postgrescert.pem                              # filename of certificate
 
 keystores:
+  server.keystore:                                          # this will be the output keystore filename
+    base-keystore-filename: idkeystore.jks                  # base keystore filename 
+    keystore-password: ${KEYSTORE_PASS|out:encrypt}         # keystore password
+    certificates:                                           # list of certificates to load into keystore
+
   client.truststore:                                        # this will be the output keystore filename
-    base-keystore-filename: ${standard_certs}              # base keystore filename 
-    keystore-password: password                             # keystore password
+    keystore-password: ${TRUSTSTORE_PASS|out:encrypt}       # keystore password
     certificates:                                           # list of certificates to load into keystore
       tableau-webserver-cert: tableau-uat                   # certificate-reference : alias
-      postgres-database-cert: postgres-uat
+      postgres-database-cert: postgres-uat                  # certificate-reference : alias
 ```
 
 The YAML required to build keystores contains two main sections: a `certificates` section and a `keystores` section.
@@ -602,15 +636,25 @@ In the example shown above, you'll notice the existence of tokens throughout. Si
 
 #### Example command line
  
-###### Build configuration and keystores from templates and value file
+###### Build configuration and keystores from templates and value file (no metadata)
 ```
 $ java -jar aotearoa.jar         \
-    -t ./templates               \ # template files directory      
-    -m ./templates/_metadata.yml \ # metadata file 
-    -k ./templates/_keystore.yml \ # keystore template file
-    -v ./templates/_values.yml   \ # values file        
+    -t ./templates               \ # template files directory
+    -k ./keydata/_keystore.yml   \ # keystore template file
+    -v ./templates/_values.yml   \ # values file
     -o ./config-out                # output folder
-```    
+```
+
+#### How Keystore files are processed
+
+During processing, AO2 will inject values into the Keystore file (assuming it contains tokens), it will then copy the Keystore file into the template folder.This means that the template folder cannot contain a file with the same (case insensitive) name as the keystore file. AO2 will generate an error if it sees a file name conflict.
+
+# Maven compatibility
+
+_**New for AO2**_
+
+Using the `-b` (or `--buildsafe`) option, AO2 can be executed as part of an application's Maven build process without causing Maven to prematurely exit.
+
     
 # Combining Files
 
@@ -619,10 +663,10 @@ While in the examples provided, we separate the metadata and keystore files, it 
 ```
 $ java -jar aotearoa.jar         \
     -t ./templates               \ # template files directory
-    -v ./templates/_values.yml   \ # values file          
+    -v ./templates/_values.yml   \ # values file
     -o ./config-out              \ # output folder
     -m ./templates/_combined.yml \ # metadata file
-    -k ./templates/_combined.yml   # keystore template file      
+    -k ./templates/_combined.yml   # keystore template file
 ```    
 
 Note: Value files cannot be combined into a single file with metadata and keystore configuration.
