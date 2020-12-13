@@ -437,7 +437,7 @@ The default log level is DEBUG (this is used when no switch is used). QUIET can 
 # Command line arguments
 To run AOtearoa, you would run
 
-&nbsp;&nbsp;&nbsp;&nbsp;`$ java -jar aotearoa.jar [arguments...]`
+&nbsp;&nbsp;&nbsp;&nbsp;`$ java -jar ao.jar [arguments...]`
 
 with the appropriate arguments:
 
@@ -508,7 +508,7 @@ Some examples are below:
  
 #### Use value file with log level set to QUIET
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -m ./templates/_metadata.yml \ # metadata file
     -t ./templates               \ # template files directory
     -x xml -x yml                \ # injects into xml and yml files
@@ -519,7 +519,7 @@ $ java -jar aotearoa.jar         \
 
 #### Use value file and set the symmetric encryption/decryption secret (no metadata.yml)
 ```
-$ java -jar aotearoa.jar            \
+$ java -jar ao.jar            \
     -t    ./templates               \ # template files directory
     -x    xml                       \ # injects into xml files
     -x    yml                       \ # injects into yml files
@@ -530,7 +530,7 @@ $ java -jar aotearoa.jar            \
     
 #### Use prompts
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -x xml -x yml                \ # injects into xml and yml files
     -m ./templates/_metadata.yml \ # metadata file
@@ -540,7 +540,7 @@ $ java -jar aotearoa.jar         \
 
 #### Use environment variables with log level set to WARN
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -x sh -x yml                 \ # injects into bash and yml files
     -m ./templates/_metadata.yml \ # metadata file
@@ -551,7 +551,7 @@ $ java -jar aotearoa.jar         \
 
 #### Use environment variables with log level set to TRACE
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -x sh -x yml                 \ # injects into bash and yml files
     -m ./templates/_metadata.yml \ # metadata file
@@ -562,7 +562,7 @@ $ java -jar aotearoa.jar         \
 
 #### Value file with environment variable overrides (no metadata.yml)
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -x xml -x yml                \ # injects into xml and yml files
     -o ./config-out              \ # output folder    
@@ -572,7 +572,7 @@ $ java -jar aotearoa.jar         \
 
 #### Maven safe mode enabled, and symmetric encryption/decryption secret (no metadata.yml)
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -x xml -x yml                \ # injects into xml and yml files
     -v ./templates/_values.yml   \ # value file
@@ -638,7 +638,7 @@ In the example shown above, you'll notice the existence of tokens throughout. Si
  
 ###### Build configuration and keystores from templates and value file (no metadata)
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -k ./keydata/_keystore.yml   \ # keystore template file
     -v ./templates/_values.yml   \ # values file
@@ -661,7 +661,7 @@ Using the `-b` (or `--buildsafe`) option, AO2 can be executed as part of an appl
 While in the examples provided, we separate the metadata and keystore files, it is actually possible to combine these files into one. For example, if you were to combine metadata and keystore configuration into a single file called _combined.yml, then you could use the following command line.
 
 ```
-$ java -jar aotearoa.jar         \
+$ java -jar ao.jar         \
     -t ./templates               \ # template files directory
     -v ./templates/_values.yml   \ # values file
     -o ./config-out              \ # output folder
