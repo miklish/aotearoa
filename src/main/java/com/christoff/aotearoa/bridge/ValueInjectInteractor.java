@@ -146,7 +146,7 @@ public class ValueInjectInteractor
     
         // Check if any metadata went unused
         for(Metadata vm : allVarMetadata.values())
-            if(!vm.getUsed()) _presenter.tagDefinedNotUsed(vm.getName());
+            if(!vm.getUsed()) _presenter.tokenDefinedNotUsed(vm.getName());
 
             
         // Load keystore metadata (if it exists)

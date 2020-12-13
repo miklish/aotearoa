@@ -30,7 +30,7 @@ public class MetadataInjector
         {
             // Set the variable values
             if(!_valueGateway.exists(varMeta)) {
-                _presenter.tagDefinedNoValueFound(varMeta.getName());
+                _presenter.tokenDefinedNoValueFound(varMeta.getName());
                 continue;
             }
 
