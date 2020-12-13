@@ -90,7 +90,7 @@ public class TestKeystoreBuild
         Path valuesFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_values.yml");
         String valuesFilename = valuesFilenamePath.toFile().getAbsolutePath();
 
-        Path keystoreFolderPath = Paths.get("src","test","resources", "nometa", "02.secrets-certs","_keystore_unique_name.yml");
+        Path keystoreFolderPath = Paths.get("src","test","resources", "nometa","_keystore_unique_name.yml");
         String keystoreFolder = keystoreFolderPath.toFile().getAbsolutePath();
 
         List exts = new LinkedList();
@@ -137,7 +137,7 @@ public class TestKeystoreBuild
         Path valuesFilenamePath = Paths.get("src","test","resources", CONFIG_FOLDER, "00.A.shared","_values.yml");
         String valuesFilename = valuesFilenamePath.toFile().getAbsolutePath();
 
-        Path keystoreFolderPath = Paths.get("src","test","resources", "nometa", "02.secrets-certs","_keystore.yml");
+        Path keystoreFolderPath = Paths.get("src","test","resources", "nometa", "_keystore_conflict_name.yml");
         String keystoreFolder = keystoreFolderPath.toFile().getAbsolutePath();
 
         List exts = new LinkedList();
