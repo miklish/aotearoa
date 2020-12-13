@@ -8,8 +8,8 @@ public interface IPresenter
     LogLevel INFO = LogLevel.INFO;
     LogLevel QUIET = LogLevel.QUIET;
     
-    void tagDefinedNotUsed(String tagName);
-    void tagDefinedNoValueFound(String tagName);
+    void tokenDefinedNotUsed(String tagName);
+    void tokenDefinedNoValueFound(String tagName);
     void persistingValuesBegin();
     void persistingValuesEnd();
     void emptyKeystore(String keystoreName);
@@ -23,5 +23,8 @@ public interface IPresenter
     void tokenAlreadyExists(String tokenName);
     void tokenAdded(String tokenName);
     void tokenHasNoProperties();
-    void tokenHasProperty(String s);
+    void tokenHasProperty(String property);
+
+    void outputLocationLocationDoesNotExist(String outputLocation);
+    void outputLocationLocationCreated(String outputLocation);
 }
