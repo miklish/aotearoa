@@ -16,7 +16,7 @@
         <joptsimple.version>5.0.4</joptsimple.version>
         <apachecommonsio.version>2.6</apachecommonsio.version>
         <snakeyaml.version>1.26</snakeyaml.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
     </properties>
 
     <dependencies>
