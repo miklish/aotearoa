@@ -127,10 +127,16 @@ public class PersistenceFileGateway implements IPersistenceGateway
                 " either does not exist or is not a folder");
         
         if(!outputDirFile.exists() || outputDirFile.isFile())
-            throw new TemplateIOException(
-                "The specified output folder " +
-                outputDirFile.getName() +
-                " either does not exist or is not a folder");
+        {
+            // try to create the output file directory
+            _presenter.outputLocationLocationDoesNotExist(outputDirFile.getName());
+
+            if(!outputDirFile.mkdir())
+                throw new TemplateIOException(
+                    "The specified output folder " + outputDirFile.getName() + " could not be created");
+
+            _presenter.outputLocationLocationCreated(outputDirFile.getName());
+        }
 
         if(templateDirFile.equals(outputDirFile))
             throw new TemplateIOException("Template " + templateDirFile.getName() + " folder and output folder cannot be the same");
