@@ -85,7 +85,7 @@
                     <!-- MainClass in manifest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>com.christoff.aotearoa.Bootstrap</mainClass>
+                            <mainClass>com.christoff.aotearoa.bridge.ValueInjectCLIStart</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
