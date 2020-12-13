@@ -6,7 +6,7 @@
 
     <groupId>com.christoff.aotearoa</groupId>
     <artifactId>aotearoa</artifactId>
-    <version>2.0.17</version>
+    <version>2.0.18</version>
 
     <properties>
         <jdk.version>11</jdk.version>
@@ -51,7 +51,7 @@
 
 
     <build>
-        <finalName>ao</finalName>
+        <finalName>aotearoa</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -80,7 +80,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <!-- MainClass in mainfest make a executable jar -->
+                    <finalName>ao</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <!-- MainClass in manifest make a executable jar -->
                     <archive>
                         <manifest>
                             <mainClass>com.christoff.aotearoa.bridge.ValueInjectCLIStart</mainClass>
