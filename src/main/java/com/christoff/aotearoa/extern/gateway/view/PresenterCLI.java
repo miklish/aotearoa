@@ -24,95 +24,107 @@ public class PresenterCLI implements IPresenter
     }
     
     @Override
-    public void tagDefinedNotUsed(String tagName) {
+    public void tokenDefinedNotUsed(String tokenName) {
         if(_logLevel.level() <= LogLevel.WARN.level())
-            System.out.println("WARNING: Tag " + tagName + " defined, but never used");
+            System.out.println("WARN: Token " + tokenName + " defined, but never used");
     }
     
     @Override
-    public void tagDefinedNoValueFound(String tagName) {
+    public void tokenDefinedNoValueFound(String tokenName) {
         if(_logLevel.level() <= LogLevel.WARN.level())
-            System.out.println("WARNING: No Value found for Metadata tag " + tagName);
+            System.out.println("WARN: No Value found for Metadata token " + tokenName);
     }
     
     @Override
     public void persistingValuesBegin() {
-        if(_logLevel.level() <= LogLevel.WARN.level())
-            System.out.print("Resolving templates...");
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: Resolving templates...");
     }
     
     @Override
     public void persistingValuesEnd() {
-        if(_logLevel.level() <= LogLevel.WARN.level())
-            System.out.println("done.");
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: Resolving templates... done");
     }
     
     @Override
     public void emptyKeystore(String keystoreName) {
         if(_logLevel.level() <= LogLevel.WARN.level())
-            System.out.println("WARNING: Keystore " + keystoreName + " has no certificates");
+            System.out.println("WARN: Keystore " + keystoreName + " has no certificates");
     }
 
     @Override
     public void templateFileNotFoundOrMalformed(String templateFile) {
         if(_logLevel.level() <= LogLevel.WARN.level())
             System.out.println(
-                "WARNING: Template file " +
+                "WARN: Template file " +
                 templateFile +
                 " is specified in the Metadata yaml, but it cannot be found or is incorrectly formatted");
     }
 
     @Override
     public void collectingMetadataFromTemplates(String templateFolder) {
-        if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Collecting metadata from template files in folder " + templateFolder);
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: Collecting metadata from template files in folder " + templateFolder);
     }
 
     @Override
     public void loadingTemplate(String templateName) {
-        if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Loading template file " + templateName);
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: Loading template file " + templateName);
     }
 
     @Override
     public void noTokensFoundInTemplate(String templateName) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("No tokens found in template file " + templateName);
+            System.out.println("TRACE: No tokens found in template file " + templateName);
     }
 
     @Override
     public void mergingTokenFromTemplate(String templateName) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Merging tokens from template file " + templateName);
+            System.out.println("TRACE: Merging tokens from template file " + templateName);
     }
 
     @Override
     public void tokenFound(String token) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Found token " + token);
+            System.out.println("TRACE: Found token " + token);
     }
 
     @Override
     public void tokenAlreadyExists(String tokenName) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Token " + tokenName + " already exists in map");
+            System.out.println("TRACE: Token " + tokenName + " already exists in map");
     }
 
     @Override
     public void tokenAdded(String tokenName) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("New token " + tokenName + " added to map");
+            System.out.println("TRACE: New token " + tokenName + " added to map");
     }
 
     @Override
     public void tokenHasNoProperties() {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Token has no properties");
+            System.out.println("TRACE: Token has no properties");
     }
 
     @Override
     public void tokenHasProperty(String property) {
         if(_logLevel.level() <= LogLevel.TRACE.level())
-            System.out.println("Token has property " + property);
+            System.out.println("TRACE: Token has property " + property);
+    }
+
+    @Override
+    public void outputLocationLocationDoesNotExist(String outputLocation) {
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: The specified output folder " + outputLocation + " does not exist. Creating...");
+    }
+
+    @Override
+    public void outputLocationLocationCreated(String outputLocation) {
+        if(_logLevel.level() <= LogLevel.INFO.level())
+            System.out.println("INFO: ...the output folder " + outputLocation + " was successfully created");
     }
 }
