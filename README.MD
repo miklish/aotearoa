@@ -2,7 +2,7 @@
 # New Release!
 Aotearoa 2 is now available.
 
-### Hihlighted feature summary
+### Highlighted feature summary
 
 \* **metadata.yml is now optional**
 
@@ -66,7 +66,7 @@ This is a straight-forward token. You can specify the replacement value for this
 
 In this case, we are providing both the token name, and providing inline instructions to AO2 on how to handle this token.
 
-The token name is `jwt_security`. The text following the `|` character is a default value. This means if AO2 does not find a value for the token `jwt_security` in the _values.yml file, it will inject the value `true`.
+The token name is `jwt_security`. The text following the `|` character is a default value. This means if AO2 does not find a value for the token `jwt_security` in the values file, it will inject the value `true`.
 
 `${database_urls|out:comma-separated}`
 
@@ -508,77 +508,77 @@ Some examples are below:
  
 #### Use value file with log level set to QUIET
 ```
-$ java -jar ao.jar         \
-    -m ./templates/_metadata.yml \ # metadata file
-    -t ./templates               \ # template files directory
-    -x xml -x yml                \ # injects into xml and yml files
-    -o ./config-out              \ # output folder
-    -v ./templates/_values.yml   \ # values file
+$ java -jar ao.jar       \
+    -m metadata.yml      \ # metadata file
+    -t templates/        \ # template files directory
+    -x xml -x yml        \ # injects into xml and yml files
+    -o config-out/       \ # output folder
+    -v values.yml        \ # values file
     -l
 ```
 
 #### Use value file and set the symmetric encryption/decryption secret (no metadata.yml)
 ```
-$ java -jar ao.jar            \
-    -t    ./templates               \ # template files directory
-    -x    xml                       \ # injects into xml files
-    -x    yml                       \ # injects into yml files
-    -o    ./config-out              \ # output folder
-    -v    ./templates/_values.yml   \ # values file
-    --key the_secret                  # the symmetric encryption/decryption secret
+$ java -jar ao.jar       \
+    -t    templates/     \ # template files directory
+    -x    xml            \ # injects into xml files
+    -x    yml            \ # injects into yml files
+    -o    config-out/    \ # output folder
+    -v    values.yml     \ # values file
+    --key the_secret       # the AES encryption/decryption secret
 ```    
     
 #### Use prompts
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -x xml -x yml                \ # injects into xml and yml files
-    -m ./templates/_metadata.yml \ # metadata file
-    -o ./config-out              \ # output folder
-    -p                             # values from prompts
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -x xml -x yml        \ # injects into xml and yml files
+    -m metadata.yml      \ # metadata file
+    -o config-out/       \ # output folder
+    -p                     # values from prompts
 ```     
 
 #### Use environment variables with log level set to WARN
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -x sh -x yml                 \ # injects into bash and yml files
-    -m ./templates/_metadata.yml \ # metadata file
-    -o ./config-out              \ # output folder
-    -e                           \ # values from environment variables
-    -loglevel w
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -x sh -x yml         \ # injects into bash and yml files
+    -m metadata.yml      \ # metadata file
+    -o config-out/       \ # output folder
+    -e                   \ # values from environment variables
+    -loglevel w            # log level set to WARN
 ```     
 
 #### Use environment variables with log level set to TRACE
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -x sh -x yml                 \ # injects into bash and yml files
-    -m ./templates/_metadata.yml \ # metadata file
-    -o ./config-out              \ # output folder
-    -e                           \ # values from environment variables
-    -loglevel t
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -x sh -x yml         \ # injects into bash and yml files
+    -m metadata.yml      \ # metadata file
+    -o config-out/       \ # output folder
+    -e                   \ # values from environment variables
+    -loglevel t            # log level set to TRACE
 ``` 
 
 #### Value file with environment variable overrides (no metadata.yml)
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -x xml -x yml                \ # injects into xml and yml files
-    -o ./config-out              \ # output folder    
-    -v ./templates/_values.yml   \ # value file
-    -e                             # with environment variable overrides
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -x xml -x yml        \ # injects into xml and yml files
+    -o config-out/       \ # output folder    
+    -v values.yml        \ # value file
+    -e                     # with environment variable overrides
 ```
 
 #### Maven safe mode enabled, and symmetric encryption/decryption secret (no metadata.yml)
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -x xml -x yml                \ # injects into xml and yml files
-    -v ./templates/_values.yml   \ # value file
-    -o ./config-out              \ # output folder        
-    --key the_secret             \ # the symmetric encryption/decryption secret
-    -b                             # Maven safe-mode enabled
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -x xml -x yml        \ # injects into xml and yml files
+    -v values.yml        \ # value file
+    -o config-out/       \ # output folder        
+    --key the_secret     \ # the AES encryption/decryption secret
+    -b                     # Maven safe-mode enabled
 ```  
 
 # Keystores
@@ -638,11 +638,11 @@ In the example shown above, you'll notice the existence of tokens throughout. Si
  
 ###### Build configuration and keystores from templates and value file (no metadata)
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -k ./keydata/_keystore.yml   \ # keystore template file
-    -v ./templates/_values.yml   \ # values file
-    -o ./config-out                # output folder
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -k keystore.yml      \ # keystore template file
+    -v values.yml        \ # values file
+    -o config-out/         # output folder
 ```
 
 #### How Keystore files are processed
@@ -661,12 +661,12 @@ Using the `-b` (or `--buildsafe`) option, AO2 can be executed as part of an appl
 While in the examples provided, we separate the metadata and keystore files, it is actually possible to combine these files into one. For example, if you were to combine metadata and keystore configuration into a single file called _combined.yml, then you could use the following command line.
 
 ```
-$ java -jar ao.jar         \
-    -t ./templates               \ # template files directory
-    -v ./templates/_values.yml   \ # values file
-    -o ./config-out              \ # output folder
-    -m ./templates/_combined.yml \ # metadata file
-    -k ./templates/_combined.yml   # keystore template file
+$ java -jar ao.jar       \
+    -t templates/        \ # template files directory
+    -v values.yml        \ # values file
+    -o config-out/       \ # output folder
+    -m combined.yml      \ # metadata file
+    -k combined.yml        # keystore template file
 ```    
 
 Note: Value files cannot be combined into a single file with metadata and keystore configuration.
