@@ -29,6 +29,7 @@ import java.util.Map;
 public class KeystorePersistenceFileGateway implements IKeystorePersistenceGateway
 {
     private String _keystoreMetadataFile;
+    private String _keydataBaseDirLoc;
     private String _outputDir;
     private ITransformGateway _transformGateway;
     private PersistenceFileHelper _fileHelper = new PersistenceFileHelper();
@@ -36,11 +37,13 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
 
     public KeystorePersistenceFileGateway(
         String keystoreMetadatafile,
+        String keydataBaseDirLoc,
         String outputDir,
         ITransformGateway transformGateway)
     {
         _keystoreMetadataFile = keystoreMetadatafile;
         _outputDir = outputDir;
+        _keydataBaseDirLoc = keydataBaseDirLoc;
         _transformGateway = transformGateway;
     }
 
@@ -80,12 +83,8 @@ public class KeystorePersistenceFileGateway implements IKeystorePersistenceGatew
         // check whether we are building a new keystore, or adding to an existing one
         if(useExistingKeystore)
         {
-            // get key data base dir
-            File ksMetaFile = new File(_keystoreMetadataFile);
-            String ksMetaDir = ksMetaFile.getParentFile().getCanonicalPath();
-
             // load existing keystore
-            String ksFilename = PersistenceFileHelper.cleanFilename(ksMetaDir + "/" + km.getBaseKeystoreFilename());
+            String ksFilename = PersistenceFileHelper.cleanFilename(_keydataBaseDirLoc + "/" + km.getBaseKeystoreFilename());
             ks = loadJKSKeystore(ksFilename, decrypt(km.getKeystorePassword()));
         }
         else
