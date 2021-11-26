@@ -78,7 +78,8 @@ public class TemplateRegexResolver
                             "Tag " + m.group(1) + " appears in template " + templateName + " but does not have any metadata");
                     }
 
-                    m.appendReplacement(sb, variableMetadata.getTransformedVariableString());
+                    m.appendReplacement(
+                        sb, Matcher.quoteReplacement(variableMetadata.getTransformedVariableString()));
                     variableMetadata.setUsed();
                 }
                 m.appendTail(sb).append("\n");
