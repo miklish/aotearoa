@@ -118,7 +118,7 @@ As you can see in the examples above, you can use different value files for diff
 _**Updated for AO2**_
 
 >**_UPDATE NOTE:_**\
->In AO1, the default regex pattern was `{{my-token}}`. If you have templates using this older default pattern, then you will need to add the `--regex \{\{(.*?)\}\}` option to those scripts.
+>In AO1, the default regex pattern was `{{my-token}}`. If you have templates using this older default pattern, then you will need to add the `--regex "\{\{(.*?)\}\}"` option to those scripts.
 
 Tokens are named placeholders that are put in template files for the purpose of being replaced with other values.
 
@@ -128,7 +128,7 @@ In AO2, the simplest tokens have the following form
 
 where `token_name` is the name of the token.
 
-Although, by default, AOtearoa 2 will look for tokens of the form `${token_name}`, AO2 can find tokens of any form by allowing you to specify the regex pattern it searches for. For example, to search for tokens of the form `{{my-token}}`, you can use the `regex` option on the command line as follows: `--regex \{\{(.*?)\}\}`.
+Although, by default, AOtearoa 2 will look for tokens of the form `${token_name}`, AO2 can find tokens of any form by allowing you to specify the regex pattern it searches for. For example, to search for tokens of the form `{{my-token}}`, you can use the `regex` option on the command line as follows: `--regex "\{\{(.*?)\}\}"`.
 
 ## Inline Token Properties
 
