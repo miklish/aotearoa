@@ -44,12 +44,13 @@ public class ValueInjectInteractor
          * If a log level switch exists with no value, then set to QUIET (no output)
          * If a log level switch with a value exists, then use that value
          */
-        String logLevel =
-            !rq.logLevelExists ?
-                IPresenter.DEBUG.levelId() :
-                rq.logLevelValue == null ?
-                    IPresenter.QUIET.levelId() :
-                    rq.logLevelValue;
+        String logLevel;
+        if(!rq.logLevelExists)
+            logLevel = IPresenter.DEBUG.levelId();
+        else if (rq.logLevelValue == null)
+            logLevel = IPresenter.QUIET.levelId();
+        else
+            logLevel = rq.logLevelValue;
 
 
         // Construct Gateways
